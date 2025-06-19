@@ -1182,12 +1182,58 @@ export function FluxKontextGenerator() {
           }
         } catch (parseError) {
           console.error('❌ 解析成功响应JSON失败:', parseError)
-          console.error('❌ 原始响应文本:', responseText)
-          throw new Error('Invalid response format from server - please try again')
+          console.error('❌ 原始响应文本长度:', responseText?.length || 0)
+          console.error('❌ 原始响应文本前500字符:', responseText?.substring(0, 500))
+          console.error('❌ 原始响应文本后500字符:', responseText?.substring(Math.max(0, (responseText?.length || 0) - 500)))
+          console.error('❌ 响应文本是否包含HTML:', responseText?.includes('<html>') || responseText?.includes('<!DOCTYPE'))
+          console.error('❌ 响应文本是否包含JSON:', responseText?.includes('{') && responseText?.includes('}'))
+          
+          // 🔧 尝试修复常见的JSON问题
+          if (responseText && responseText.trim()) {
+            // 尝试移除可能的前缀/后缀
+            let cleanedText = responseText.trim()
+            
+            // 移除可能的BOM或其他前缀
+            if (cleanedText.startsWith('\ufeff')) {
+              cleanedText = cleanedText.substring(1)
+              console.log('🔧 移除BOM字符')
+            }
+            
+            // 查找JSON开始和结束位置
+            const jsonStart = cleanedText.indexOf('{')
+            const jsonEnd = cleanedText.lastIndexOf('}')
+            
+            if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+              const extractedJson = cleanedText.substring(jsonStart, jsonEnd + 1)
+              console.log('🔧 尝试提取JSON部分:', extractedJson.substring(0, 200) + '...')
+              
+              try {
+                data = JSON.parse(extractedJson)
+                console.log('✅ JSON修复成功！')
+              } catch (retryError) {
+                console.error('❌ JSON修复失败:', retryError)
+                throw new Error(`Invalid response format from server - JSON parse failed. Response preview: ${responseText?.substring(0, 100)}...`)
+              }
+            } else {
+              throw new Error(`Invalid response format from server - no valid JSON found. Response preview: ${responseText?.substring(0, 100)}...`)
+            }
+          } else {
+            throw new Error('Invalid response format from server - empty response')
+          }
         }
         
         // 🔧 修改：确保正确处理result，兼容不同的响应数据结构
         result = data.data || data
+        
+        // 🔧 额外调试：检查最终的result结构
+        console.log('🔧 ===== 最终result结构检查 =====')
+        console.log('🔧 result:', result)
+        console.log('🔧 result.images:', result?.images)
+        console.log('🔧 result.images长度:', result?.images?.length || 0)
+        if (result?.images && result.images.length > 0) {
+          console.log('🔧 第一张图片:', result.images[0])
+          console.log('🔧 第一张图片URL:', result.images[0]?.url)
+        }
       }
       
       // 🔧 增强测试，检查result结构

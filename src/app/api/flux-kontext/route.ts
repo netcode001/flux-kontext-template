@@ -1005,13 +1005,8 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    // 使用Promise.race来检测超时
-    const result = await Promise.race([
-      mainLogic(),
-      timeoutPromise
-    ]);
-
-    return NextResponse.json(result);
+    // 🔧 直接执行主逻辑，不使用Promise.race避免响应被破坏
+    return await mainLogic();
 
   } catch (error) {
     console.error('🔥 API request processing failed:', error);
