@@ -9,6 +9,8 @@ import { LogoVariants } from "@/components/Logo"
 import { ChevronDown, User, LogOut, Code, BookOpen } from "lucide-react"
 // 导入文案系统
 import { common } from "@/lib/content"
+// 导入语言选择器
+import { LanguageSwitcher } from "@/components/LanguageSwitcher"
 
 export function Navigation() {
   const pathname = usePathname()
@@ -67,6 +69,11 @@ export function Navigation() {
         {/* 左侧：Logo */}
         <div className="flex-shrink-0">
           <LogoVariants.Navigation />
+        </div>
+        
+        {/* 移动端：顶部语言选择器（国旗图标） */}
+        <div className="md:hidden ml-auto mr-2">
+          <LanguageSwitcher variant="mobile-icon" />
         </div>
         
         {/* 中间：桌面端导航菜单 - 居中显示 */}
@@ -138,8 +145,11 @@ export function Navigation() {
           ))}
         </nav>
 
-        {/* 右侧：桌面端用户状态和按钮 */}
+        {/* 右侧：桌面端语言选择器和用户状态 */}
         <div className="hidden md:flex items-center space-x-4 flex-shrink-0">
+          {/* 语言选择器 */}
+          <LanguageSwitcher variant="dropdown" />
+          
           {status === "loading" ? (
             <div className="w-8 h-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           ) : session ? (
@@ -186,7 +196,7 @@ export function Navigation() {
               )}
             </div>
           ) : (
-            // 未登录状态
+            // 未登录状态 - 语言选择器已在上方显示，这里只显示登录/注册按钮
             <>
               <Link href="/auth/signin">
                 <Button 

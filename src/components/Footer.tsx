@@ -9,29 +9,10 @@ export function Footer() {
     { label: footer.legal.refund, href: "/refund" }
   ]
 
-  const languages = [
-    { code: "en", label: "English", flag: "🇺🇸" },
-    { code: "de", label: "Deutsch", flag: "🇩🇪" },
-    { code: "es", label: "Español", flag: "🇪🇸" },
-    { code: "zh", label: "中文", flag: "🇨🇳" },
-    { code: "fr", label: "Français", flag: "🇫🇷" },
-    { code: "it", label: "Italiano", flag: "🇮🇹" },
-    { code: "ja", label: "日本語", flag: "🇯🇵" },
-    { code: "ko", label: "한국어", flag: "🇰🇷" },
-    { code: "nl", label: "Nederlands", flag: "🇳🇱" },
-    { code: "pl", label: "Polski", flag: "🇵🇱" },
-    { code: "pt", label: "Português", flag: "🇵🇹" },
-    { code: "ru", label: "Русский", flag: "🇷🇺" },
-    { code: "tr", label: "Türkçe", flag: "🇹🇷" },
-    { code: "ar", label: "العربية", flag: "🇸🇦" },
-    { code: "hi", label: "हिन्दी", flag: "🇮🇳" },
-    { code: "bn", label: "বাংলা", flag: "🇧🇩" }
-  ]
-
   return (
     <footer className="bg-card border-t border-border mt-16">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="text-2xl font-bold text-primary">
@@ -45,7 +26,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Contact & Legal - 中间栏目 */}
+          {/* Contact & Legal - 右侧栏目 */}
           <div className="space-y-4">
             <h3 className="font-semibold text-foreground">{footer.contact.title}</h3>
             <a
@@ -68,27 +49,6 @@ export function Footer() {
                   </a>
                 ))}
               </div>
-            </div>
-          </div>
-
-          {/* Languages - 右边栏目 */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">{footer.languages.title}</h3>
-            <div className="grid grid-cols-2 gap-1">
-              {languages.map((lang) => (
-                <a
-                  key={lang.code}
-                  href={`/${lang.code}`}
-                  className={`flex items-center space-x-2 transition-all duration-200 text-sm py-1 hover:font-semibold active:scale-95 ${
-                    lang.code === 'en' 
-                      ? 'text-primary font-medium' 
-                      : 'text-muted-foreground hover:text-primary'
-                  }`}
-                >
-                  <span>{lang.flag}</span>
-                  <span>{lang.label}</span>
-                </a>
-              ))}
             </div>
           </div>
         </div>
