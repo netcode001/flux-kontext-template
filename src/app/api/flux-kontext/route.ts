@@ -828,6 +828,8 @@ export async function POST(request: NextRequest) {
 
                   if (!verifyResponse.ok) {
                     console.warn(`⚠️ R2 URL verification failed: ${verifyResponse.status} ${verifyResponse.statusText}`);
+                    // 🔧 如果R2 URL不可访问，抛出错误以触发回退逻辑
+                    throw new Error(`R2 URL not accessible: ${verifyResponse.status} ${verifyResponse.statusText}`);
                   } else {
                     console.log(`✅ R2 URL is accessible and ready for use`);
                   }
@@ -836,15 +838,17 @@ export async function POST(request: NextRequest) {
                     url: r2Url.substring(0, 80) + '...',
                     error: verifyError instanceof Error ? verifyError.message : verifyError
                   });
+                  // 🔧 验证失败时抛出错误，触发回退逻辑
+                  throw new Error(`R2 URL verification failed: ${verifyError instanceof Error ? verifyError.message : 'Unknown error'}`);
                 }
                 
-                // 返回包含R2 URL的图片对象，优先使用FAL链接
+                // 🎉 R2转换和验证都成功
                 convertedImages.push({
                   ...image,
-                  url: image.url, // 保持FAL URL作为主URL（更稳定）
-                  r2_url: r2Url, // R2 URL作为备用
-                  fal_url: image.url, // 明确标记FAL URL
-                  storage: 'both' // 表示同时有FAL和R2存储
+                  url: r2Url, // 🔧 使用R2 URL作为主URL（如果可访问）
+                  r2_url: r2Url,
+                  fal_url: image.url, // 保留FAL URL作为备用
+                  storage: 'both'
                 });
                 
                 // 在转存之间添加延迟，避免R2并发限制
@@ -859,9 +863,10 @@ export async function POST(request: NextRequest) {
                   sourceUrl: image.url?.substring(0, 50) + '...'
                 });
                 
-                // 如果R2转换失败，返回原始FAL URL
+                // 🔧 如果R2转换失败，返回原始FAL URL
                 convertedImages.push({
                   ...image,
+                  url: image.url, // 使用FAL URL作为主URL
                   fal_url: image.url,
                   storage: 'fal',
                   r2_error: r2Error instanceof Error ? r2Error.message : 'Unknown R2 error'

@@ -257,88 +257,119 @@ class R2StorageService {
                    imageUrl.includes('r2.dev') ? 'r2' : 'external';
     console.log(`🔍 Source URL type: ${urlType}`);
 
-    // 下载图片
-    console.log(`⬇️ Downloading image from: ${imageUrl}`);
-    const response = await fetch(imageUrl, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'FluxKontext/1.0',
-        'Accept': 'image/*'
-      },
-      // 增加超时时间
-      signal: AbortSignal.timeout(30000) // 30秒超时
-    });
+    return await withRetry(async () => {
+      // 下载图片
+      console.log(`⬇️ Downloading image from: ${imageUrl}`);
+      const response = await fetch(imageUrl, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'FluxKontext/1.0',
+          'Accept': 'image/*'
+        },
+        // 增加超时时间
+        signal: AbortSignal.timeout(30000) // 30秒超时
+      });
 
-    if (!response.ok) {
-      throw new Error(`Failed to download image: ${response.status} ${response.statusText}`);
-    }
+      if (!response.ok) {
+        throw new Error(`Failed to download image: ${response.status} ${response.statusText}`);
+      }
 
-    // 获取图片数据
-    const imageBuffer = await response.arrayBuffer();
-    const contentType = response.headers.get('content-type') || 'image/jpeg';
-    
-    console.log(`📋 Downloaded image info:`, {
-      size: imageBuffer.byteLength,
-      contentType,
-      responseStatus: response.status
-    });
+      // 获取图片数据
+      const imageBuffer = await response.arrayBuffer();
+      const contentType = response.headers.get('content-type') || 'image/jpeg';
+      
+      console.log(`📋 Downloaded image info:`, {
+        size: imageBuffer.byteLength,
+        contentType,
+        responseStatus: response.status
+      });
 
-    // 验证图片完整性
-    if (imageBuffer.byteLength === 0) {
-      throw new Error('Downloaded image is empty');
-    }
+      // 验证图片完整性
+      if (imageBuffer.byteLength === 0) {
+        throw new Error('Downloaded image is empty');
+      }
 
-    // 检测图片格式
-    const detectedType = detectImageContentType(new Uint8Array(imageBuffer));
-    const finalContentType = detectedType || contentType;
-    
-    console.log(`🔍 Image format detection:`, {
-      originalContentType: contentType,
-      detectedType,
-      finalContentType
-    });
+      // 检测图片格式
+      const detectedType = detectImageContentType(new Uint8Array(imageBuffer));
+      const finalContentType = detectedType || contentType;
+      
+      console.log(`🔍 Image format detection:`, {
+        originalContentType: contentType,
+        detectedType,
+        finalContentType
+      });
 
-    // 生成文件名
-    const timestamp = Date.now();
-    const randomString = Math.random().toString(36).substring(2, 15);
-    const extension = this.getExtensionFromContentType(finalContentType);
-    const fileName = `ai-generated-${timestamp}-${randomString}.${extension}`;
-    
-    console.log(`📋 Generated R2 filename: ${fileName}`);
+      // 生成文件名
+      const timestamp = Date.now();
+      const randomString = Math.random().toString(36).substring(2, 15);
+      const extension = this.getExtensionFromContentType(finalContentType);
+      const fileName = `ai-generated-${timestamp}-${randomString}.${extension}`;
+      
+      console.log(`📋 Generated R2 filename: ${fileName}`);
 
-    // 上传到R2
-    const uploadResult = await this.client!.send(
-      new PutObjectCommand({
-        Bucket: this.config!.bucketName,
-        Key: fileName,
-        Body: new Uint8Array(imageBuffer), // 转换ArrayBuffer为Uint8Array
-        ContentType: finalContentType,
-        CacheControl: 'public, max-age=31536000', // 1年缓存
-        Metadata: {
-          'source-url': imageUrl.substring(0, 200), // 限制长度
-          'prompt': originalPrompt?.substring(0, 500) || 'AI Generated Image', // 限制长度
-          'upload-timestamp': timestamp.toString(),
-          'source': 'ai-generated',
-          'original-content-type': contentType,
-          'detected-type': detectedType || 'unknown'
+      try {
+        // 🔧 修复：添加更详细的错误捕获和处理
+        console.log(`📤 Saving AI generated image to R2: ${imageUrl}`);
+        
+        // 上传到R2 - 使用队列控制并发
+        const uploadResult = await uploadQueue.add(async () => {
+          return await this.client!.send(
+            new PutObjectCommand({
+              Bucket: this.config!.bucketName,
+              Key: fileName,
+              Body: new Uint8Array(imageBuffer),
+              ContentType: finalContentType,
+              CacheControl: 'public, max-age=31536000',
+              Metadata: {
+                'source-url': imageUrl.substring(0, 200),
+                'prompt': originalPrompt?.substring(0, 500) || 'AI Generated Image',
+                'upload-timestamp': timestamp.toString(),
+                'source': 'ai-generated',
+                'original-content-type': contentType,
+                'detected-type': detectedType || 'unknown'
+              }
+            })
+          );
+        });
+
+        // 构建公开访问URL
+        const publicUrl = `https://${this.config!.bucketName}.${this.config!.accountId}.r2.cloudflarestorage.com/${fileName}`;
+        
+        console.log(`✅ R2 upload from URL successful:`, {
+          sourceUrl: imageUrl.substring(0, 50) + '...',
+          fileName,
+          publicUrl: publicUrl.substring(0, 80) + '...',
+          uploadResult: uploadResult.$metadata
+        });
+
+        // 🔍 验证R2 URL可访问性（简化版本，避免过度验证）
+        try {
+          await this.verifyR2UrlAccessibility(publicUrl);
+        } catch (verifyError) {
+          console.warn(`⚠️ R2 URL verification failed, but upload was successful:`, verifyError);
+          // 不抛出错误，因为上传本身是成功的
         }
-      })
-    );
 
-    // 构建公开访问URL
-    const publicUrl = `https://${this.config!.bucketName}.${this.config!.accountId}.r2.cloudflarestorage.com/${fileName}`;
-    
-    console.log(`✅ R2 upload from URL successful:`, {
-      sourceUrl: imageUrl.substring(0, 50) + '...',
-      fileName,
-      publicUrl,
-      uploadResult: uploadResult.$metadata
-    });
+        return publicUrl;
 
-    // 🔍 验证R2 URL可访问性
-    await this.verifyR2UrlAccessibility(publicUrl);
-
-    return publicUrl;
+      } catch (uploadError: any) {
+        // 🔧 详细的错误处理
+        console.error(`❌ Failed to save AI generated image to R2:`, uploadError);
+        
+        // 检查特定的错误类型
+        if (uploadError.code === 'EPROTO' || uploadError.code === 'ECONNRESET') {
+          throw new Error(`R2 connection error: ${uploadError.message}. This may be a temporary network issue.`);
+        } else if (uploadError.name === 'TooManyRequestsException') {
+          throw new Error(`R2 rate limit exceeded. Please try again later.`);
+        } else if (uploadError.$metadata?.httpStatusCode === 403) {
+          throw new Error(`R2 access denied. Please check your credentials.`);
+        } else if (uploadError.$metadata?.httpStatusCode === 404) {
+          throw new Error(`R2 bucket not found. Please check your configuration.`);
+        } else {
+          throw new Error(`R2 upload failed: ${uploadError.message || 'Unknown error'}`);
+        }
+      }
+    }, 3, 3000); // 3次重试，3秒基础延迟
   }
 
   async getFileUrl(fileName: string): Promise<string> {
