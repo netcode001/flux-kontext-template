@@ -536,9 +536,36 @@ FluxKontext.space是一个功能完整的AI图像生成平台，具有：
 
 ---
 
+## 🗄️ R2 存储配置状态
+
+✅ **当前状态**: R2存储已完全配置并启用
+- **存储桶**: `labubuhub` 
+- **公开访问**: 已启用
+- **图片存储**: 自动上传到R2并使用Public Development URL
+- **回退机制**: R2失败时自动使用FAL URL
+
+### 📋 已配置的R2环境变量
+```bash
+R2_ACCOUNT_ID="139b76588d6ec74c89c4c753cbbf4dc0"     # ✅ 已配置
+R2_ACCESS_KEY_ID="200c4113c72c7e65c0d32599a90db34b"  # ✅ 已配置  
+R2_SECRET_ACCESS_KEY="***"                           # ✅ 已配置
+R2_BUCKET_NAME="labubuhub"                           # ✅ 已配置
+R2_PUBLIC_URL="https://pub-82d6d1ca25d849b9b1a7fc2de2e83d06.r2.dev"  # ✅ 已配置
+NEXT_PUBLIC_ENABLE_R2=true                           # ✅ 已启用
+```
+
+### 🎯 R2配置验证
+运行以下命令验证R2配置：
+```bash
+node scripts/check-r2-config.js
+```
+
+---
+
 ## 📞 技术支持
 
 如需技术支持或有任何问题，请查看：
 - 📄 PAYMENT_SECURITY_GUIDE.md - 支付安全指南
 - 📄 env.example - 环境变量配置示例
+- 📄 docs/R2配置获取指南.md - R2存储配置详细指南
 - 📁 scripts/ - 各种检查和设置脚本 
