@@ -144,12 +144,12 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🚀 Starting image generation request at:', new Date().toISOString());
     
-    // 设置请求超时检测
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => {
-        reject(new Error('Request timeout: Generation took longer than 55 seconds'))
-      }, 55000) // 55秒超时，留5秒缓冲
-    });
+    // 🔧 移除超时检测 - 不再使用Promise.race，避免unhandledRejection
+    // const timeoutPromise = new Promise((_, reject) => {
+    //   setTimeout(() => {
+    //     reject(new Error('Request timeout: Generation took longer than 55 seconds'))
+    //   }, 55000) // 55秒超时，留5秒缓冲
+    // });
 
     // 包装主要逻辑在Promise中
     const mainLogic = async () => {
