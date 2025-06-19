@@ -32,8 +32,8 @@ export function Navigation() {
   }, [])
 
   const navLinks = [
-    { href: "/", label: common.navigation.home },
-    { href: "/generate", label: common.navigation.generate },
+    { href: "/", label: common.navigation.home, emoji: "🏠" },
+    { href: "/generate", label: common.navigation.generate, emoji: "✨" },
     { 
       href: "/labubu-news", 
       label: "Labubu快报",
@@ -44,10 +44,11 @@ export function Navigation() {
       label: "创意秀场",
       emoji: "🎨"
     },
-    { href: "/pricing", label: common.navigation.pricing },
+    { href: "/pricing", label: common.navigation.pricing, emoji: "💎" },
     { 
       href: "/resources", 
       label: common.navigation.resources,
+      emoji: "📚",
       hasDropdown: true,
       subItems: [
         { href: "/resources", label: common.navigation.resourcesHub, icon: BookOpen },
@@ -77,16 +78,21 @@ export function Navigation() {
                 <div className="relative resources-dropdown">
                   <button
                     onClick={() => setIsResourcesMenuOpen(!isResourcesMenuOpen)}
-                    className={`flex items-center space-x-1 relative transition-all duration-200 hover:font-semibold active:scale-95 ${
+                    className={`flex items-center space-x-2 relative transition-all duration-200 hover:font-semibold active:scale-95 px-3 py-2 rounded-lg hover:bg-accent/50 ${
                       pathname.startsWith('/resources') 
-                        ? 'text-primary font-semibold' 
+                        ? 'text-primary font-semibold bg-accent/30' 
                         : 'text-foreground hover:text-primary'
                     }`}
                   >
-                    <span>{link.label}</span>
+                    {link.emoji && (
+                      <span className="text-base leading-none flex items-center justify-center w-5 h-5">
+                        {link.emoji}
+                      </span>
+                    )}
+                    <span className="leading-none">{link.label}</span>
                     <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isResourcesMenuOpen ? 'rotate-180' : ''}`} />
                     {pathname.startsWith('/resources') && (
-                      <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+                      <div className="absolute -bottom-1 left-3 right-3 h-0.5 bg-primary rounded-full" />
                     )}
                   </button>
                   
@@ -111,16 +117,20 @@ export function Navigation() {
                 // 普通导航链接
                 <Link 
                   href={link.href} 
-                  className={`relative transition-all duration-200 hover:font-semibold active:scale-95 flex items-center space-x-1 ${
+                  className={`relative transition-all duration-200 hover:font-semibold active:scale-95 flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent/50 ${
                     pathname === link.href 
-                      ? 'text-primary font-semibold' 
+                      ? 'text-primary font-semibold bg-accent/30' 
                       : 'text-foreground hover:text-primary'
                   }`}
                 >
-                  {link.emoji && <span className="text-lg">{link.emoji}</span>}
-                  <span>{link.label}</span>
+                  {link.emoji && (
+                    <span className="text-base leading-none flex items-center justify-center w-5 h-5">
+                      {link.emoji}
+                    </span>
+                  )}
+                  <span className="leading-none">{link.label}</span>
                   {pathname === link.href && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+                    <div className="absolute -bottom-1 left-3 right-3 h-0.5 bg-primary rounded-full" />
                   )}
                 </Link>
               )}
@@ -227,13 +237,20 @@ export function Navigation() {
                   <div>
                     <button
                       onClick={() => setIsResourcesMenuOpen(!isResourcesMenuOpen)}
-                      className={`flex items-center justify-between w-full py-2 px-3 rounded-md transition-all duration-200 hover:bg-accent hover:font-semibold active:scale-95 ${
+                      className={`flex items-center justify-between w-full py-3 px-4 rounded-lg transition-all duration-200 hover:bg-accent hover:font-semibold active:scale-95 ${
                         pathname.startsWith('/resources') 
                           ? 'text-primary font-semibold bg-accent' 
                           : 'text-foreground'
                       }`}
                     >
-                      <span>{link.label}</span>
+                      <div className="flex items-center space-x-3">
+                        {link.emoji && (
+                          <span className="text-lg leading-none flex items-center justify-center w-6 h-6">
+                            {link.emoji}
+                          </span>
+                        )}
+                        <span className="leading-none">{link.label}</span>
+                      </div>
                       <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isResourcesMenuOpen ? 'rotate-180' : ''}`} />
                     </button>
                     
@@ -261,14 +278,19 @@ export function Navigation() {
                   // 普通移动端导航链接
                   <Link
                     href={link.href}
-                    className={`block py-2 px-3 rounded-md transition-all duration-200 hover:bg-accent hover:font-semibold active:scale-95 ${
+                    className={`flex items-center space-x-3 py-3 px-4 rounded-lg transition-all duration-200 hover:bg-accent hover:font-semibold active:scale-95 ${
                       pathname === link.href 
                         ? 'text-primary font-semibold bg-accent' 
                         : 'text-foreground'
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {link.label}
+                    {link.emoji && (
+                      <span className="text-lg leading-none flex items-center justify-center w-6 h-6">
+                        {link.emoji}
+                      </span>
+                    )}
+                    <span className="leading-none">{link.label}</span>
                   </Link>
                 )}
               </div>

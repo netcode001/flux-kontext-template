@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function LabubuNewsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
       {/* 页面头部 */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-pink-100">
         <div className="container mx-auto px-4 py-8">

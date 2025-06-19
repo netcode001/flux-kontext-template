@@ -49,18 +49,19 @@ export function SearchBar({
           defaultValue={searchParams.get("search") ?? ""}
           onChange={(e) => handleSearch(e.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-lg border border-pink-200 p-3 pl-10 shadow-sm outline-none 
-                     focus:border-pink-400 focus:ring-2 focus:ring-pink-300 focus:ring-opacity-50
-                     bg-white/90 backdrop-blur-sm
-                     placeholder:text-gray-500
-                     transition-all duration-200"
+          className="w-full rounded-xl border-2 border-pink-200 p-4 pl-12 shadow-lg outline-none 
+                     focus:border-pink-400 focus:ring-4 focus:ring-pink-100 focus:ring-opacity-60
+                     bg-white/95 backdrop-blur-sm
+                     placeholder:text-gray-500 placeholder:font-medium
+                     transition-all duration-300 hover:shadow-xl
+                     text-gray-700 font-medium"
         />
 
-        <Search className="absolute inset-y-0 left-3 my-auto h-5 w-5 text-pink-400" />
+        <Search className="absolute inset-y-0 left-4 my-auto h-5 w-5 text-pink-500" />
 
         {isPending && (
-          <div className="absolute right-3 top-3">
-            <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-pink-500"></div>
+          <div className="absolute right-4 top-4">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-pink-200 border-t-pink-500"></div>
           </div>
         )}
       </div>
