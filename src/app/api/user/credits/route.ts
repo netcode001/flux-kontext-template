@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { createAdminClient } from '@/lib/supabase/server'
+import { createAdminClient, createAdminClientWithRetry } from '@/lib/supabase/server'
 
 // 🔥 获取用户积分信息
 export async function GET(request: NextRequest) {
@@ -18,15 +18,44 @@ export async function GET(request: NextRequest) {
 
     console.log('🔍 开始获取用户积分:', session.user.email)
 
-    // 🔍 直接使用Supabase获取用户信息
+    // 🔧 使用带重试机制的Supabase客户端
     const supabase = createAdminClient()
     
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', session.user.email)
-      .limit(1)
-      .single()
+    // 🔄 添加重试机制的查询操作
+    const queryWithRetry = async () => {
+      const { data: user, error: userError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', session.user.email)
+        .limit(1)
+        .single()
+      
+      return { user, userError }
+    }
+
+    // 执行带重试的查询
+    let user, userError
+    try {
+      const result = await queryWithRetry()
+      user = result.user
+      userError = result.userError
+    } catch (retryError) {
+      console.error('🚨 查询用户失败:', {
+        message: retryError instanceof Error ? retryError.message : '未知错误',
+        details: retryError instanceof Error ? retryError.stack : '无详细信息',
+        hint: '数据库连接可能不稳定',
+        code: ''
+      })
+      
+      return NextResponse.json(
+        { 
+          error: '数据库连接失败',
+          details: '请稍后重试或联系技术支持',
+          suggestion: '如果问题持续存在，请刷新页面重试'
+        },
+        { status: 500 }
+      )
+    }
 
     if (userError) {
       if (userError.code === 'PGRST116') { // No rows found
@@ -36,15 +65,18 @@ export async function GET(request: NextRequest) {
         try {
           const { getUuid } = await import('@/lib/utils/hash')
           
+          // 🎯 强制使用生成的UUID
+          const newUserId = getUuid()
+          
           const newUserData = {
-            id: getUuid(),
+            id: newUserId, // 🔧 修复：使用生成的UUID
             email: session.user.email,
             name: session.user.name || session.user.email,
             image: session.user.image || '',
             credits: 100, // 🎁 新用户赠送100积分
             signin_type: 'oauth',
             signin_provider: 'google',
-            signin_openid: '',
+            signin_openid: '', // OAuth ID单独存储
             signin_ip: 'unknown',
             last_signin_at: new Date().toISOString(),
             signin_count: 1,
@@ -52,6 +84,11 @@ export async function GET(request: NextRequest) {
             preferred_currency: 'USD',
             preferred_payment_provider: 'creem'
           }
+
+          console.log('🔍 准备自动创建用户:', {
+            id: newUserData.id,
+            email: newUserData.email
+          })
 
           const { data: newUser, error: createError } = await supabase
             .from('users')

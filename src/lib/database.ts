@@ -113,41 +113,68 @@ class SupabaseAdapter {
         
         console.log('🔍 数据库查询 - 查找用户:', args.where)
         
-        const { data, error } = await query.single()
+        // 🔧 添加重试机制
+        let retryCount = 0
+        const maxRetries = 3
         
-        if (error) {
-          console.log('🔍 User findUnique error:', error.message)
-          return null
+        while (retryCount < maxRetries) {
+          try {
+            const { data, error } = await query.single()
+            
+            if (error) {
+              if (error.code === 'PGRST116') {
+                console.log('🔍 用户不存在')
+                return null
+              }
+              throw error
+            }
+            
+            if (!data) {
+              console.log('🔍 用户不存在')
+              return null
+            }
+            
+            console.log('✅ 找到用户:', data.email)
+            
+            return {
+              id: data.id,
+              email: data.email,
+              name: data.name,
+              image: data.image,
+              credits: data.credits,
+              location: data.location,
+              lastSigninAt: data.last_signin_at ? new Date(data.last_signin_at) : undefined,
+              signinCount: data.signin_count,
+              signinType: data.signin_type,
+              signinProvider: data.signin_provider,
+              signinOpenid: data.signin_openid,
+              signinIp: data.signin_ip,
+              preferredCurrency: data.preferred_currency,
+              preferredPaymentProvider: data.preferred_payment_provider,
+              createdAt: new Date(data.created_at),
+              updatedAt: new Date(data.updated_at)
+            }
+          } catch (queryError) {
+            retryCount++
+            console.warn(`🔄 数据库查询失败，第 ${retryCount}/${maxRetries} 次重试:`, queryError)
+            
+            if (retryCount >= maxRetries) {
+              throw queryError
+            }
+            
+            // 等待后重试
+            await new Promise(resolve => setTimeout(resolve, 1000 * retryCount))
+          }
         }
         
-        if (!data) {
-          console.log('🔍 用户不存在')
-          return null
-        }
-        
-        console.log('✅ 找到用户:', data.email)
-        
-        return {
-          id: data.id,
-          email: data.email,
-          name: data.name,
-          image: data.image,
-          credits: data.credits,
-          location: data.location,
-          lastSigninAt: data.last_signin_at ? new Date(data.last_signin_at) : undefined,
-          signinCount: data.signin_count,
-          signinType: data.signin_type,
-          signinProvider: data.signin_provider,
-          signinOpenid: data.signin_openid,
-          signinIp: data.signin_ip,
-          preferredCurrency: data.preferred_currency,
-          preferredPaymentProvider: data.preferred_payment_provider,
-          createdAt: new Date(data.created_at),
-          updatedAt: new Date(data.updated_at)
-        }
+        return null
       } catch (error) {
         console.error('🚨 User findUnique error:', error)
-        return null
+        // 🔧 改进错误处理，抛出更详细的错误信息
+        if (error instanceof Error) {
+          throw new Error(`数据库查询失败: ${error.message}`)
+        }
+        throw new Error('数据库查询失败: 未知错误')
       }
     },
 
@@ -195,8 +222,14 @@ class SupabaseAdapter {
       
       const supabase = getSupabaseAdmin()
       
+      // 🔧 确保ID是有效的UUID格式
+      const { getUuid } = await import('@/lib/utils/hash')
+      const userId = args.data.id || getUuid()
+      
+      console.log('🔍 使用的用户ID:', userId)
+      
       const insertData: any = {
-        id: args.data.id,
+        id: userId, // 🎯 确保使用有效的UUID
         email: args.data.email,
         name: args.data.name,
         image: args.data.image,

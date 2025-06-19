@@ -216,15 +216,18 @@ export const authOptions: NextAuthOptions = {
             // 用户不存在，创建新用户
             console.log('🎁 开始创建新用户...')
             
+            // 🔧 修复：永远使用生成的UUID，不使用OAuth提供商的ID
+            const newUserId = getUuid()
+            
             const newUserData = {
-              id: user.id || getUuid(),
+              id: newUserId, // 🎯 强制使用生成的UUID
               email: user.email,
               name: user.name || user.email,
               image: user.image || '',
               credits: 100, // 🎁 新用户赠送100积分
               signin_type: account?.type || 'oauth',
               signin_provider: account?.provider || 'google',
-              signin_openid: account?.providerAccountId || '',
+              signin_openid: account?.providerAccountId || '', // OAuth ID单独存储
               signin_ip: 'unknown',
               last_signin_at: new Date().toISOString(),
               signin_count: 1,
@@ -232,6 +235,13 @@ export const authOptions: NextAuthOptions = {
               preferred_currency: 'USD',
               preferred_payment_provider: 'creem'
             }
+
+            console.log('🔍 准备插入用户数据:', { 
+              id: newUserData.id, 
+              email: newUserData.email,
+              signin_provider: newUserData.signin_provider,
+              signin_openid: newUserData.signin_openid
+            })
 
             const { data: newUser, error: createError } = await supabase
               .from('users')
