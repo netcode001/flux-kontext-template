@@ -15,7 +15,16 @@
 - 📁 **组件结构**: 新增 `directory/`、`labubu/`、`admin/` 组件分类
 - 🎨 **Suspense优化**: 搜索组件包装Suspense，提升用户体验
 
-### 🐛 问题修复 (2024年12月19日)
+### 🐛 问题修复 
+
+#### 2024年12月19日 - UUID和数据库连接修复
+- 🔧 **UUID格式冲突修复**: 修复OAuth登录时UUID格式冲突问题，强制使用生成的UUID作为用户ID
+- 🔄 **数据库连接稳定性**: 添加Supabase连接重试机制，解决间歇性 `TypeError: fetch failed` 问题
+- 🎯 **用户创建逻辑优化**: 统一用户创建策略，确保ID字段使用正确的UUID格式
+- 📊 **错误处理改进**: 改进错误处理和日志记录，便于问题排查和监控
+- ✅ **登录流程稳定**: 解决Google OAuth登录后用户信息不一致的问题
+
+#### 2024年12月19日 - API响应格式修复
 - 🔧 **API响应格式修复**: 修复AI图像生成API返回空响应 `{}` 的问题
 - 📡 **NextResponse统一**: 统一所有API端点使用 `NextResponse.json()` 格式
 - 🧪 **调试端点**: 新增 `/api/debug/fal-test` 和 `/api/debug/simple-generation` 测试端点
