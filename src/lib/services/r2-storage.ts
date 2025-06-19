@@ -230,8 +230,10 @@ class R2StorageService {
       })
     );
 
-    // 构建公开访问URL
-    const publicUrl = `https://${this.config!.bucketName}.${this.config!.accountId}.r2.cloudflarestorage.com/${fileName}`;
+    // 构建公开访问URL - 使用Public Development URL
+    const publicUrl = process.env.R2_PUBLIC_URL 
+      ? `${process.env.R2_PUBLIC_URL}/${fileName}`
+      : `https://${this.config!.bucketName}.${this.config!.accountId}.r2.cloudflarestorage.com/${fileName}`;
     
     console.log(`✅ R2 upload successful:`, {
       fileName,
@@ -332,8 +334,10 @@ class R2StorageService {
           );
         });
 
-        // 构建公开访问URL
-        const publicUrl = `https://${this.config!.bucketName}.${this.config!.accountId}.r2.cloudflarestorage.com/${fileName}`;
+        // 构建公开访问URL - 使用Public Development URL
+        const publicUrl = process.env.R2_PUBLIC_URL 
+          ? `${process.env.R2_PUBLIC_URL}/${fileName}`
+          : `https://${this.config!.bucketName}.${this.config!.accountId}.r2.cloudflarestorage.com/${fileName}`;
         
         console.log(`✅ R2 upload from URL successful:`, {
           sourceUrl: imageUrl.substring(0, 50) + '...',
@@ -377,7 +381,10 @@ class R2StorageService {
       throw new Error('R2 storage not configured')
     }
 
-    return `https://pub-${this.config!.accountId.replace(/-/g, '')}.r2.dev/${fileName}`
+    // 使用配置的Public Development URL
+    return process.env.R2_PUBLIC_URL 
+      ? `${process.env.R2_PUBLIC_URL}/${fileName}`
+      : `https://${this.config!.bucketName}.${this.config!.accountId}.r2.cloudflarestorage.com/${fileName}`;
   }
 
   // 批量上传（用于多图处理）

@@ -828,8 +828,23 @@ export async function POST(request: NextRequest) {
 
                   if (!verifyResponse.ok) {
                     console.warn(`⚠️ R2 URL verification failed: ${verifyResponse.status} ${verifyResponse.statusText}`);
-                    // 🔧 如果R2 URL不可访问，抛出错误以触发回退逻辑
-                    throw new Error(`R2 URL not accessible: ${verifyResponse.status} ${verifyResponse.statusText}`);
+                    // 🔧 如果R2 URL不可访问，直接使用FAL URL而不抛出错误
+                    console.log(`🔄 R2 URL not accessible, falling back to FAL URL: ${image.url}`);
+                    convertedImages.push({
+                      ...image,
+                      url: image.url, // 使用FAL URL作为主URL
+                      fal_url: image.url,
+                      r2_url: r2Url, // 保留R2 URL（虽然不可访问）
+                      storage: 'fal',
+                      r2_note: `R2 uploaded but not publicly accessible (${verifyResponse.status})`
+                    });
+                    
+                    // 继续处理下一张图片
+                    if (index < result.images.length - 1) {
+                      console.log(`⏳ Waiting 2 seconds before next conversion...`);
+                      await new Promise(resolve => setTimeout(resolve, 2000));
+                    }
+                    return; // 跳出当前循环
                   } else {
                     console.log(`✅ R2 URL is accessible and ready for use`);
                   }
