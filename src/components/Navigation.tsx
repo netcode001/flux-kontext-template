@@ -34,6 +34,16 @@ export function Navigation() {
   const navLinks = [
     { href: "/", label: common.navigation.home },
     { href: "/generate", label: common.navigation.generate },
+    { 
+      href: "/labubu-news", 
+      label: "Labubu快报",
+      emoji: "📰"
+    },
+    { 
+      href: "/labubu-gallery", 
+      label: "创意秀场",
+      emoji: "🎨"
+    },
     { href: "/pricing", label: common.navigation.pricing },
     { 
       href: "/resources", 
@@ -101,13 +111,14 @@ export function Navigation() {
                 // 普通导航链接
                 <Link 
                   href={link.href} 
-                  className={`relative transition-all duration-200 hover:font-semibold active:scale-95 ${
+                  className={`relative transition-all duration-200 hover:font-semibold active:scale-95 flex items-center space-x-1 ${
                     pathname === link.href 
                       ? 'text-primary font-semibold' 
                       : 'text-foreground hover:text-primary'
                   }`}
                 >
-                  {link.label}
+                  {link.emoji && <span className="text-lg">{link.emoji}</span>}
+                  <span>{link.label}</span>
                   {pathname === link.href && (
                     <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
                   )}

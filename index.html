@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labubu梦想社区 - 全球首个Labubu主题垂直社区</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'labubu-pink': '#FF6B9D',
+                        'labubu-light': '#FFB6C1',
+                        'labubu-dark': '#E91E63',
+                        'labubu-cream': '#FFF8F0',
+                        'labubu-purple': '#9C27B0',
+                    },
+                    fontFamily: {
+                        'cute': ['Comic Sans MS', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #FF6B9D 0%, #FFB6C1 50%, #9C27B0 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(255, 107, 157, 0.3);
+        }
+        .animate-bounce-slow {
+            animation: bounce 3s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .scrollbar-hide::-webkit-scrollbar { 
+            display: none;  /* Safari and Chrome */
+        }
+    </style>
+</head>
+<body class="bg-labubu-cream">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md shadow-lg z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-labubu-pink to-labubu-purple rounded-full flex items-center justify-center">
+                        <i class="fas fa-heart text-white text-lg"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-labubu-dark font-cute">Labubu梦想社区</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-gray-700 hover:text-labubu-pink transition-colors">首页</a>
+                    <a href="#news" class="text-gray-700 hover:text-labubu-pink transition-colors">Labubu快报</a>
+                    <a href="#creator" class="text-gray-700 hover:text-labubu-pink transition-colors">变身工场</a>
+                    <a href="#gallery" class="text-gray-700 hover:text-labubu-pink transition-colors">秀场</a>
+                    <a href="#timeline" class="text-gray-700 hover:text-labubu-pink transition-colors">萌系进化史</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="bg-labubu-pink text-white px-4 py-2 rounded-full hover:bg-labubu-dark transition-colors">
+                        登录
+                    </button>
+                    <button class="md:hidden text-labubu-pink">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="pt-20 pb-16 gradient-bg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center py-20">
+                <div class="mb-8 animate-float">
+                    <div class="w-32 h-32 mx-auto bg-white rounded-full flex items-center justify-center shadow-2xl overflow-hidden">
+                        <img src="image/098b8cc65919eebbd97b045840301cea.jpg" alt="Labubu" class="w-full h-full object-cover rounded-full">
+                    </div>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 animate-bounce-slow">
+                    欢迎来到Labubu世界
+                </h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    每天超过3000位Labubu爱好者在这里分享收藏、创作故事、交流心得
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-white text-labubu-pink px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                        立即加入社区
+                    </button>
+                    <button class="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-labubu-pink transition-all">
+                        探索更多
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- News Section Demo -->
+    <section id="news" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">📰 Labubu快报</h2>
+                <p class="text-xl text-gray-600">最新资讯，一网打尽</p>
+            </div>
+            
+            <!-- 横向滚动容器 -->
+            <div class="overflow-x-auto scrollbar-hide">
+                <div class="flex space-x-6 pb-4" style="width: max-content;">
+                    <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover flex-shrink-0 w-80">
+                        <div class="h-48 bg-gradient-to-r from-pink-200 to-purple-200 overflow-hidden">
+                            <img src="image/3c0a5d92cb624e2530a30116bf886f65.jpeg" alt="Labubu春季限定系列" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center mb-3">
+                                <span class="bg-labubu-pink text-white px-3 py-1 rounded-full text-sm">新品发布</span>
+                                <span class="text-gray-500 text-sm ml-3">2小时前</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Labubu春季限定系列正式发布</h3>
+                            <p class="text-gray-600 mb-4">Pop Mart今日宣布推出Labubu春季限定系列，包含樱花、彩虹等多种主题...</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4 text-gray-500 text-sm">
+                                    <span><i class="fas fa-eye mr-1"></i>1.2k</span>
+                                    <span><i class="fas fa-heart mr-1"></i>89</span>
+                                    <span><i class="fas fa-comment mr-1"></i>23</span>
+                                </div>
+                                <button class="text-labubu-pink hover:text-labubu-dark">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover flex-shrink-0 w-80">
+                        <div class="h-48 bg-gradient-to-r from-blue-200 to-green-200 overflow-hidden">
+                            <img src="image/e5fc279bdd746e6b54ad2db405265e24.jpeg" alt="IU与Labubu收藏" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center mb-3">
+                                <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm">明星同款</span>
+                                <span class="text-gray-500 text-sm ml-3">5小时前</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">IU晒出Labubu收藏照片引热议</h3>
+                            <p class="text-gray-600 mb-4">韩国人气歌手IU在Instagram分享了自己的Labubu收藏，引发粉丝热烈讨论...</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4 text-gray-500 text-sm">
+                                    <span><i class="fas fa-eye mr-1"></i>3.5k</span>
+                                    <span><i class="fas fa-heart mr-1"></i>256</span>
+                                    <span><i class="fas fa-comment mr-1"></i>78</span>
+                                </div>
+                                <button class="text-labubu-pink hover:text-labubu-dark">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover flex-shrink-0 w-80">
+                        <div class="h-48 bg-gradient-to-r from-yellow-200 to-orange-200 overflow-hidden">
+                            <img src="image/4721999eebe624817db9e2353a7309c9.jpeg" alt="Labubu主题咖啡厅" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center mb-3">
+                                <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm">活动资讯</span>
+                                <span class="text-gray-500 text-sm ml-3">1天前</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Labubu主题咖啡厅全球巡展启动</h3>
+                            <p class="text-gray-600 mb-4">首站将在上海开设，为期3个月的Labubu主题咖啡厅体验即将开始...</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4 text-gray-500 text-sm">
+                                    <span><i class="fas fa-eye mr-1"></i>892</span>
+                                    <span><i class="fas fa-heart mr-1"></i>67</span>
+                                    <span><i class="fas fa-comment mr-1"></i>15</span>
+                                </div>
+                                <button class="text-labubu-pink hover:text-labubu-dark">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 添加更多卡片以展示滚动效果 -->
+                    <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover flex-shrink-0 w-80">
+                        <div class="h-48 bg-gradient-to-r from-purple-200 to-pink-200 overflow-hidden">
+                            <img src="image/58ec4e75fce6baf1e9f04115cea9a6be.jpg" alt="Labubu联名款" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center mb-3">
+                                <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-sm">联名合作</span>
+                                <span class="text-gray-500 text-sm ml-3">2天前</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Labubu x 知名品牌联名款上市</h3>
+                            <p class="text-gray-600 mb-4">限量版联名系列一经推出就引发抢购热潮，各大门店排起长队...</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4 text-gray-500 text-sm">
+                                    <span><i class="fas fa-eye mr-1"></i>2.1k</span>
+                                    <span><i class="fas fa-heart mr-1"></i>145</span>
+                                    <span><i class="fas fa-comment mr-1"></i>32</span>
+                                </div>
+                                <button class="text-labubu-pink hover:text-labubu-dark">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover flex-shrink-0 w-80">
+                        <div class="h-48 bg-gradient-to-r from-green-200 to-blue-200 overflow-hidden">
+                            <img src="image/f67c1f9abaddfed02235bf5fa6681b9d.jpg" alt="Labubu展览" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center mb-3">
+                                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">展览活动</span>
+                                <span class="text-gray-500 text-sm ml-3">3天前</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Labubu艺术展览北京站开幕</h3>
+                            <p class="text-gray-600 mb-4">汇集全球艺术家的Labubu创作作品，展期为期一个月，免费参观...</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4 text-gray-500 text-sm">
+                                    <span><i class="fas fa-eye mr-1"></i>1.8k</span>
+                                    <span><i class="fas fa-heart mr-1"></i>98</span>
+                                    <span><i class="fas fa-comment mr-1"></i>19</span>
+                                </div>
+                                <button class="text-labubu-pink hover:text-labubu-dark">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Creator Section Demo -->
+    <section id="creator" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">🎨 Labubu变身工场</h2>
+                <p class="text-xl text-gray-600">AI驱动，无限创意</p>
+            </div>
+            
+            <div class="bg-white rounded-3xl p-8 shadow-2xl">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-6">本周AI创作精选</h3>
+                        <p class="text-gray-600 mb-8">@MimiArt 创作的"赛博朋克Labubu"获得2.3万点赞，@DreamyStyle 的"古风仙子"系列火爆全网</p>
+                        
+                        <div class="space-y-4 mb-8">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-labubu-pink rounded-full flex items-center justify-center">
+                                    <i class="fas fa-fire text-white text-sm"></i>
+                                </div>
+                                <span class="text-gray-700">今日热门：古风仙子Labubu - 3.2万生成</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-labubu-pink rounded-full flex items-center justify-center">
+                                    <i class="fas fa-star text-white text-sm"></i>
+                                </div>
+                                <span class="text-gray-700">本周新增：赛博朋克风格 - 1.8万生成</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-labubu-pink rounded-full flex items-center justify-center">
+                                    <i class="fas fa-heart text-white text-sm"></i>
+                                </div>
+                                <span class="text-gray-700">最受欢迎：甜美公主风 - 2.5万收藏</span>
+                            </div>
+                        </div>
+                        
+                        <button class="bg-gradient-to-r from-labubu-pink to-labubu-purple text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                            查看更多作品 <i class="fas fa-images ml-2"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-4">
+                            <div class="bg-gradient-to-br from-purple-100 to-pink-100 p-4 rounded-2xl overflow-hidden">
+                                <img src="image/e9642e2c6c9e4584efd524d4576ceb06.png" alt="古风Labubu" class="w-full h-24 object-cover rounded-lg mb-2">
+                                <p class="text-sm font-semibold text-gray-700 text-center">古风仙侠</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-blue-100 to-cyan-100 p-4 rounded-2xl overflow-hidden">
+                                <img src="image/406cdea2ad56f2176d6d18af87868dd7.png" alt="赛博朋克Labubu" class="w-full h-24 object-cover rounded-lg mb-2">
+                                <p class="text-sm font-semibold text-gray-700 text-center">赛博朋克</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4 mt-8">
+                            <div class="bg-gradient-to-br from-gray-100 to-purple-100 p-4 rounded-2xl overflow-hidden">
+                                <img src="image/427793f19cf2b40d991020774ed75798.jpg" alt="哥特Labubu" class="w-full h-24 object-cover rounded-lg mb-2">
+                                <p class="text-sm font-semibold text-gray-700 text-center">哥特暗黑</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-pink-100 to-yellow-100 p-4 rounded-2xl overflow-hidden">
+                                <img src="image/a56e13dbd5da7fd98337c3eabf42bd65.jpg" alt="公主Labubu" class="w-full h-24 object-cover rounded-lg mb-2">
+                                <p class="text-sm font-semibold text-gray-700 text-center">甜美公主</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Gallery -->
+    <section id="gallery" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">🎪 Labubu秀场</h2>
+                <p class="text-xl text-gray-600">本周新增1,247件原创作品，总浏览量达156万</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gradient-to-br from-pink-200 to-purple-200 overflow-hidden">
+                        <img src="image/dd7dcf4fe7f97e80662eeee85c361e37.jpeg" alt="Labubu摄影作品" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold text-gray-700">@LabubuLover</span>
+                            <div class="flex items-center space-x-2 text-gray-500 text-sm">
+                                <i class="fas fa-heart"></i>
+                                <span>234</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm">春日阳台上的Labubu下午茶时光</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gradient-to-br from-blue-200 to-green-200 overflow-hidden">
+                        <img src="image/27ce5064bee873825a41de64330b683b.jpeg" alt="手绘Labubu" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold text-gray-700">@CreativeArt</span>
+                            <div class="flex items-center space-x-2 text-gray-500 text-sm">
+                                <i class="fas fa-heart"></i>
+                                <span>189</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm">水彩风格Labubu在花海中漫步</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gradient-to-br from-yellow-200 to-orange-200 overflow-hidden">
+                        <img src="image/0f45954ae2258112e0a12bf80219124d.jpg" alt="Labubu房间" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold text-gray-700">@DIYMaster</span>
+                            <div class="flex items-center space-x-2 text-gray-500 text-sm">
+                                <i class="fas fa-heart"></i>
+                                <span>156</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm">粉色系Labubu主题卧室完整改造</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gradient-to-br from-purple-200 to-pink-200 overflow-hidden">
+                        <img src="image/53ae3b6c9a265bdb4f2463197c04f2f1.jpeg" alt="Labubu时尚" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold text-gray-700">@FashionGuru</span>
+                            <div class="flex items-center space-x-2 text-gray-500 text-sm">
+                                <i class="fas fa-heart"></i>
+                                <span>298</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm">Labubu配饰与包包的完美搭配</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="bg-labubu-pink text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-labubu-dark transition-colors">
+                    查看更多作品
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gradient-to-r from-labubu-pink to-labubu-purple rounded-3xl p-12 text-center">
+                <h2 class="text-4xl font-bold text-white mb-12">社区数据</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="text-4xl font-bold text-white mb-2">12.8K</div>
+                        <div class="text-white/80">注册用户</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold text-white mb-2">3.2K</div>
+                        <div class="text-white/80">每日活跃</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold text-white mb-2">89K</div>
+                        <div class="text-white/80">分享作品</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold text-white mb-2">156K</div>
+                        <div class="text-white/80">AI生成</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Labubu Timeline -->
+    <section id="timeline" class="py-20 bg-gradient-to-br from-labubu-cream to-pink-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">🎀 Labubu萌系进化史</h2>
+                <p class="text-xl text-gray-600">从诞生到风靡全球，见证每一个重要时刻</p>
+            </div>
+            
+            <!-- Timeline Container -->
+            <div class="relative overflow-x-auto scrollbar-hide py-8">
+                <!-- Timeline Line -->
+                <div class="absolute top-16 left-0 right-0 h-0.5 bg-gradient-to-r from-labubu-pink to-labubu-purple" style="z-index: 1;"></div>
+                
+                <!-- Timeline Items -->
+                <div class="flex space-x-8 pb-4" style="width: max-content;">
+                    <!-- 2019 - 诞生 -->
+                    <div class="relative flex flex-col items-center w-80 flex-shrink-0">
+                        <!-- Timeline Dot -->
+                        <div class="relative z-10 w-8 h-8 bg-labubu-pink rounded-full border-4 border-white shadow-lg flex items-center justify-center">
+                            <div class="w-3 h-3 bg-white rounded-full"></div>
+                        </div>
+                        <!-- Year -->
+                        <div class="text-3xl font-bold text-labubu-pink my-4">2019</div>
+                        <!-- Content Card -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg card-hover w-full mt-6">
+                            <div class="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border-4 border-labubu-pink">
+                                <img src="image/6af4d98238528baf652e2d13c756c913.jpg" alt="Labubu诞生" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">萌系诞生</h3>
+                            <p class="text-gray-600 text-sm mb-3 text-center">Kasing Lung在香港创造了第一个Labubu形象，这个大眼睛的小恶魔从此开启了它的传奇之路</p>
+                            <div class="flex items-center justify-center space-x-2 text-labubu-pink text-sm">
+                                <i class="fas fa-heart"></i>
+                                <span>经典诞生</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2020 - POP MART合作 -->
+                    <div class="relative flex flex-col items-center w-80 flex-shrink-0">
+                        <!-- Timeline Dot -->
+                        <div class="relative z-10 w-8 h-8 bg-labubu-purple rounded-full border-4 border-white shadow-lg flex items-center justify-center">
+                            <div class="w-3 h-3 bg-white rounded-full"></div>
+                        </div>
+                        <!-- Year -->
+                        <div class="text-3xl font-bold text-labubu-purple my-4">2020</div>
+                        <!-- Content Card -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg card-hover w-full mt-6">
+                            <div class="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border-4 border-labubu-purple">
+                                <img src="image/502da5c0167378b4347876bd05a31bb8.jpg" alt="POP MART合作" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">潮玩巨头牵手</h3>
+                            <p class="text-gray-600 text-sm mb-3 text-center">POP MART与Kasing Lung达成合作，Labubu正式加入潮玩大家庭，开始规模化生产</p>
+                            <div class="flex items-center justify-center space-x-2 text-labubu-purple text-sm">
+                                <i class="fas fa-handshake"></i>
+                                <span>战略合作</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2021 - 首个系列爆火 -->
+                    <div class="relative flex flex-col items-center w-80 flex-shrink-0">
+                        <!-- Timeline Dot -->
+                        <div class="relative z-10 w-8 h-8 bg-orange-400 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
+                            <div class="w-3 h-3 bg-white rounded-full"></div>
+                        </div>
+                        <!-- Year -->
+                        <div class="text-3xl font-bold text-orange-400 my-4">2021</div>
+                        <!-- Content Card -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg card-hover w-full mt-6">
+                            <div class="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border-4 border-orange-400">
+                                <img src="image/8934cdb13bd1c607a14b45165ae8cb47.jpg" alt="系列爆火" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">全球爆火</h3>
+                            <p class="text-gray-600 text-sm mb-3 text-center">首个盲盒系列一经推出便席卷全球，各大门店排起长队，二手市场价格飞涨</p>
+                            <div class="flex items-center justify-center space-x-2 text-orange-400 text-sm">
+                                <i class="fas fa-fire"></i>
+                                <span>现象级热潮</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2022 - 明星效应 -->
+                    <div class="relative flex flex-col items-center w-80 flex-shrink-0">
+                        <!-- Timeline Dot -->
+                        <div class="relative z-10 w-8 h-8 bg-pink-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
+                            <div class="w-3 h-3 bg-white rounded-full"></div>
+                        </div>
+                        <!-- Year -->
+                        <div class="text-3xl font-bold text-pink-500 my-4">2022</div>
+                        <!-- Content Card -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg card-hover w-full mt-6">
+                            <div class="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border-4 border-pink-500">
+                                <img src="image/132364bc26fdf962adcccf7be8a25879.jpg" alt="明星效应" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">明星加持</h3>
+                            <p class="text-gray-600 text-sm mb-3 text-center">IU、Lisa等众多明星公开展示Labubu收藏，社交媒体话题量突破千万</p>
+                            <div class="flex items-center justify-center space-x-2 text-pink-500 text-sm">
+                                <i class="fas fa-star"></i>
+                                <span>明星效应</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2023 - 文化现象 -->
+                    <div class="relative flex flex-col items-center w-80 flex-shrink-0">
+                        <!-- Timeline Dot -->
+                        <div class="relative z-10 w-8 h-8 bg-green-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
+                            <div class="w-3 h-3 bg-white rounded-full"></div>
+                        </div>
+                        <!-- Year -->
+                        <div class="text-3xl font-bold text-green-500 my-4">2023</div>
+                        <!-- Content Card -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg card-hover w-full mt-6">
+                            <div class="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border-4 border-green-500">
+                                <img src="image/6d985e9642412d4858e44b069a045e5c.jpeg" alt="文化现象" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">文化符号</h3>
+                            <p class="text-gray-600 text-sm mb-3 text-center">Labubu不再只是玩具，成为年轻人表达个性的文化符号，衍生出无数创意作品</p>
+                            <div class="flex items-center justify-center space-x-2 text-green-500 text-sm">
+                                <i class="fas fa-globe"></i>
+                                <span>文化现象</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2024 - 未来展望 -->
+                    <div class="relative flex flex-col items-center w-80 flex-shrink-0">
+                        <!-- Timeline Dot -->
+                        <div class="relative z-10 w-8 h-8 bg-purple-600 rounded-full border-4 border-white shadow-lg flex items-center justify-center animate-pulse">
+                            <div class="w-3 h-3 bg-white rounded-full"></div>
+                        </div>
+                        <!-- Year -->
+                        <div class="text-3xl font-bold text-purple-600 my-4">2024</div>
+                        <!-- Content Card -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg card-hover w-full mt-6 border-2 border-purple-200">
+                            <div class="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border-4 border-purple-600">
+                                <img src="image/f67d0fff0ad4668ce2bbc381f9c36ea8.png" alt="未来展望" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">未来无限</h3>
+                            <p class="text-gray-600 text-sm mb-3 text-center">AI创作、元宇宙、NFT...Labubu正在探索更多可能性，与科技融合开创潮玩新纪元</p>
+                            <div class="flex items-center justify-center space-x-2 text-purple-600 text-sm">
+                                <i class="fas fa-rocket"></i>
+                                <span>未来可期</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl p-8 text-center shadow-lg card-hover">
+                    <div class="text-4xl font-bold text-labubu-pink mb-2">5</div>
+                    <div class="text-gray-600">年发展历程</div>
+                </div>
+                <div class="bg-white rounded-2xl p-8 text-center shadow-lg card-hover">
+                    <div class="text-4xl font-bold text-labubu-purple mb-2">100+</div>
+                    <div class="text-gray-600">款式系列</div>
+                </div>
+                <div class="bg-white rounded-2xl p-8 text-center shadow-lg card-hover">
+                    <div class="text-4xl font-bold text-orange-400 mb-2">1000万+</div>
+                    <div class="text-gray-600">全球粉丝</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-labubu-pink to-labubu-purple rounded-full flex items-center justify-center">
+                            <i class="fas fa-heart text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold font-cute">Labubu梦想社区</span>
+                    </div>
+                    <p class="text-gray-400">全球首个Labubu主题垂直社区，让每个Labubu都有自己的故事。</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">功能导航</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#news" class="hover:text-labubu-light transition-colors">Labubu快报</a></li>
+                        <li><a href="#creator" class="hover:text-labubu-light transition-colors">变身工场</a></li>
+                        <li><a href="#gallery" class="hover:text-labubu-light transition-colors">Labubu秀场</a></li>
+                        <li><a href="#timeline" class="hover:text-labubu-light transition-colors">萌系进化史</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">帮助中心</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-labubu-light transition-colors">使用指南</a></li>
+                        <li><a href="#" class="hover:text-labubu-light transition-colors">常见问题</a></li>
+                        <li><a href="#" class="hover:text-labubu-light transition-colors">联系我们</a></li>
+                        <li><a href="#" class="hover:text-labubu-light transition-colors">意见反馈</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">关注我们</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-labubu-pink transition-colors">
+                            <i class="fab fa-weibo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-labubu-pink transition-colors">
+                            <i class="fab fa-weixin"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-labubu-pink transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-labubu-pink transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Labubu梦想社区. All rights reserved. Made with ❤️ for Labubu lovers.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Smooth Scrolling Script -->
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click effects to cards
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Simulate loading animation for demo
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 500);
+        });
+    </script>
+</body>
+</html> 
