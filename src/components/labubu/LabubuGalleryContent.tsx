@@ -234,14 +234,10 @@ export function LabubuGalleryContent() {
 
       {/* 发布作品弹窗 */}
       {showPublisher && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <PostPublisher
-              onPublish={handlePostPublish}
-              onCancel={() => setShowPublisher(false)}
-            />
-          </div>
-        </div>
+        <PostPublisher
+          onPublish={handlePostPublish}
+          onCancel={() => setShowPublisher(false)}
+        />
       )}
 
       {/* 主要内容区域 */}

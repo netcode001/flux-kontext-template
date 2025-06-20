@@ -79,14 +79,21 @@ export async function POST(
         }
       })
       
+      console.log('✅ 取消点赞成功:', { userId, postId })
       return NextResponse.json({
         success: true,
         liked: false,
         message: '取消点赞'
       })
       
-    } catch (deleteError) {
+    } catch (deleteError: any) {
       // 如果删除失败，说明还没点赞，创建新的点赞
+      if (deleteError.code === 'PGRST116') {
+        console.log('🔍 用户尚未点赞，创建新点赞:', { userId, postId })
+      } else {
+        console.error('🚨 删除点赞时发生意外错误:', deleteError)
+      }
+      
       try {
         await prisma.like.create({
           data: {
@@ -95,6 +102,7 @@ export async function POST(
           }
         })
         
+        console.log('✅ 创建点赞成功:', { userId, postId })
         return NextResponse.json({
           success: true,
           liked: true,

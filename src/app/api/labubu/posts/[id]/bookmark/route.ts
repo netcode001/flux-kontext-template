@@ -79,14 +79,21 @@ export async function POST(
         }
       })
       
+      console.log('✅ 取消收藏成功:', { userId, postId })
       return NextResponse.json({
         success: true,
         bookmarked: false,
         message: '取消收藏'
       })
       
-    } catch (deleteError) {
+    } catch (deleteError: any) {
       // 如果删除失败，说明还没收藏，创建新的收藏
+      if (deleteError.code === 'PGRST116') {
+        console.log('🔍 用户尚未收藏，创建新收藏:', { userId, postId })
+      } else {
+        console.error('🚨 删除收藏时发生意外错误:', deleteError)
+      }
+      
       try {
         await prisma.bookmark.create({
           data: {
@@ -95,6 +102,7 @@ export async function POST(
           }
         })
         
+        console.log('✅ 创建收藏成功:', { userId, postId })
         return NextResponse.json({
           success: true,
           bookmarked: true,
