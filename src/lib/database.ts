@@ -93,6 +93,95 @@ export interface PaymentConfig {
   updatedAt: Date
 }
 
+// 🎨 社区功能接口定义
+export interface Post {
+  id: string
+  userId: string
+  title: string
+  content?: string
+  imageUrls: string[]
+  prompt?: string
+  model?: string
+  tags: string[]
+  isFeatured: boolean
+  isPublic: boolean
+  viewCount: number
+  likeCount: number
+  commentCount: number
+  bookmarkCount: number
+  generationId?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface Comment {
+  id: string
+  postId: string
+  userId: string
+  parentId?: string
+  content: string
+  isDeleted: boolean
+  createdAt: Date
+  updatedAt: Date
+  // 关联数据
+  user?: User
+  replies?: Comment[]
+}
+
+export interface Like {
+  id: string
+  userId: string
+  postId: string
+  createdAt: Date
+}
+
+export interface Bookmark {
+  id: string
+  userId: string
+  postId: string
+  createdAt: Date
+}
+
+export interface Follow {
+  id: string
+  followerId: string
+  followingId: string
+  createdAt: Date
+}
+
+export interface Tag {
+  id: string
+  name: string
+  description?: string
+  color?: string
+  useCount: number
+  isOfficial: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface UserStats {
+  userId: string
+  postCount: number
+  followerCount: number
+  followingCount: number
+  totalLikesReceived: number
+  totalViewsReceived: number
+  level: number
+  experiencePoints: number
+  badges: string[]
+  updatedAt: Date
+}
+
+// 扩展接口，包含关联数据
+export interface PostWithUser extends Post {
+  user?: User
+  userStats?: UserStats
+  isLiked?: boolean
+  isBookmarked?: boolean
+  comments?: Comment[]
+}
+
 // Supabase适配器，提供类似Prisma的接口
 class SupabaseAdapter {
   user = {
@@ -815,6 +904,406 @@ class SupabaseAdapter {
         paymentProvider: 'stripe',
         createdAt: new Date(),
         updatedAt: new Date()
+      }
+    }
+  }
+
+  // 🎨 社区功能数据库操作
+  post = {
+    async findMany(args?: any): Promise<PostWithUser[]> {
+      try {
+        const supabase = getSupabaseAdmin()
+        let query = supabase.from('posts')
+          .select(`
+            *,
+            users:user_id(id, name, email, image),
+            user_stats:user_id(*)
+          `)
+          .eq('is_public', true)
+          .order('created_at', { ascending: false })
+          
+        // 添加分页
+        if (args?.skip) query = query.range(args.skip, args.skip + (args.take || 10) - 1)
+        if (args?.take) query = query.limit(args.take)
+        
+        // 添加筛选条件
+        if (args?.where?.userId) query = query.eq('user_id', args.where.userId)
+        if (args?.where?.isFeatured) query = query.eq('is_featured', args.where.isFeatured)
+        
+        const { data, error } = await query
+        
+        if (error) throw error
+        
+        return (data || []).map((post: any) => ({
+          id: post.id,
+          userId: post.user_id,
+          title: post.title,
+          content: post.content,
+          imageUrls: post.image_urls || [],
+          prompt: post.prompt,
+          model: post.model,
+          tags: post.tags || [],
+          isFeatured: post.is_featured,
+          isPublic: post.is_public,
+          viewCount: post.view_count,
+          likeCount: post.like_count,
+          commentCount: post.comment_count,
+          bookmarkCount: post.bookmark_count,
+          generationId: post.generation_id,
+          createdAt: new Date(post.created_at),
+          updatedAt: new Date(post.updated_at),
+          user: post.users ? {
+            id: post.users.id,
+            name: post.users.name,
+            email: post.users.email,
+            image: post.users.image,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          } : undefined
+        }))
+        
+      } catch (error) {
+        console.error('🚨 Post findMany error:', error)
+        return []
+      }
+    },
+
+    async findUnique(args: any): Promise<PostWithUser | null> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('posts')
+          .select(`
+            *,
+            users:user_id(id, name, email, image),
+            user_stats:user_id(*)
+          `)
+          .eq('id', args.where.id)
+          .single()
+          
+        if (error || !data) return null
+        
+        return {
+          id: data.id,
+          userId: data.user_id,
+          title: data.title,
+          content: data.content,
+          imageUrls: data.image_urls || [],
+          prompt: data.prompt,
+          model: data.model,
+          tags: data.tags || [],
+          isFeatured: data.is_featured,
+          isPublic: data.is_public,
+          viewCount: data.view_count,
+          likeCount: data.like_count,
+          commentCount: data.comment_count,
+          bookmarkCount: data.bookmark_count,
+          generationId: data.generation_id,
+          createdAt: new Date(data.created_at),
+          updatedAt: new Date(data.updated_at),
+          user: data.users ? {
+            id: data.users.id,
+            name: data.users.name,
+            email: data.users.email,
+            image: data.users.image,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          } : undefined
+        }
+      } catch (error) {
+        console.error('🚨 Post findUnique error:', error)
+        return null
+      }
+    },
+
+    async create(args: any): Promise<Post> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('posts')
+          .insert({
+            user_id: args.data.userId,
+            title: args.data.title,
+            content: args.data.content,
+            image_urls: args.data.imageUrls,
+            prompt: args.data.prompt,
+            model: args.data.model,
+            tags: args.data.tags,
+            is_featured: args.data.isFeatured || false,
+            is_public: args.data.isPublic !== false,
+            generation_id: args.data.generationId
+          })
+          .select()
+          .single()
+          
+        if (error) throw error
+        
+        return {
+          id: data.id,
+          userId: data.user_id,
+          title: data.title,
+          content: data.content,
+          imageUrls: data.image_urls || [],
+          prompt: data.prompt,
+          model: data.model,
+          tags: data.tags || [],
+          isFeatured: data.is_featured,
+          isPublic: data.is_public,
+          viewCount: data.view_count,
+          likeCount: data.like_count,
+          commentCount: data.comment_count,
+          bookmarkCount: data.bookmark_count,
+          generationId: data.generation_id,
+          createdAt: new Date(data.created_at),
+          updatedAt: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 Post create error:', error)
+        throw error
+      }
+    },
+
+    async update(args: any): Promise<Post> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const updateData: any = {}
+        
+        if (args.data.title !== undefined) updateData.title = args.data.title
+        if (args.data.content !== undefined) updateData.content = args.data.content
+        if (args.data.imageUrls !== undefined) updateData.image_urls = args.data.imageUrls
+        if (args.data.tags !== undefined) updateData.tags = args.data.tags
+        if (args.data.isFeatured !== undefined) updateData.is_featured = args.data.isFeatured
+        if (args.data.isPublic !== undefined) updateData.is_public = args.data.isPublic
+        if (args.data.viewCount !== undefined) updateData.view_count = args.data.viewCount
+        
+        const { data, error } = await supabase
+          .from('posts')
+          .update(updateData)
+          .eq('id', args.where.id)
+          .select()
+          .single()
+          
+        if (error) throw error
+        
+        return {
+          id: data.id,
+          userId: data.user_id,
+          title: data.title,
+          content: data.content,
+          imageUrls: data.image_urls || [],
+          prompt: data.prompt,
+          model: data.model,
+          tags: data.tags || [],
+          isFeatured: data.is_featured,
+          isPublic: data.is_public,
+          viewCount: data.view_count,
+          likeCount: data.like_count,
+          commentCount: data.comment_count,
+          bookmarkCount: data.bookmark_count,
+          generationId: data.generation_id,
+          createdAt: new Date(data.created_at),
+          updatedAt: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 Post update error:', error)
+        throw error
+      }
+    },
+
+    async delete(args: any): Promise<Post> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('posts')
+          .delete()
+          .eq('id', args.where.id)
+          .select()
+          .single()
+          
+        if (error) throw error
+        
+        return {
+          id: data.id,
+          userId: data.user_id,
+          title: data.title,
+          content: data.content,
+          imageUrls: data.image_urls || [],
+          prompt: data.prompt,
+          model: data.model,
+          tags: data.tags || [],
+          isFeatured: data.is_featured,
+          isPublic: data.is_public,
+          viewCount: data.view_count,
+          likeCount: data.like_count,
+          commentCount: data.comment_count,
+          bookmarkCount: data.bookmark_count,
+          generationId: data.generation_id,
+          createdAt: new Date(data.created_at),
+          updatedAt: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 Post delete error:', error)
+        throw error
+      }
+    }
+  }
+
+  // 点赞功能
+  like = {
+    async create(args: any): Promise<Like> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('likes')
+          .insert({
+            user_id: args.data.userId,
+            post_id: args.data.postId
+          })
+          .select()
+          .single()
+          
+        if (error) throw error
+        
+        return {
+          id: data.id,
+          userId: data.user_id,
+          postId: data.post_id,
+          createdAt: new Date(data.created_at)
+        }
+      } catch (error) {
+        console.error('🚨 Like create error:', error)
+        throw error
+      }
+    },
+
+    async delete(args: any): Promise<Like> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('likes')
+          .delete()
+          .eq('user_id', args.where.userId)
+          .eq('post_id', args.where.postId)
+          .select()
+          .single()
+          
+        if (error) throw error
+        
+        return {
+          id: data.id,
+          userId: data.user_id,
+          postId: data.post_id,
+          createdAt: new Date(data.created_at)
+        }
+      } catch (error) {
+        console.error('🚨 Like delete error:', error)
+        throw error
+      }
+    }
+  }
+
+  // 收藏功能
+  bookmark = {
+    async findMany(args: any): Promise<Bookmark[]> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('bookmarks')
+          .select('*')
+          .eq('user_id', args.where.userId)
+          .order('created_at', { ascending: false })
+          
+        if (error) throw error
+        
+        return (data || []).map((bookmark: any) => ({
+          id: bookmark.id,
+          userId: bookmark.user_id,
+          postId: bookmark.post_id,
+          createdAt: new Date(bookmark.created_at)
+        }))
+      } catch (error) {
+        console.error('🚨 Bookmark findMany error:', error)
+        return []
+      }
+    },
+
+    async create(args: any): Promise<Bookmark> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('bookmarks')
+          .insert({
+            user_id: args.data.userId,
+            post_id: args.data.postId
+          })
+          .select()
+          .single()
+          
+        if (error) throw error
+        
+        return {
+          id: data.id,
+          userId: data.user_id,
+          postId: data.post_id,
+          createdAt: new Date(data.created_at)
+        }
+      } catch (error) {
+        console.error('🚨 Bookmark create error:', error)
+        throw error
+      }
+    },
+
+    async delete(args: any): Promise<Bookmark> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('bookmarks')
+          .delete()
+          .eq('user_id', args.where.userId)
+          .eq('post_id', args.where.postId)
+          .select()
+          .single()
+          
+        if (error) throw error
+        
+        return {
+          id: data.id,
+          userId: data.user_id,
+          postId: data.post_id,
+          createdAt: new Date(data.created_at)
+        }
+      } catch (error) {
+        console.error('🚨 Bookmark delete error:', error)
+        throw error
+      }
+    }
+  }
+
+  // 标签功能
+  tag = {
+    async findMany(): Promise<Tag[]> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('tags')
+          .select('*')
+          .order('use_count', { ascending: false })
+          
+        if (error) throw error
+        
+        return (data || []).map((tag: any) => ({
+          id: tag.id,
+          name: tag.name,
+          description: tag.description,
+          color: tag.color,
+          useCount: tag.use_count,
+          isOfficial: tag.is_official,
+          createdAt: new Date(tag.created_at),
+          updatedAt: new Date(tag.updated_at)
+        }))
+      } catch (error) {
+        console.error('🚨 Tag findMany error:', error)
+        return []
       }
     }
   }
