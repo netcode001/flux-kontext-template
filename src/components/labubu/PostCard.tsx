@@ -44,10 +44,16 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       hasUser: !!post.user,
       createdAt: post.createdAt
     })
+    
+    // 🚨 检测异常的状态变化
+    if (showDetailModal) {
+      console.warn('⚠️ 检测到弹窗状态在组件重渲染时为true，这可能是异常的')
+    }
   }, [post.id, post.title, showDetailModal, post.user, post.createdAt])
 
   // 处理点赞操作
   const handleLike = async (e?: React.MouseEvent) => {
+    e?.preventDefault()
     e?.stopPropagation() // 防止触发卡片点击
     
     if (!session) {
@@ -77,6 +83,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
 
   // 处理收藏操作
   const handleBookmark = async (e?: React.MouseEvent) => {
+    e?.preventDefault()
     e?.stopPropagation() // 防止触发卡片点击
     
     if (!session) {
@@ -104,12 +111,15 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
 
   // 处理分享操作
   const handleShare = (e?: React.MouseEvent) => {
+    e?.preventDefault()
     e?.stopPropagation() // 防止触发卡片点击
     onShare?.(post.id)
   }
 
   // 🎪 打开详情弹窗
-  const handleCardClick = () => {
+  const handleCardClick = (e?: React.MouseEvent) => {
+    e?.preventDefault()
+    e?.stopPropagation()
     console.log('🎪 点击卡片，准备打开弹窗:', { postId: post.id, title: post.title })
     setShowDetailModal(true)
     setCurrentImageIndex(0)
@@ -212,13 +222,6 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
 
   return (
     <>
-      {/* 🐛 调试信息显示 */}
-      {showDetailModal && (
-        <div className="absolute top-0 left-0 bg-red-500 text-white text-xs p-1 z-50">
-          弹窗状态异常: {post.id}
-        </div>
-      )}
-      
       {/* 主卡片 */}
       <Card 
         className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-white border-gray-100 rounded-xl mb-3 break-inside-avoid cursor-pointer"
