@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { Upload, X, Plus, Tag, Globe, Lock } from 'lucide-react'
+import { Upload, X, Plus, Tag, Globe, Lock, Loader2 } from 'lucide-react'
+// 🔧 使用统一的认证状态管理Hook
+import { useAuthStatus } from '@/hooks/useAuthStatus'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -21,7 +23,8 @@ interface PostPublisherProps {
 }
 
 export function PostPublisher({ onPublish, onCancel, generationData }: PostPublisherProps) {
-  const { data: session } = useSession()
+  // 🔧 使用统一的认证状态管理，提供更准确的session状态
+  const { isLoading: authLoading, isAuthenticated, isUnauthenticated, session } = useAuthStatus()
   const [isLoading, setIsLoading] = useState(false)
   
   // 表单状态
@@ -35,7 +38,7 @@ export function PostPublisher({ onPublish, onCancel, generationData }: PostPubli
   // 处理图片上传
   const handleImageUpload = async (file: File) => {
     // 🔐 首先检查登录状态，防止未登录用户上传到R2存储
-    if (!session) {
+    if (!isAuthenticated) {
       alert('请先登录后再上传图片')
       return
     }
@@ -84,7 +87,7 @@ export function PostPublisher({ onPublish, onCancel, generationData }: PostPubli
   
   // 发布作品
   const handlePublish = async () => {
-    if (!session) {
+    if (!isAuthenticated) {
       alert('请先登录')
       return
     }
@@ -139,8 +142,34 @@ export function PostPublisher({ onPublish, onCancel, generationData }: PostPubli
     }
   }
 
+  // 🔧 优化认证状态处理
+  if (authLoading) {
+    return (
+      <Card className="w-full max-w-2xl mx-auto bg-white/90 backdrop-blur-sm border-pink-200">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2 text-pink-600">
+            <Upload className="w-5 h-5" />
+            <span>发布Labubu作品</span>
+          </CardTitle>
+        </CardHeader>
+        
+        <CardContent className="text-center py-12">
+          <div className="space-y-4">
+            <div className="w-16 h-16 mx-auto bg-pink-100 rounded-full flex items-center justify-center">
+              <Loader2 className="w-8 h-8 text-pink-500 animate-spin" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">正在验证登录状态...</h3>
+            <p className="text-gray-600 max-w-sm mx-auto">
+              请稍候，正在确认您的登录状态
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   // 🔐 如果用户未登录，显示登录提示
-  if (!session) {
+  if (isUnauthenticated) {
     return (
       <Card className="w-full max-w-2xl mx-auto bg-white/90 backdrop-blur-sm border-pink-200">
         <CardHeader>
