@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { Heart, Bookmark, Eye, MessageCircle, Share2, MoreHorizontal, X, ChevronLeft, ChevronRight, Images } from 'lucide-react'
@@ -101,6 +101,45 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
     setShowDetailModal(false)
     setCurrentImageIndex(0)
   }
+
+  // 🔒 滚动锁定效果 - 防止背景滚动穿透
+  useEffect(() => {
+    if (showDetailModal) {
+      // 保存当前滚动位置
+      const scrollY = window.scrollY
+      
+      // 锁定body滚动
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
+      document.body.style.overflow = 'hidden'
+      
+      return () => {
+        // 恢复滚动
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.width = ''
+        document.body.style.overflow = ''
+        
+        // 恢复滚动位置
+        window.scrollTo(0, scrollY)
+      }
+    }
+  }, [showDetailModal])
+
+  // 🎪 ESC键关闭弹窗
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showDetailModal) {
+        handleCloseModal()
+      }
+    }
+
+    if (showDetailModal) {
+      document.addEventListener('keydown', handleEscape)
+      return () => document.removeEventListener('keydown', handleEscape)
+    }
+  }, [showDetailModal])
 
   // 🎪 切换图片
   const handlePrevImage = () => {
@@ -249,8 +288,14 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
 
       {/* 🎪 详情弹窗 */}
       {showDetailModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden flex flex-col">
+        <div 
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={handleCloseModal}
+        >
+          <div 
+            className="w-full max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* 弹窗头部 */}
             <div className="flex items-center justify-between p-4 border-b border-gray-100">
               <div className="flex items-center space-x-3">
