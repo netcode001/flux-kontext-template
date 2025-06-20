@@ -268,11 +268,11 @@ export function LabubuGalleryContent() {
           </div>
         ) : (
           <div className="space-y-8">
-            {/* 作品网格 - 5列极简布局 */}
-            <div className={`grid gap-3 ${
+            {/* 作品网格 - 小红书瀑布流布局 */}
+            <div className={`${
               viewMode === 'grid' 
-                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5' 
-                : 'grid-cols-1 max-w-2xl mx-auto'
+                ? 'columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-3 space-y-3' 
+                : 'grid grid-cols-1 max-w-2xl mx-auto gap-6'
             }`}>
               {posts.map((post) => (
                 <PostCard

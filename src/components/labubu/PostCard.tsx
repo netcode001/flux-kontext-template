@@ -112,18 +112,23 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
   }
 
   return (
-    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-white border-gray-100 rounded-xl">
+    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-white border-gray-100 rounded-xl mb-3 break-inside-avoid">
       <CardContent className="p-0">
-        {/* 图片展示 - 小红书风格 */}
+        {/* 图片展示 - 真正的小红书风格 */}
         {post.imageUrls.length > 0 && (
           <div className="relative">
             {post.imageUrls.length === 1 ? (
-              <div className="aspect-[4/3] relative overflow-hidden">
+              <div className="relative w-full">
                 <Image
                   src={post.imageUrls[0]}
                   alt={post.title}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105 rounded-t-xl"
+                  width={300}
+                  height={400}
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105 rounded-t-xl"
+                  style={{ 
+                    maxHeight: '400px',
+                    minHeight: '200px'
+                  }}
                   onError={(e) => {
                     console.error('图片加载失败:', post.imageUrls[0])
                     // 显示占位符
@@ -132,7 +137,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
                     const parent = target.parentElement
                     if (parent && !parent.querySelector('.image-placeholder')) {
                       const placeholder = document.createElement('div')
-                      placeholder.className = 'image-placeholder absolute inset-0 bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center rounded-t-xl'
+                      placeholder.className = 'image-placeholder w-full h-48 bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center rounded-t-xl'
                       placeholder.innerHTML = `
                         <div class="text-center">
                           <div class="w-12 h-12 mx-auto mb-2 bg-pink-200 rounded-full flex items-center justify-center">
