@@ -34,6 +34,12 @@ export function PostPublisher({ onPublish, onCancel, generationData }: PostPubli
   
   // 处理图片上传
   const handleImageUpload = async (file: File) => {
+    // 🔐 首先检查登录状态，防止未登录用户上传到R2存储
+    if (!session) {
+      alert('请先登录后再上传图片')
+      return
+    }
+
     const formData = new FormData()
     formData.append('file', file)
     
@@ -46,9 +52,9 @@ export function PostPublisher({ onPublish, onCancel, generationData }: PostPubli
       const data = await response.json()
       
       if (data.success) {
-        setImageUrls(prev => [...prev, data.url])
+        setImageUrls(prev => [...prev, data.data.url])
       } else {
-        alert('图片上传失败')
+        alert(data.error || '图片上传失败')
       }
     } catch (error) {
       console.error('图片上传失败:', error)
@@ -131,6 +137,56 @@ export function PostPublisher({ onPublish, onCancel, generationData }: PostPubli
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // 🔐 如果用户未登录，显示登录提示
+  if (!session) {
+    return (
+      <Card className="w-full max-w-2xl mx-auto bg-white/90 backdrop-blur-sm border-pink-200">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2 text-pink-600">
+            <Upload className="w-5 h-5" />
+            <span>发布Labubu作品</span>
+          </CardTitle>
+        </CardHeader>
+        
+        <CardContent className="text-center py-12">
+          <div className="space-y-4">
+            <div className="w-16 h-16 mx-auto bg-pink-100 rounded-full flex items-center justify-center">
+              <Lock className="w-8 h-8 text-pink-500" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">请先登录</h3>
+            <p className="text-gray-600 max-w-sm mx-auto">
+              登录后即可发布你的Labubu作品，与社区成员分享创意
+            </p>
+            <div className="flex justify-center space-x-3 pt-4">
+              <Button 
+                onClick={() => window.location.href = '/auth/signin'}
+                className="bg-pink-500 hover:bg-pink-600"
+              >
+                立即登录
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => window.location.href = '/auth/signup'}
+                className="border-pink-200 text-pink-600 hover:bg-pink-50"
+              >
+                注册账号
+              </Button>
+            </div>
+            {onCancel && (
+              <Button 
+                variant="ghost" 
+                onClick={onCancel}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                取消
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (

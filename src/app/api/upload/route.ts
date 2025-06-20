@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { r2Storage } from '@/lib/services/r2-storage'
 
 // 支持的文件类型配置
@@ -19,6 +21,15 @@ const SIZE_LIMITS = {
 
 export async function POST(request: NextRequest) {
   try {
+    // 🔐 验证用户登录状态 - 防止未登录用户滥用存储
+    const session = await getServerSession(authOptions)
+    if (!session?.user) {
+      return NextResponse.json({
+        success: false,
+        error: '请先登录后再上传文件'
+      }, { status: 401 })
+    }
+
     // 检查R2是否启用
     if (process.env.NEXT_PUBLIC_ENABLE_R2 !== 'true') {
       return NextResponse.json({
