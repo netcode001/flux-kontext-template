@@ -84,8 +84,10 @@ export function LabubuGalleryContent() {
 
   // 处理作品发布
   const handlePostPublish = (newPost: any) => {
-    setPosts(prev => [newPost, ...prev])
+    // 发布成功后自动关闭弹窗并刷新列表
     setShowPublisher(false)
+    // 重新获取最新的帖子列表，确保包含完整的用户信息
+    fetchPosts(1, true)
   }
 
   // 处理点赞

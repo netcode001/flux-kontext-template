@@ -113,56 +113,8 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
 
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-white/80 backdrop-blur-sm border-pink-100">
-      <CardHeader className="p-4">
-        {/* 用户信息 */}
-        <div className="flex items-center space-x-3 mb-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold">
-            {post.user?.name?.[0] || post.user?.email?.[0] || 'U'}
-          </div>
-          <div className="flex-1">
-            <div className="font-semibold text-gray-900">
-              {post.user?.name || '匿名用户'}
-            </div>
-            <div className="text-sm text-gray-500">
-              {formatTime(post.createdAt)}
-            </div>
-          </div>
-          <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
-            <MoreHorizontal className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* 标题 */}
-        <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
-          {post.title}
-        </h3>
-
-        {/* 内容描述 */}
-        {post.content && (
-          <p className="text-gray-600 text-sm line-clamp-3 mb-3">
-            {post.content}
-          </p>
-        )}
-
-        {/* 标签 */}
-        {post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
-            {post.tags.slice(0, 3).map((tag, index) => (
-              <Badge key={index} variant="secondary" className="text-xs bg-pink-100 text-pink-700 hover:bg-pink-200">
-                #{tag}
-              </Badge>
-            ))}
-            {post.tags.length > 3 && (
-              <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
-                +{post.tags.length - 3}
-              </Badge>
-            )}
-          </div>
-        )}
-      </CardHeader>
-
       <CardContent className="p-0">
-        {/* 图片展示 */}
+        {/* 图片展示 - 移到顶部 */}
         {post.imageUrls.length > 0 && (
           <div className="relative">
             {post.imageUrls.length === 1 ? (
@@ -243,6 +195,54 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
           </div>
         )}
       </CardContent>
+
+      <CardHeader className="p-4">
+        {/* 用户信息 */}
+        <div className="flex items-center space-x-3 mb-3">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold">
+            {post.user?.name?.[0] || post.user?.email?.[0] || 'U'}
+          </div>
+          <div className="flex-1">
+            <div className="font-semibold text-gray-900">
+              {post.user?.name || '匿名用户'}
+            </div>
+            <div className="text-sm text-gray-500">
+              {formatTime(post.createdAt)}
+            </div>
+          </div>
+          <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
+            <MoreHorizontal className="w-4 h-4" />
+          </Button>
+        </div>
+
+        {/* 标题 */}
+        <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
+          {post.title}
+        </h3>
+
+        {/* 内容描述 */}
+        {post.content && (
+          <p className="text-gray-600 text-sm line-clamp-3 mb-3">
+            {post.content}
+          </p>
+        )}
+
+        {/* 标签 */}
+        {post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-3">
+            {post.tags.slice(0, 3).map((tag, index) => (
+              <Badge key={index} variant="secondary" className="text-xs bg-pink-100 text-pink-700 hover:bg-pink-200">
+                #{tag}
+              </Badge>
+            ))}
+            {post.tags.length > 3 && (
+              <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
+                +{post.tags.length - 3}
+              </Badge>
+            )}
+          </div>
+        )}
+      </CardHeader>
 
       <CardFooter className="p-4">
         {/* 互动按钮 */}

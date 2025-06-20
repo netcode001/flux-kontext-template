@@ -124,13 +124,17 @@ export function PostPublisher({ onPublish, onCancel, generationData }: PostPubli
       const data = await response.json()
       
       if (data.success) {
-        onPublish?.(data.data)
         // 重置表单
         setTitle('')
         setContent('')
         setImageUrls([])
         setTags(['labubu'])
-        alert('作品发布成功！')
+        
+        // 通知父组件发布成功，传递新帖子数据
+        onPublish?.(data.data)
+        
+        // 自动关闭发布窗口
+        onCancel?.()
       } else {
         alert(data.error || '发布失败')
       }
