@@ -26,7 +26,7 @@ export function LabubuGalleryContent() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
 
-  // 获取帖子列表
+  // 🔧 修复数据获取逻辑
   const fetchPosts = async (pageNum = 1, reset = false, searchTerm = '') => {
     try {
       setIsLoading(true)
@@ -44,28 +44,59 @@ export function LabubuGalleryContent() {
         params.append('search', searchTerm.trim())
       }
       
+      console.log('🔍 正在获取帖子数据:', { pageNum, reset, searchTerm, currentFilter })
+      
       const response = await fetch(`/api/labubu/posts?${params}`)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
       const data = await response.json()
+      console.log('📄 API响应数据:', data)
       
       if (data.success) {
         if (reset) {
-          setPosts(data.data)
+          setPosts(data.data || [])
+          console.log('✅ 重置帖子列表，数量:', data.data?.length || 0)
         } else {
-          setPosts(prev => [...prev, ...data.data])
+          setPosts(prev => [...prev, ...(data.data || [])])
+          console.log('✅ 追加帖子到列表，新增数量:', data.data?.length || 0)
         }
-        setHasMore(data.pagination.hasMore)
+        setHasMore(data.pagination?.hasMore || false)
+      } else {
+        console.error('❌ API返回错误:', data.error)
+        // 如果API返回错误，设置空数组而不是保持loading状态
+        if (reset) {
+          setPosts([])
+        }
       }
     } catch (error) {
-      console.error('获取帖子失败:', error)
+      console.error('❌ 获取帖子失败:', error)
+      // 出错时也要设置空数组，避免一直loading
+      if (reset) {
+        setPosts([])
+      }
     } finally {
       setIsLoading(false)
+      console.log('🔄 加载状态已重置为false')
     }
   }
 
-  // 初始加载
+  // 🔧 修复初始加载逻辑
   useEffect(() => {
+    console.log('🚀 组件初始化，开始获取数据...')
     fetchPosts(1, true, searchQuery)
-  }, [currentFilter])
+  }, [currentFilter]) // 只依赖currentFilter，避免无限循环
+
+  // 🔧 单独处理搜索查询的变化
+  useEffect(() => {
+    if (searchQuery !== searchInput) {
+      // 只有当搜索查询真正改变时才重新获取数据
+      console.log('🔍 搜索查询变化，重新获取数据:', searchQuery)
+      fetchPosts(1, true, searchQuery)
+    }
+  }, [searchQuery])
 
   // 🔍 执行搜索 - 只有在用户按回车或点击搜索时才执行
   const executeSearch = () => {

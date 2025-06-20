@@ -28,28 +28,12 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [imageLoadError, setImageLoadError] = useState(false)
 
-  // 🐛 调试信息 - 检查是否有异常的弹窗状态
+  // 🔧 简化调试信息 - 只在开发环境打印
   useEffect(() => {
-    if (showDetailModal) {
-      console.log('🎪 弹窗打开:', { postId: post.id, title: post.title })
+    if (process.env.NODE_ENV === 'development' && showDetailModal) {
+      console.log('🎪 弹窗状态变化:', { postId: post.id, title: post.title, showDetailModal })
     }
   }, [showDetailModal, post.id, post.title])
-
-  // 🛡️ 初始化检查 - 确保弹窗状态正确初始化
-  useEffect(() => {
-    console.log('🔧 PostCard初始化:', { 
-      postId: post.id, 
-      title: post.title, 
-      showDetailModal,
-      hasUser: !!post.user,
-      createdAt: post.createdAt
-    })
-    
-    // 🚨 检测异常的状态变化
-    if (showDetailModal) {
-      console.warn('⚠️ 检测到弹窗状态在组件重渲染时为true，这可能是异常的')
-    }
-  }, [post.id, post.title, showDetailModal, post.user, post.createdAt])
 
   // 处理点赞操作
   const handleLike = async (e?: React.MouseEvent) => {
@@ -116,31 +100,25 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
     onShare?.(post.id)
   }
 
-  // 🎪 打开详情弹窗
+  // 🎪 打开详情弹窗 - 简化逻辑
   const handleCardClick = (e?: React.MouseEvent) => {
     e?.preventDefault()
     e?.stopPropagation()
-    console.log('🎪 点击卡片，准备打开弹窗:', { postId: post.id, title: post.title })
+    
+    console.log('🎪 点击卡片，打开弹窗:', { postId: post.id, title: post.title })
     setShowDetailModal(true)
     setCurrentImageIndex(0)
   }
 
   // 🎪 关闭详情弹窗
-  const handleCloseModal = () => {
+  const handleCloseModal = (e?: React.MouseEvent) => {
+    e?.preventDefault()
+    e?.stopPropagation()
+    
+    console.log('🎪 关闭弹窗:', { postId: post.id })
     setShowDetailModal(false)
     setCurrentImageIndex(0)
   }
-
-  // 🛡️ 安全检查 - 确保弹窗状态不会意外保持
-  useEffect(() => {
-    // 如果组件被重新渲染或props变化，重置弹窗状态
-    return () => {
-      if (showDetailModal) {
-        console.log('🔧 组件卸载时强制关闭弹窗:', post.id)
-        setShowDetailModal(false)
-      }
-    }
-  }, [post.id, showDetailModal])
 
   // 🔒 滚动锁定效果 - 防止背景滚动穿透
   useEffect(() => {
@@ -324,8 +302,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       {/* 🎪 详情弹窗 - 小红书风格布局 */}
       {showDetailModal && (
         <div 
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-          style={{ zIndex: 9999, position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]"
           onClick={handleCloseModal}
         >
           <div 
