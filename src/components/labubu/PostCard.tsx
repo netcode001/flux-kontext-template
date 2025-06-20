@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { Heart, Bookmark, Eye, MessageCircle, Share2, MoreHorizontal, X, ChevronLeft, ChevronRight, Images } from 'lucide-react'
@@ -299,15 +300,29 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
         </div>
       </Card>
 
-      {/* 🎪 详情弹窗 - 小红书风格布局 */}
-      {showDetailModal && (
+      {/* 🎪 详情弹窗 - 使用Portal渲染到body，完全避免CSS columns影响 */}
+      {showDetailModal && typeof window !== 'undefined' && createPortal(
         <div 
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          style={{ 
+            zIndex: 99999,
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh'
+          }}
           onClick={handleCloseModal}
         >
           <div 
             className="w-full max-w-5xl max-h-[90vh] bg-white rounded-xl overflow-hidden flex"
             onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              zIndex: 100000
+            }}
           >
             {/* 📸 左侧图片区域 */}
             <div className="flex-1 relative bg-gray-50 flex items-center justify-center">
@@ -467,7 +482,8 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )
