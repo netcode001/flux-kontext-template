@@ -20,6 +20,7 @@ export function LabubuGalleryContent() {
   const [isLoading, setIsLoading] = useState(true)
   const [showPublisher, setShowPublisher] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchInput, setSearchInput] = useState('') // 🔍 新增：搜索输入框的值
   const [currentFilter, setCurrentFilter] = useState<FilterType>('all')
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [page, setPage] = useState(1)
@@ -66,19 +67,31 @@ export function LabubuGalleryContent() {
     fetchPosts(1, true, searchQuery)
   }, [currentFilter])
 
-  // 🔍 搜索防抖效果
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      setPage(1) // 重置页码
-      fetchPosts(1, true, searchQuery)
-    }, 500) // 500ms 防抖
-    
-    return () => clearTimeout(debounceTimer)
-  }, [searchQuery])
+  // 🔍 执行搜索 - 只有在用户按回车或点击搜索时才执行
+  const executeSearch = () => {
+    setSearchQuery(searchInput.trim())
+    setPage(1) // 重置页码
+    fetchPosts(1, true, searchInput.trim())
+  }
 
-  // 🔍 处理搜索输入
-  const handleSearch = (query: string) => {
-    setSearchQuery(query)
+  // 🔍 处理搜索输入变化
+  const handleSearchInputChange = (value: string) => {
+    setSearchInput(value)
+  }
+
+  // 🔍 处理回车键搜索
+  const handleSearchKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      executeSearch()
+    }
+  }
+
+  // 🔍 清除搜索
+  const clearSearch = () => {
+    setSearchInput('')
+    setSearchQuery('')
+    setPage(1)
+    fetchPosts(1, true, '')
   }
 
   // 处理筛选
@@ -179,16 +192,20 @@ export function LabubuGalleryContent() {
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             {/* 搜索框 */}
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search 
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 cursor-pointer hover:text-purple-600 transition-colors" 
+                onClick={executeSearch}
+              />
               <Input
                 placeholder="搜索标题或内容..."
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10 border-purple-200 focus:border-purple-400"
+                value={searchInput}
+                onChange={(e) => handleSearchInputChange(e.target.value)}
+                onKeyPress={handleSearchKeyPress}
+                className="pl-10 pr-10 border-purple-200 focus:border-purple-400"
               />
-              {searchQuery && (
+              {searchInput && (
                 <button
-                  onClick={() => handleSearch('')}
+                  onClick={clearSearch}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   ✕
@@ -280,7 +297,7 @@ export function LabubuGalleryContent() {
                 )}
               </div>
               <button
-                onClick={() => handleSearch('')}
+                onClick={clearSearch}
                 className="text-purple-600 hover:text-purple-800 text-sm"
               >
                 清除搜索
@@ -310,7 +327,7 @@ export function LabubuGalleryContent() {
             </p>
             {searchQuery ? (
               <Button
-                onClick={() => handleSearch('')}
+                onClick={clearSearch}
                 variant="outline"
                 className="border-purple-200 text-purple-600 hover:bg-purple-50"
               >

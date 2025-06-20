@@ -28,6 +28,13 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [imageLoadError, setImageLoadError] = useState(false)
 
+  // 🐛 调试信息 - 检查是否有异常的弹窗状态
+  useEffect(() => {
+    if (showDetailModal) {
+      console.log('🎪 弹窗打开:', { postId: post.id, title: post.title })
+    }
+  }, [showDetailModal, post.id, post.title])
+
   // 处理点赞操作
   const handleLike = async (e?: React.MouseEvent) => {
     e?.stopPropagation() // 防止触发卡片点击
@@ -101,6 +108,17 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
     setShowDetailModal(false)
     setCurrentImageIndex(0)
   }
+
+  // 🛡️ 安全检查 - 确保弹窗状态不会意外保持
+  useEffect(() => {
+    // 如果组件被重新渲染或props变化，重置弹窗状态
+    return () => {
+      if (showDetailModal) {
+        console.log('🔧 组件卸载时强制关闭弹窗:', post.id)
+        setShowDetailModal(false)
+      }
+    }
+  }, [post.id, showDetailModal])
 
   // 🔒 滚动锁定效果 - 防止背景滚动穿透
   useEffect(() => {
@@ -284,7 +302,8 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       {/* 🎪 详情弹窗 - 小红书风格布局 */}
       {showDetailModal && (
         <div 
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          style={{ zIndex: 9999 }}
           onClick={handleCloseModal}
         >
           <div 
