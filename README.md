@@ -89,6 +89,15 @@
 
 ### 🐛 问题修复
 
+#### 2025年01月20日 - hotScore undefined错误修复 🔧 已完成 ⭐ 关键修复
+- 🚨 **TypeError修复**: 修复 `Cannot read properties of undefined (reading 'toFixed')` 运行时错误
+- 🔄 **数据映射优化**: 修复API返回的下划线命名(hot_score)与前端期望的驼峰命名(hotScore)不匹配问题
+- 🛡️ **安全检查**: 为hotScore.toFixed()调用添加安全检查 `(hotScore || 0).toFixed()`
+- 📊 **数据完整性**: 为所有数值字段(viewCount、likeCount、shareCount等)添加默认值
+- 🔧 **格式转换**: 在fetchArticles和fetchTrendingKeywords中统一数据格式转换
+- 💾 **字段映射**: 完整的API字段映射，确保前后端数据结构一致性
+- ✅ **用户体验**: 消除页面崩溃错误，恢复资讯页面正常显示功能
+
 #### 2025年01月20日 - 卡片弹窗显示问题修复 🔧 已完成 ⭐ 关键修复
 - 🔍 **数据加载优化**: 修复Labubu Gallery页面一直显示"加载中..."的问题
 - 📊 **状态管理优化**: 优化LabubuGalleryContent组件的数据获取逻辑
