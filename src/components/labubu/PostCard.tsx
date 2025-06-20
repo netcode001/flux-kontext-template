@@ -80,17 +80,26 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
     onShare?.(post.id)
   }
 
-  // 格式化时间
-  const formatTime = (date: Date) => {
+  // 格式化时间 - 修复日期类型问题
+  const formatTime = (date: Date | string) => {
+    // 🔧 确保date是Date对象
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    
+    // 🔧 验证日期有效性
+    if (isNaN(dateObj.getTime())) {
+      console.error('Invalid date:', date)
+      return '时间未知'
+    }
+    
     const now = new Date()
-    const diff = now.getTime() - date.getTime()
+    const diff = now.getTime() - dateObj.getTime()
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
     
     if (days === 0) {
       const hours = Math.floor(diff / (1000 * 60 * 60))
       if (hours === 0) {
         const minutes = Math.floor(diff / (1000 * 60))
-        return `${minutes}分钟前`
+        return minutes <= 0 ? '刚刚' : `${minutes}分钟前`
       }
       return `${hours}小时前`
     }
@@ -99,7 +108,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       return `${days}天前`
     }
     
-    return date.toLocaleDateString('zh-CN')
+    return dateObj.toLocaleDateString('zh-CN')
   }
 
   return (

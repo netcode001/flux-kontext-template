@@ -19,11 +19,15 @@ export async function GET(request: NextRequest) {
     if (userId) where.userId = userId
     if (featured) where.isFeatured = true
     
+    console.log('🔍 获取帖子列表:', { page, limit, where })
+    
     const posts = await prisma.post.findMany({
       where,
       skip,
       take: limit
     })
+    
+    console.log('✅ 帖子列表获取成功:', { count: posts.length })
     
     return NextResponse.json({
       success: true,
