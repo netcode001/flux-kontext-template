@@ -259,7 +259,7 @@ export function LabubuNewsContent() {
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-4 gap-8">
           
-          {/* 🔥 左侧边栏 - 热搜排行榜 */}
+          {/* 🔥 左侧边栏 - 热搜标签 */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
               <Card>
@@ -268,29 +268,28 @@ export function LabubuNewsContent() {
                     🔥 Labubu热搜
                   </h3>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  {trendingKeywords.map((keyword) => (
-                    <div
-                      key={keyword.keyword}
-                      onClick={() => handleTrendingClick(keyword.keyword)}
-                      className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className={`text-sm font-bold w-6 text-center ${
-                          keyword.rank <= 3 ? 'text-red-500' : 'text-gray-500'
-                        }`}>
-                          {keyword.rank}
-                        </span>
-                        <span className="text-sm font-medium">{keyword.keyword}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs">{keyword.trendIcon}</span>
-                        <Badge className={`text-xs ${getHeatColor(keyword.heatLevel)}`}>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {trendingKeywords.map((keyword) => (
+                      <div
+                        key={keyword.keyword}
+                        onClick={() => handleTrendingClick(keyword.keyword)}
+                        className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm cursor-pointer transition-all hover:scale-105 ${
+                          keyword.rank <= 3 
+                            ? 'bg-gradient-to-r from-red-100 to-pink-100 text-red-700 border border-red-200 hover:from-red-200 hover:to-pink-200' 
+                            : keyword.rank <= 6
+                            ? 'bg-gradient-to-r from-orange-100 to-yellow-100 text-orange-700 border border-orange-200 hover:from-orange-200 hover:to-yellow-200'
+                            : 'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 border border-blue-200 hover:from-blue-200 hover:to-purple-200'
+                        }`}
+                      >
+                        <span className="font-medium"># {keyword.keyword}</span>
+                        <span className="text-xs font-bold">
                           {(keyword.hotScore || 0).toFixed(0)}
-                        </Badge>
+                        </span>
+                        <span className="text-xs">{keyword.trendIcon}</span>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </div>
