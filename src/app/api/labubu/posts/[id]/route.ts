@@ -6,11 +6,12 @@ import prisma from '@/lib/database'
 // 🎨 获取帖子详情
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const post = await prisma.post.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
     
     if (!post) {
@@ -22,13 +23,13 @@ export async function GET(
     
     // 增加浏览次数
     await prisma.post.update({
-      where: { id: params.id },
+      where: { id },
       data: { viewCount: post.viewCount + 1 }
     })
     
     // 返回更新后的数据
     const updatedPost = await prisma.post.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
     
     return NextResponse.json({
@@ -48,9 +49,11 @@ export async function GET(
 // 🎨 更新帖子
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+    
     // 验证用户登录状态
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
@@ -62,7 +65,7 @@ export async function PUT(
     
     // 检查帖子是否存在以及用户权限
     const existingPost = await prisma.post.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
     
     if (!existingPost) {
@@ -84,7 +87,7 @@ export async function PUT(
     
     // 更新帖子
     const updatedPost = await prisma.post.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: title || existingPost.title,
         content: content !== undefined ? content : existingPost.content,
@@ -111,9 +114,11 @@ export async function PUT(
 // 🎨 删除帖子
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+    
     // 验证用户登录状态
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
@@ -125,7 +130,7 @@ export async function DELETE(
     
     // 检查帖子是否存在以及用户权限
     const existingPost = await prisma.post.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
     
     if (!existingPost) {
@@ -144,7 +149,7 @@ export async function DELETE(
     
     // 删除帖子
     await prisma.post.delete({
-      where: { id: params.id }
+      where: { id }
     })
     
     return NextResponse.json({

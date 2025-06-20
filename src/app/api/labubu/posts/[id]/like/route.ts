@@ -6,7 +6,7 @@ import prisma from '@/lib/database'
 // 🎨 切换点赞状态
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // 验证用户登录状态

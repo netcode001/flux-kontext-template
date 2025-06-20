@@ -332,7 +332,12 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       // 🔧 修复session用户ID问题 - 确保session包含完整的用户信息
       if (session?.user && token?.user) {
-        session.user = token.user
+        // 确保包含id字段
+        session.user = {
+          ...session.user,
+          ...token.user,
+          id: token.user.id || session.user.id
+        }
       }
       
       // 🔍 如果session中没有用户ID，尝试从数据库获取
