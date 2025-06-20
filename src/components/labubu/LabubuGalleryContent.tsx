@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { Navigation } from '@/components/Navigation'
 import { PostCard } from './PostCard'
 import { PostPublisher } from './PostPublisher'
 import { PostWithUser } from '@/lib/database'
@@ -139,8 +140,11 @@ export function LabubuGalleryContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50">
+      {/* 统一的导航栏 */}
+      <Navigation />
+      
       {/* 页面头部 */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100 pt-16">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center space-y-4">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-500 to-pink-600 bg-clip-text text-transparent">

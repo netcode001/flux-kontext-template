@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { Navigation } from "@/components/Navigation";
 import { SearchBar } from "@/components/directory/SearchBar";
 
 export const metadata: Metadata = {
@@ -11,8 +12,11 @@ export const metadata: Metadata = {
 export default function LabubuNewsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
+      {/* 统一的导航栏 */}
+      <Navigation />
+      
       {/* 页面头部 */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-pink-100">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-pink-100 pt-16">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center space-y-4">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
