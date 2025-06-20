@@ -268,10 +268,10 @@ export function LabubuGalleryContent() {
           </div>
         ) : (
           <div className="space-y-8">
-            {/* 作品网格 - 小红书风格 6列布局 */}
-            <div className={`grid gap-4 ${
+            {/* 作品网格 - 5列极简布局 */}
+            <div className={`grid gap-3 ${
               viewMode === 'grid' 
-                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6' 
+                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5' 
                 : 'grid-cols-1 max-w-2xl mx-auto'
             }`}>
               {posts.map((post) => (

@@ -196,31 +196,26 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
         )}
       </CardContent>
 
-      {/* 小红书风格的紧凑信息区域 */}
-      <div className="p-3">
-        {/* 标题 - 小红书风格 */}
-        <h3 className="font-medium text-sm text-gray-900 mb-2 line-clamp-2 leading-relaxed">
+      {/* 极简信息区域 */}
+      <div className="p-2">
+        {/* 标题 - 极简风格 */}
+        <h3 className="font-medium text-sm text-gray-900 mb-2 line-clamp-2 leading-tight">
           {post.title}
         </h3>
 
-        {/* 用户信息和互动 - 小红书风格 */}
+        {/* 用户信息和互动 - 极简风格 */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-5 h-5 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
               {post.user?.name?.[0] || post.user?.email?.[0] || 'U'}
             </div>
-            <div className="flex flex-col">
-              <span className="text-xs text-gray-700 font-medium">
-                {post.user?.name || '匿名用户'}
-              </span>
-              <span className="text-xs text-gray-400">
-                {formatTime(post.createdAt)}
-              </span>
-            </div>
+            <span className="text-xs text-gray-700 font-medium">
+              {post.user?.name || '匿名用户'}
+            </span>
           </div>
 
           {/* 简化的互动按钮 */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             <Button
               variant="ghost"
               size="sm"
@@ -230,7 +225,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
                 isLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
               }`}
             >
-              <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
+              <Heart className={`w-3 h-3 ${isLiked ? 'fill-current' : ''}`} />
               <span className="text-xs ml-1">{likeCount}</span>
             </Button>
 
@@ -243,26 +238,10 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
                 isBookmarked ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'
               }`}
             >
-              <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
+              <Bookmark className={`w-3 h-3 ${isBookmarked ? 'fill-current' : ''}`} />
             </Button>
           </div>
         </div>
-
-        {/* 标签 - 小红书风格 */}
-        {post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-2">
-            {post.tags.slice(0, 2).map((tag, index) => (
-              <Badge key={index} variant="secondary" className="text-xs px-2 py-0.5 bg-pink-50 text-pink-600 hover:bg-pink-100 border-0">
-                #{tag}
-              </Badge>
-            ))}
-            {post.tags.length > 2 && (
-              <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-gray-50 text-gray-500 border-0">
-                +{post.tags.length - 2}
-              </Badge>
-            )}
-          </div>
-        )}
       </div>
     </Card>
   )
