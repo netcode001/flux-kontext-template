@@ -101,7 +101,29 @@ export function LabubuNewsContent() {
       const data = await response.json()
       
       if (data.success) {
-        const newArticles = data.data.articles || []
+        // 🔄 数据格式转换：下划线转驼峰命名
+        const rawArticles = data.data.articles || []
+        const newArticles = rawArticles.map((article: any) => ({
+          id: article.id,
+          title: article.title,
+          content: article.content,
+          summary: article.summary,
+          author: article.author,
+          sourceName: article.source_name,
+          sourceType: article.source_type,
+          originalUrl: article.original_url,
+          publishedAt: article.published_at,
+          imageUrls: article.image_urls || [],
+          tags: article.tags || [],
+          category: article.category,
+          viewCount: article.view_count || 0,
+          likeCount: article.like_count || 0,
+          shareCount: article.share_count || 0,
+          hotScore: article.hot_score || 0, // 确保hotScore有默认值
+          isLiked: article.isLiked || false,
+          isBookmarked: article.isBookmarked || false,
+          createdAt: article.created_at
+        }))
         
         if (reset) {
           setArticles(newArticles)
@@ -130,8 +152,16 @@ export function LabubuNewsContent() {
       const data = await response.json()
       
       if (data.success) {
-        setTrendingKeywords(data.data.keywords || [])
-        console.log('🔥 热搜数据获取成功:', data.data.keywords?.length)
+        // 🔄 数据格式转换：下划线转驼峰命名
+        const formattedKeywords = (data.data.keywords || []).map((keyword: any) => ({
+          ...keyword,
+          hotScore: keyword.hot_score || 0, // 确保hotScore有默认值
+          trendDirection: keyword.trend_direction || 'stable',
+          searchCount: keyword.search_count || 0,
+          heatLevel: keyword.heatLevel || 'low'
+        }))
+        setTrendingKeywords(formattedKeywords)
+        console.log('🔥 热搜数据获取成功:', formattedKeywords.length)
       }
     } catch (error) {
       console.error('🚨 获取热搜数据异常:', error)
@@ -417,7 +447,7 @@ export function LabubuNewsContent() {
                               </div>
                               <div className="flex items-center gap-1">
                                 <TrendingUp className="w-4 h-4" />
-                                <span className="font-medium">{article.hotScore.toFixed(1)}</span>
+                                <span className="font-medium">{(article.hotScore || 0).toFixed(1)}</span>
                               </div>
                             </div>
                           </div>
@@ -473,7 +503,7 @@ export function LabubuNewsContent() {
                       <div className="flex items-center gap-1">
                         <span className="text-xs">{keyword.trendIcon}</span>
                         <Badge className={`text-xs ${getHeatColor(keyword.heatLevel)}`}>
-                          {keyword.hotScore.toFixed(0)}
+                          {(keyword.hotScore || 0).toFixed(0)}
                         </Badge>
                       </div>
                     </div>
