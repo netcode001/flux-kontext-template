@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { Heart, Bookmark, Eye, MessageCircle, Share2, MoreHorizontal, X, ChevronLeft, ChevronRight, Images } from 'lucide-react'
@@ -99,6 +100,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
 
   // 🎪 打开详情弹窗
   const handleCardClick = () => {
+    console.log('🎪 点击卡片，准备打开弹窗:', { postId: post.id, title: post.title })
     setShowDetailModal(true)
     setCurrentImageIndex(0)
   }
@@ -300,7 +302,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       </Card>
 
       {/* 🎪 详情弹窗 - 小红书风格布局 */}
-      {showDetailModal && (
+      {showDetailModal && typeof document !== 'undefined' && createPortal(
         <div 
           className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           style={{ zIndex: 9999 }}
@@ -468,7 +470,8 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )
