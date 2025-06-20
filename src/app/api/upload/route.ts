@@ -67,7 +67,10 @@ export async function POST(request: NextRequest) {
     const filePath = `${mediaType}s/${purpose}/${fileName}`
 
     // 上传到R2
-    const uploadResult = await r2Storage.uploadFile(file)
+    console.log(`📤 Processing file upload: ${file.name} (${file.size} bytes, ${file.type})`);
+    const uploadResult = await r2Storage.uploadFile(file);
+    
+    console.log(`✅ Upload completed successfully: ${uploadResult}`);
 
     return NextResponse.json({
       success: true,

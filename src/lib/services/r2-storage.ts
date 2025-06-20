@@ -214,37 +214,80 @@ class R2StorageService {
     
     console.log(`📋 Generated R2 filename: ${fileName}`);
 
-    // 上传到R2
-    const uploadResult = await this.client!.send(
-      new PutObjectCommand({
-        Bucket: this.config!.bucketName,
-        Key: fileName,
-        Body: file,
-        ContentType: file.type || 'image/jpeg',
-        CacheControl: 'public, max-age=31536000', // 1年缓存
-        Metadata: {
-          'original-name': file.name,
-          'upload-timestamp': timestamp.toString(),
-          'source': 'user-upload'
-        }
-      })
-    );
+    try {
+      // 🔧 修复：将File转换为ArrayBuffer，避免hash计算错误
+      console.log('📄 Converting file to buffer...');
+      const fileBuffer = await file.arrayBuffer();
+      const fileBytes = new Uint8Array(fileBuffer);
+      
+      console.log(`📋 File buffer info:`, {
+        originalSize: file.size,
+        bufferSize: fileBytes.length,
+        contentType: file.type
+      });
 
-    // 构建公开访问URL - 使用Public Development URL
-    const publicUrl = process.env.R2_PUBLIC_URL 
-      ? `${process.env.R2_PUBLIC_URL}/${fileName}`
-      : `https://${this.config!.bucketName}.${this.config!.accountId}.r2.cloudflarestorage.com/${fileName}`;
-    
-    console.log(`✅ R2 upload successful:`, {
-      fileName,
-      publicUrl,
-      uploadResult: uploadResult.$metadata
-    });
+      // 验证文件内容
+      if (fileBytes.length === 0) {
+        throw new Error('File is empty');
+      }
 
-    // 🔍 验证R2 URL可访问性
-    await this.verifyR2UrlAccessibility(publicUrl);
+      // 🔧 使用队列控制上传，避免并发问题
+      const uploadResult = await uploadQueue.add(async () => {
+        console.log(`📤 Uploading to R2: ${fileName}`);
+        return await this.client!.send(
+          new PutObjectCommand({
+            Bucket: this.config!.bucketName,
+            Key: fileName,
+            Body: fileBytes, // 使用Uint8Array而不是File对象
+            ContentType: file.type || 'image/jpeg',
+            CacheControl: 'public, max-age=31536000', // 1年缓存
+            Metadata: {
+              'original-name': file.name,
+              'upload-timestamp': timestamp.toString(),
+              'source': 'user-upload',
+              'file-size': file.size.toString()
+            }
+          })
+        );
+      });
 
-    return publicUrl;
+      // 构建公开访问URL - 使用Public Development URL
+      const publicUrl = process.env.R2_PUBLIC_URL 
+        ? `${process.env.R2_PUBLIC_URL}/${fileName}`
+        : `https://${this.config!.bucketName}.${this.config!.accountId}.r2.cloudflarestorage.com/${fileName}`;
+      
+      console.log(`✅ R2 upload successful:`, {
+        fileName,
+        publicUrl,
+        uploadResult: uploadResult.$metadata
+      });
+
+      // 🔍 验证R2 URL可访问性（简化版本）
+      try {
+        await this.verifyR2UrlAccessibility(publicUrl);
+      } catch (verifyError) {
+        console.warn(`⚠️ R2 URL verification failed, but upload was successful:`, verifyError);
+        // 不抛出错误，因为上传本身是成功的
+      }
+
+      return publicUrl;
+
+    } catch (error: any) {
+      console.error(`❌ R2 upload failed:`, error);
+      
+      // 详细的错误处理
+      if (error.code === 'EPROTO' || error.code === 'ECONNRESET') {
+        throw new Error(`R2 connection error: ${error.message}`);
+      } else if (error.name === 'TooManyRequestsException') {
+        throw new Error(`Upload limit exceeded. Please try again later.`);
+      } else if (error.$metadata?.httpStatusCode === 403) {
+        throw new Error(`R2 access denied. Please check configuration.`);
+      } else if (error.$metadata?.httpStatusCode === 404) {
+        throw new Error(`R2 bucket not found.`);
+      } else {
+        throw new Error(`Upload failed: ${error.message || 'Unknown error'}`);
+      }
+    }
   }
 
   async uploadFromUrl(imageUrl: string, originalPrompt?: string): Promise<string> {
