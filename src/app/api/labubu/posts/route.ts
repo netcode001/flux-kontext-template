@@ -64,34 +64,38 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    // 🔧 临时修复：如果没有用户ID，从数据库获取
-    let userId = session.user.id
-    if (!userId && session.user.email) {
-      try {
-        console.log('🔍 API尝试从数据库获取用户ID:', session.user.email)
-        
-        const user = await prisma.user.findFirst({
-          where: { email: session.user.email },
-          select: { id: true }
-        })
-        
-        if (user) {
-          userId = user.id
-          console.log('✅ API从数据库获取用户ID成功:', userId)
-        } else {
-          console.error('❌ API从数据库获取用户ID失败: 用户不存在')
-          return NextResponse.json(
-            { success: false, error: '用户身份验证失败' },
-            { status: 401 }
-          )
-        }
-      } catch (error) {
-        console.error('❌ API数据库查询失败:', error)
+    // 🔧 关键修复：OAuth ID不是UUID，必须从数据库获取正确的用户UUID
+    let userId: string | null = null
+    
+    console.log('🔍 Session用户ID检查:', { 
+      sessionId: session.user.id, 
+      isUUID: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(session.user.id || ''),
+      email: session.user.email 
+    })
+    
+    try {
+      console.log('🔍 API从数据库获取用户UUID:', session.user.email)
+      
+      const user = await prisma.user.findFirst({
+        where: { email: session.user.email }
+      })
+      
+      if (user) {
+        userId = user.id
+        console.log('✅ API获取数据库UUID成功:', userId)
+      } else {
+        console.error('❌ 数据库中未找到用户:', session.user.email)
         return NextResponse.json(
-          { success: false, error: '用户身份验证失败' },
+          { success: false, error: '用户不存在，请重新登录' },
           { status: 401 }
         )
       }
+    } catch (error) {
+      console.error('❌ API数据库查询失败:', error)
+      return NextResponse.json(
+        { success: false, error: '数据库查询失败' },
+        { status: 500 }
+      )
     }
     
     if (!userId) {
@@ -113,6 +117,13 @@ export async function POST(request: NextRequest) {
       )
     }
     
+    console.log('🔍 准备创建帖子:', { 
+      userId, 
+      title, 
+      imageUrlsCount: imageUrls.length,
+      tagsCount: tags?.length || 0 
+    })
+    
     // 创建帖子
     const post = await prisma.post.create({
       data: {
@@ -127,6 +138,8 @@ export async function POST(request: NextRequest) {
       }
     })
     
+    console.log('✅ 帖子创建成功:', post.id)
+    
     return NextResponse.json({
       success: true,
       data: post,
@@ -134,6 +147,7 @@ export async function POST(request: NextRequest) {
     })
     
   } catch (error) {
+    console.error('🚨 Post create error:', error)
     console.error('🚨 创建帖子失败:', error)
     return NextResponse.json(
       { success: false, error: '发布失败，请重试' },
