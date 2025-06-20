@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { Heart, Bookmark, Eye, MessageCircle, Share2, MoreHorizontal, X, ChevronLeft, ChevronRight, Images } from 'lucide-react'
@@ -35,6 +34,17 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       console.log('🎪 弹窗打开:', { postId: post.id, title: post.title })
     }
   }, [showDetailModal, post.id, post.title])
+
+  // 🛡️ 初始化检查 - 确保弹窗状态正确初始化
+  useEffect(() => {
+    console.log('🔧 PostCard初始化:', { 
+      postId: post.id, 
+      title: post.title, 
+      showDetailModal,
+      hasUser: !!post.user,
+      createdAt: post.createdAt
+    })
+  }, [post.id, post.title, showDetailModal, post.user, post.createdAt])
 
   // 处理点赞操作
   const handleLike = async (e?: React.MouseEvent) => {
@@ -202,6 +212,13 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
 
   return (
     <>
+      {/* 🐛 调试信息显示 */}
+      {showDetailModal && (
+        <div className="absolute top-0 left-0 bg-red-500 text-white text-xs p-1 z-50">
+          弹窗状态异常: {post.id}
+        </div>
+      )}
+      
       {/* 主卡片 */}
       <Card 
         className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-white border-gray-100 rounded-xl mb-3 break-inside-avoid cursor-pointer"
@@ -302,10 +319,10 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       </Card>
 
       {/* 🎪 详情弹窗 - 小红书风格布局 */}
-      {showDetailModal && typeof document !== 'undefined' && createPortal(
+      {showDetailModal && (
         <div 
           className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-          style={{ zIndex: 9999 }}
+          style={{ zIndex: 9999, position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
           onClick={handleCloseModal}
         >
           <div 
@@ -470,8 +487,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
               </div>
             </div>
           </div>
-        </div>,
-        document.body
+        </div>
       )}
     </>
   )
