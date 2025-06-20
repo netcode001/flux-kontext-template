@@ -11,15 +11,51 @@ export async function POST(
   try {
     // 验证用户登录状态
     const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
+    if (!session?.user) {
       return NextResponse.json(
         { success: false, error: '请先登录' },
         { status: 401 }
       )
     }
     
-    const postId = params.id
-    const userId = session.user.id
+    // 🔧 Next.js 15 要求await params
+    const { id: postId } = await params
+    
+    // 🔧 关键修复：OAuth ID不是UUID，必须从数据库获取正确的用户UUID
+    let userId: string | null = null
+    
+    try {
+      console.log('🔍 点赞API从数据库获取用户UUID:', session.user.email)
+      
+      const user = await prisma.user.findFirst({
+        where: { email: session.user.email }
+      })
+      
+      if (user) {
+        userId = user.id
+        console.log('✅ 点赞API获取数据库UUID成功:', userId)
+      } else {
+        console.error('❌ 数据库中未找到用户:', session.user.email)
+        return NextResponse.json(
+          { success: false, error: '用户不存在，请重新登录' },
+          { status: 401 }
+        )
+      }
+    } catch (error) {
+      console.error('❌ 点赞API数据库查询失败:', error)
+      return NextResponse.json(
+        { success: false, error: '数据库查询失败' },
+        { status: 500 }
+      )
+    }
+    
+    if (!userId) {
+      console.log('❌ 点赞API认证失败: 无法获取用户ID')
+      return NextResponse.json(
+        { success: false, error: '用户身份验证失败' },
+        { status: 401 }
+      )
+    }
     
     // 检查帖子是否存在
     const post = await prisma.post.findUnique({
