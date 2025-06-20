@@ -255,43 +255,47 @@ export function LabubuNewsContent() {
   }, [currentCategory, currentSort])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-sky-50 to-emerald-50">
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-4 gap-8">
           
           {/* 🔥 左侧边栏 - 热搜标签 */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
-              <Card>
-                <CardHeader>
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    🔥 Labubu热搜
+              <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 hover:bg-white/80">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full flex items-center justify-center animate-pulse">
+                    <span className="text-white text-sm">🔥</span>
+                  </div>
+                  <h3 className="text-lg font-bold bg-gradient-to-r from-pink-600 to-violet-600 bg-clip-text text-transparent">
+                    Labubu热搜
                   </h3>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {trendingKeywords.map((keyword) => (
-                      <div
-                        key={keyword.keyword}
-                        onClick={() => handleTrendingClick(keyword.keyword)}
-                        className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm cursor-pointer transition-all hover:scale-105 ${
-                          keyword.rank <= 3 
-                            ? 'bg-gradient-to-r from-red-100 to-pink-100 text-red-700 border border-red-200 hover:from-red-200 hover:to-pink-200' 
-                            : keyword.rank <= 6
-                            ? 'bg-gradient-to-r from-orange-100 to-yellow-100 text-orange-700 border border-orange-200 hover:from-orange-200 hover:to-yellow-200'
-                            : 'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 border border-blue-200 hover:from-blue-200 hover:to-purple-200'
-                        }`}
-                      >
-                        <span className="font-medium"># {keyword.keyword}</span>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {trendingKeywords.map((keyword, index) => (
+                    <div
+                      key={keyword.keyword}
+                      onClick={() => handleTrendingClick(keyword.keyword)}
+                      className={`group inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm cursor-pointer transition-all duration-300 hover:scale-110 hover:rotate-1 animate-fade-in-up ${
+                        keyword.rank <= 3 
+                          ? 'bg-gradient-to-r from-pink-400 to-rose-400 text-white shadow-lg hover:shadow-pink-300/50 hover:from-pink-500 hover:to-rose-500' 
+                          : keyword.rank <= 6
+                          ? 'bg-gradient-to-r from-violet-400 to-purple-400 text-white shadow-lg hover:shadow-violet-300/50 hover:from-violet-500 hover:to-purple-500'
+                          : 'bg-gradient-to-r from-sky-400 to-cyan-400 text-white shadow-lg hover:shadow-sky-300/50 hover:from-sky-500 hover:to-cyan-500'
+                      }`}
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <span className="font-semibold group-hover:scale-105 transition-transform"># {keyword.keyword}</span>
+                      <div className="flex items-center gap-1 bg-white/20 rounded-full px-2 py-0.5">
                         <span className="text-xs font-bold">
                           {(keyword.hotScore || 0).toFixed(0)}
                         </span>
-                        <span className="text-xs">{keyword.trendIcon}</span>
+                        <span className="text-xs animate-bounce">{keyword.trendIcon}</span>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -299,13 +303,13 @@ export function LabubuNewsContent() {
           <div className="lg:col-span-3 space-y-6">
             
             {/* 🔍 搜索和筛选栏 */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-pink-100">
-              <div className="flex flex-col gap-4">
+            <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 hover:bg-white/80">
+              <div className="flex flex-col gap-6">
                 
                 {/* 搜索框 */}
-                <div className="relative">
+                <div className="relative group">
                   <Search 
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 cursor-pointer hover:text-purple-600 transition-colors" 
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-violet-400 w-5 h-5 cursor-pointer hover:text-pink-500 transition-all duration-300 group-hover:scale-110" 
                     onClick={handleSearch}
                   />
                   <Input
@@ -313,12 +317,12 @@ export function LabubuNewsContent() {
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onKeyPress={handleSearchKeyPress}
-                    className="pl-12 pr-10 border-purple-200 focus:border-purple-400 text-lg"
+                    className="pl-12 pr-12 h-12 text-lg border-2 border-violet-200 focus:border-pink-400 rounded-2xl bg-gradient-to-r from-violet-50/50 to-pink-50/50 focus:bg-white transition-all duration-300 focus:shadow-lg focus:shadow-pink-200/50"
                   />
                   {searchInput && (
                     <button
                       onClick={clearSearch}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-violet-400 hover:text-pink-500 transition-all duration-300 hover:scale-110 hover:rotate-90"
                     >
                       ✕
                     </button>
@@ -326,44 +330,51 @@ export function LabubuNewsContent() {
                 </div>
 
                 {/* 分类筛选 */}
-                <div className="flex flex-wrap gap-2">
-                  {categories.map((category) => (
+                <div className="flex flex-wrap gap-3">
+                  {categories.map((category, index) => (
                     <Button
                       key={category.key}
                       variant={currentCategory === category.key ? "default" : "outline"}
                       size="sm"
                       onClick={() => handleCategoryChange(category.key)}
-                      className={`flex items-center gap-2 ${
+                      className={`flex items-center gap-2 px-4 py-2 rounded-2xl transition-all duration-300 hover:scale-105 animate-fade-in-up ${
                         currentCategory === category.key
-                          ? 'bg-purple-500 hover:bg-purple-600 text-white'
-                          : 'border-purple-200 text-purple-600 hover:bg-purple-50'
+                          ? 'bg-gradient-to-r from-pink-500 to-violet-500 text-white shadow-lg hover:shadow-pink-300/50 hover:from-pink-600 hover:to-violet-600'
+                          : 'border-2 border-violet-200 text-violet-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-pink-50 hover:border-pink-300'
                       }`}
+                      style={{ animationDelay: `${index * 50}ms` }}
                     >
-                      <span>{category.icon}</span>
-                      {category.label}
+                      <span className="text-base">{category.icon}</span>
+                      <span className="font-medium">{category.label}</span>
                     </Button>
                   ))}
                 </div>
 
                 {/* 排序选项 */}
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-600 text-sm">排序：</span>
-                  {sortOptions.map((option) => (
-                    <Button
-                      key={option.key}
-                      variant={currentSort === option.key ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => handleSortChange(option.key)}
-                      className={`flex items-center gap-1 ${
-                        currentSort === option.key
-                          ? 'bg-purple-500 text-white'
-                          : 'text-gray-600 hover:text-purple-600'
-                      }`}
-                    >
-                      <span>{option.icon}</span>
-                      {option.label}
-                    </Button>
-                  ))}
+                <div className="flex items-center gap-4">
+                  <span className="text-violet-600 text-sm font-medium flex items-center gap-2">
+                    <span className="w-2 h-2 bg-gradient-to-r from-pink-400 to-violet-400 rounded-full animate-pulse"></span>
+                    排序方式
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {sortOptions.map((option, index) => (
+                      <Button
+                        key={option.key}
+                        variant={currentSort === option.key ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => handleSortChange(option.key)}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:scale-105 animate-fade-in-up ${
+                          currentSort === option.key
+                            ? 'bg-gradient-to-r from-sky-400 to-cyan-400 text-white shadow-md hover:shadow-sky-300/50'
+                            : 'text-violet-600 hover:bg-gradient-to-r hover:from-sky-50 hover:to-cyan-50 hover:text-sky-600'
+                        }`}
+                        style={{ animationDelay: `${index * 50}ms` }}
+                      >
+                        <span className="text-sm">{option.icon}</span>
+                        <span className="font-medium text-sm">{option.label}</span>
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -410,39 +421,46 @@ export function LabubuNewsContent() {
                 </div>
               ) : (
                 <>
-                  {articles.map((article) => (
-                    <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
+                  {articles.map((article, index) => (
+                    <div 
+                      key={article.id} 
+                      className="group bg-white/70 backdrop-blur-xl rounded-3xl overflow-hidden shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-500 hover:bg-white/80 hover:scale-[1.02] animate-fade-in-up"
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <div className="p-6">
                         <div className="flex gap-6">
                           
                           {/* 📸 文章图片 */}
                           {article.imageUrls.length > 0 && (
                             <div className="flex-shrink-0">
-                              <img
-                                src={article.imageUrls[0]}
-                                alt={article.title}
-                                className="w-32 h-24 object-cover rounded-lg"
-                              />
+                              <div className="relative overflow-hidden rounded-2xl group-hover:scale-105 transition-transform duration-300">
+                                <img
+                                  src={article.imageUrls[0]}
+                                  alt={article.title}
+                                  className="w-32 h-24 object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                              </div>
                             </div>
                           )}
 
                           {/* 📝 文章内容 */}
-                          <div className="flex-1 space-y-3">
+                          <div className="flex-1 space-y-4">
                             
                             {/* 标题和来源 */}
                             <div>
-                              <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 hover:text-purple-600 cursor-pointer">
+                              <h3 className="text-lg font-bold text-slate-800 line-clamp-2 hover:bg-gradient-to-r hover:from-pink-600 hover:to-violet-600 hover:bg-clip-text hover:text-transparent cursor-pointer transition-all duration-300 group-hover:scale-[1.02]">
                                 {article.title}
                               </h3>
-                              <div className="flex items-center gap-2 mt-1">
-                                <Badge variant="outline" className="text-xs">
+                              <div className="flex items-center gap-3 mt-2">
+                                <div className="px-3 py-1 bg-gradient-to-r from-pink-100 to-violet-100 text-pink-700 rounded-full text-xs font-medium border border-pink-200">
                                   {article.sourceName}
-                                </Badge>
-                                <span className="text-gray-500 text-xs">
+                                </div>
+                                <span className="text-violet-500 text-xs font-medium">
                                   {formatTime(article.publishedAt)}
                                 </span>
                                 {article.author && (
-                                  <span className="text-gray-500 text-xs">
+                                  <span className="text-sky-500 text-xs font-medium">
                                     by {article.author}
                                   </span>
                                 )}
@@ -451,45 +469,48 @@ export function LabubuNewsContent() {
 
                             {/* 摘要 */}
                             {article.summary && (
-                              <p className="text-gray-600 text-sm line-clamp-2">
+                              <p className="text-slate-600 text-sm line-clamp-2 leading-relaxed">
                                 {article.summary}
                               </p>
                             )}
 
                             {/* 标签 */}
                             {article.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-1">
-                                {article.tags.slice(0, 3).map((tag, index) => (
-                                  <Badge key={index} variant="secondary" className="text-xs">
+                              <div className="flex flex-wrap gap-2">
+                                {article.tags.slice(0, 3).map((tag, tagIndex) => (
+                                  <div 
+                                    key={tagIndex} 
+                                    className="px-2 py-1 bg-gradient-to-r from-sky-100 to-cyan-100 text-sky-700 rounded-xl text-xs font-medium border border-sky-200 hover:scale-105 transition-transform duration-200"
+                                  >
                                     #{tag}
-                                  </Badge>
+                                  </div>
                                 ))}
                               </div>
                             )}
 
                             {/* 互动数据 */}
-                            <div className="flex items-center gap-4 text-gray-500 text-sm">
-                              <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-6 text-slate-500 text-sm">
+                              <div className="flex items-center gap-2 hover:text-violet-500 transition-colors duration-200">
                                 <Eye className="w-4 h-4" />
-                                {article.viewCount}
+                                <span className="font-medium">{article.viewCount}</span>
                               </div>
-                              <div className="flex items-center gap-1">
-                                <Heart className={`w-4 h-4 ${article.isLiked ? 'text-red-500 fill-current' : ''}`} />
-                                {article.likeCount}
+                              <div className="flex items-center gap-2 hover:text-pink-500 transition-colors duration-200">
+                                <Heart className={`w-4 h-4 ${article.isLiked ? 'text-pink-500 fill-current' : ''}`} />
+                                <span className="font-medium">{article.likeCount}</span>
                               </div>
-                              <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-2 hover:text-sky-500 transition-colors duration-200">
                                 <Share2 className="w-4 h-4" />
-                                {article.shareCount}
+                                <span className="font-medium">{article.shareCount}</span>
                               </div>
-                              <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-2 hover:text-emerald-500 transition-colors duration-200">
                                 <TrendingUp className="w-4 h-4" />
-                                <span className="font-medium">{(article.hotScore || 0).toFixed(1)}</span>
+                                <span className="font-bold text-emerald-600">{(article.hotScore || 0).toFixed(1)}</span>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   ))}
 
                   {/* 📄 加载更多 */}
