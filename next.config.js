@@ -49,18 +49,10 @@ const nextConfig = {
     ]
   },
   
-  // 图片配置
+  // 图片配置 - 动态读取环境变量
   images: {
-    domains: [
-      "source.unsplash.com",
-      "images.unsplash.com",
-      "ext.same-assets.com",
-      "ugc.same-assets.com",
-      // R2存储域名
-      process.env.NEXT_PUBLIC_DEMO_VIDEOS_URL?.replace('https://', '') || 
-      "pub-49364ecf52e344d3a722a3c5bca11271.r2.dev",
-    ],
     remotePatterns: [
+      // 第三方图片服务
       {
         protocol: "https",
         hostname: "source.unsplash.com",
@@ -81,11 +73,29 @@ const nextConfig = {
         hostname: "ugc.same-assets.com",
         pathname: "/**",
       },
+      // R2存储域名模式 - 支持所有R2存储子域名
       {
         protocol: "https",
-        hostname: process.env.NEXT_PUBLIC_DEMO_VIDEOS_URL?.replace('https://', '') || "pub-49364ecf52e344d3a722a3c5bca11271.r2.dev",
+        hostname: "*.r2.cloudflarestorage.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "*.r2.dev",
+        pathname: "/**",
+      },
+      // 动态添加环境变量中配置的R2域名
+      ...(process.env.R2_PUBLIC_URL ? [{
+        protocol: "https",
+        hostname: process.env.R2_PUBLIC_URL.replace('https://', ''),
+        pathname: "/**",
+      }] : []),
+      // 动态添加演示视频URL域名
+      ...(process.env.NEXT_PUBLIC_DEMO_VIDEOS_URL ? [{
+        protocol: "https", 
+        hostname: process.env.NEXT_PUBLIC_DEMO_VIDEOS_URL.replace('https://', ''),
+        pathname: "/**",
+      }] : []),
     ],
     // 图片优化配置
     minimumCacheTTL: 60,
