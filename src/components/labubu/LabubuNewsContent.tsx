@@ -430,22 +430,27 @@ export function LabubuNewsContent() {
                       style={{ animationDelay: `${index * 100}ms` }}
                       onClick={() => window.open(article.originalUrl, '_blank')}
                     >
-                      {/* 📸 文章图片 */}
-                      {article.imageUrls.length > 0 && (
-                        <div className="relative overflow-hidden">
-                          <img
-                            src={article.imageUrls[0]}
-                            alt={article.title}
-                            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          
-                          {/* 热度标签 */}
-                          <div className="absolute top-3 right-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                            🔥 {(article.hotScore || 0).toFixed(1)}
-                          </div>
+                      {/* 📸 文章图片 - 确保每个卡片都有图片 */}
+                      <div className="relative overflow-hidden">
+                        <img
+                          src={article.imageUrls && article.imageUrls.length > 0 
+                            ? article.imageUrls[0] 
+                            : `https://picsum.photos/600/400?random=${Math.floor(Math.random() * 1000)}`
+                          }
+                          alt={article.title}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            // 图片加载失败时使用备用图片
+                            e.currentTarget.src = `https://picsum.photos/600/400?random=${Math.floor(Math.random() * 1000)}`
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        
+                        {/* 热度标签 */}
+                        <div className="absolute top-3 right-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                          🔥 {(article.hotScore || 0).toFixed(1)}
                         </div>
-                      )}
+                      </div>
 
                       <div className="p-6">
                         {/* 📝 文章内容 */}
