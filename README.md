@@ -901,10 +901,42 @@ node scripts/check-r2-config.js
 
 ---
 
+## 🚀 v2.0 资讯聚合版 - 已完成
+
+### 📰 新功能特性
+- **智能资讯聚合**: 多平台Labubu相关资讯自动收集
+- **热搜排行榜**: 实时热门关键词趋势分析  
+- **分类筛选**: 7大分类精准内容定位
+- **多维排序**: 热度、时间、互动等多种排序方式
+- **用户交互**: 点赞、收藏、分享等社交功能
+
+### 🔧 数据库设置
+**重要**: 首次使用需要创建数据库表结构
+
+1. 登录 [Supabase 控制台](https://supabase.com/dashboard)
+2. 进入你的项目 → SQL Editor
+3. 复制并执行 `scripts/create-news-tables.sql` 文件中的所有SQL语句
+4. 执行完成后访问 http://localhost:3000/labubu-news 查看资讯页面
+
+📊 **数据库结构包含**:
+- 7个核心表: news_articles、trending_keywords、news_sources等
+- 2个查询视图: v_trending_articles、v_hot_keywords  
+- 完整的索引和触发器优化
+- 6篇测试资讯文章
+- 8个热搜关键词
+
+### 📱 访问资讯页面
+- 🌐 **资讯聚合页面**: http://localhost:3000/labubu-news
+- 🎨 **创意作品画廊**: http://localhost:3000/labubu-gallery
+- 🏠 **项目主页**: http://localhost:3000
+
+---
+
 ## 📞 技术支持
 
 如需技术支持或有任何问题，请查看：
 - 📄 PAYMENT_SECURITY_GUIDE.md - 支付安全指南
 - 📄 env.example - 环境变量配置示例
 - 📄 docs/R2配置获取指南.md - R2存储配置详细指南
-- 📁 scripts/ - 各种检查和设置脚本 
+- 📁 scripts/ - 各种检查和设置脚本
+- 📁 scripts/create-news-tables.sql - 资讯聚合数据库表结构 
