@@ -112,18 +112,19 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
   }
 
   return (
-    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-white/80 backdrop-blur-sm border-pink-100">
+    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-white border-gray-100 rounded-xl">
       <CardContent className="p-0">
-        {/* 图片展示 - 移到顶部 */}
+        {/* 图片展示 - 小红书风格 */}
         {post.imageUrls.length > 0 && (
           <div className="relative">
             {post.imageUrls.length === 1 ? (
-              <div className="aspect-square relative overflow-hidden">
+              <div className="relative w-full" style={{ aspectRatio: 'auto' }}>
                 <Image
                   src={post.imageUrls[0]}
                   alt={post.title}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  width={300}
+                  height={200}
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105 rounded-t-xl"
                   onError={(e) => {
                     console.error('图片加载失败:', post.imageUrls[0])
                     // 显示占位符
@@ -132,16 +133,15 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
                     const parent = target.parentElement
                     if (parent && !parent.querySelector('.image-placeholder')) {
                       const placeholder = document.createElement('div')
-                      placeholder.className = 'image-placeholder absolute inset-0 bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center'
+                      placeholder.className = 'image-placeholder w-full h-48 bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center rounded-t-xl'
                       placeholder.innerHTML = `
                         <div class="text-center">
-                          <div class="w-16 h-16 mx-auto mb-2 bg-pink-200 rounded-full flex items-center justify-center">
-                            <svg class="w-8 h-8 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div class="w-12 h-12 mx-auto mb-2 bg-pink-200 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                           </div>
                           <p class="text-sm text-gray-500">图片加载失败</p>
-                          <p class="text-xs text-gray-400">R2存储配置中...</p>
                         </div>
                       `
                       parent.appendChild(placeholder)
@@ -169,8 +169,8 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
                           placeholder.className = 'image-placeholder absolute inset-0 bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center'
                           placeholder.innerHTML = `
                             <div class="text-center">
-                              <div class="w-8 h-8 mx-auto mb-1 bg-pink-200 rounded-full flex items-center justify-center">
-                                <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div class="w-6 h-6 mx-auto mb-1 bg-pink-200 rounded-full flex items-center justify-center">
+                                <svg class="w-3 h-3 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
                               </div>
@@ -183,7 +183,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
                     />
                     {index === 3 && post.imageUrls.length > 4 && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <span className="text-white font-bold text-lg">
+                        <span className="text-white font-bold text-sm">
                           +{post.imageUrls.length - 4}
                         </span>
                       </div>
@@ -196,111 +196,74 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
         )}
       </CardContent>
 
-      <CardHeader className="p-4">
-        {/* 用户信息 */}
-        <div className="flex items-center space-x-3 mb-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold">
-            {post.user?.name?.[0] || post.user?.email?.[0] || 'U'}
-          </div>
-          <div className="flex-1">
-            <div className="font-semibold text-gray-900">
-              {post.user?.name || '匿名用户'}
-            </div>
-            <div className="text-sm text-gray-500">
-              {formatTime(post.createdAt)}
-            </div>
-          </div>
-          <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
-            <MoreHorizontal className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* 标题 */}
-        <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
+      {/* 小红书风格的紧凑信息区域 */}
+      <div className="p-3">
+        {/* 标题 - 小红书风格 */}
+        <h3 className="font-medium text-sm text-gray-900 mb-2 line-clamp-2 leading-relaxed">
           {post.title}
         </h3>
 
-        {/* 内容描述 */}
-        {post.content && (
-          <p className="text-gray-600 text-sm line-clamp-3 mb-3">
-            {post.content}
-          </p>
-        )}
-
-        {/* 标签 */}
-        {post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
-            {post.tags.slice(0, 3).map((tag, index) => (
-              <Badge key={index} variant="secondary" className="text-xs bg-pink-100 text-pink-700 hover:bg-pink-200">
-                #{tag}
-              </Badge>
-            ))}
-            {post.tags.length > 3 && (
-              <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
-                +{post.tags.length - 3}
-              </Badge>
-            )}
+        {/* 用户信息和互动 - 小红书风格 */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
+              {post.user?.name?.[0] || post.user?.email?.[0] || 'U'}
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-700 font-medium">
+                {post.user?.name || '匿名用户'}
+              </span>
+              <span className="text-xs text-gray-400">
+                {formatTime(post.createdAt)}
+              </span>
+            </div>
           </div>
-        )}
-      </CardHeader>
 
-      <CardFooter className="p-4">
-        {/* 互动按钮 */}
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center space-x-4">
-            {/* 点赞按钮 */}
+          {/* 简化的互动按钮 */}
+          <div className="flex items-center space-x-3">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleLike}
               disabled={isLoading}
-              className={`flex items-center space-x-1 ${
-                isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-500 hover:text-red-500'
+              className={`p-1 h-auto ${
+                isLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
               }`}
             >
               <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-              <span className="text-sm">{likeCount}</span>
+              <span className="text-xs ml-1">{likeCount}</span>
             </Button>
 
-            {/* 评论按钮 */}
-            <Button variant="ghost" size="sm" className="flex items-center space-x-1 text-gray-500 hover:text-blue-500">
-              <MessageCircle className="w-4 h-4" />
-              <span className="text-sm">{post.commentCount}</span>
-            </Button>
-
-            {/* 浏览量 */}
-            <div className="flex items-center space-x-1 text-gray-400">
-              <Eye className="w-4 h-4" />
-              <span className="text-sm">{post.viewCount}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            {/* 收藏按钮 */}
             <Button
               variant="ghost"
               size="sm"
               onClick={handleBookmark}
               disabled={isLoading}
-              className={`${
-                isBookmarked ? 'text-yellow-500 hover:text-yellow-600' : 'text-gray-500 hover:text-yellow-500'
+              className={`p-1 h-auto ${
+                isBookmarked ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'
               }`}
             >
               <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
             </Button>
-
-            {/* 分享按钮 */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleShare}
-              className="text-gray-500 hover:text-green-500"
-            >
-              <Share2 className="w-4 h-4" />
-            </Button>
           </div>
         </div>
-      </CardFooter>
+
+        {/* 标签 - 小红书风格 */}
+        {post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-2">
+            {post.tags.slice(0, 2).map((tag, index) => (
+              <Badge key={index} variant="secondary" className="text-xs px-2 py-0.5 bg-pink-50 text-pink-600 hover:bg-pink-100 border-0">
+                #{tag}
+              </Badge>
+            ))}
+            {post.tags.length > 2 && (
+              <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-gray-50 text-gray-500 border-0">
+                +{post.tags.length - 2}
+              </Badge>
+            )}
+          </div>
+        )}
+      </div>
     </Card>
   )
 } 

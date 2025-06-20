@@ -141,7 +141,7 @@ export function LabubuGalleryContent() {
   ] as const
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50">
+    <div className="min-h-screen bg-gray-50">
       {/* 统一的导航栏 */}
       <Navigation />
       
@@ -268,10 +268,10 @@ export function LabubuGalleryContent() {
           </div>
         ) : (
           <div className="space-y-8">
-            {/* 作品网格 */}
-            <div className={`grid gap-6 ${
+            {/* 作品网格 - 小红书风格 6列布局 */}
+            <div className={`grid gap-4 ${
               viewMode === 'grid' 
-                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
+                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6' 
                 : 'grid-cols-1 max-w-2xl mx-auto'
             }`}>
               {posts.map((post) => (
