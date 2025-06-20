@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { AdvancedContentControl } from '@/components/admin/AdvancedContentControl'
+import { AdvancedContentDashboard } from '@/components/admin/AdvancedContentDashboard'
 
 export const metadata: Metadata = {
   title: '高级内容引擎 - Labubu社区管理',
@@ -7,11 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default function AdvancedContentPage() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-sky-50 to-emerald-50">
-      <div className="container mx-auto px-4 py-8">
-        <AdvancedContentControl />
-      </div>
-    </div>
-  )
+  return <AdvancedContentDashboard />
 } 
