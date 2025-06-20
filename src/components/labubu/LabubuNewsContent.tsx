@@ -259,6 +259,43 @@ export function LabubuNewsContent() {
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-4 gap-8">
           
+          {/* 🔥 左侧边栏 - 热搜排行榜 */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8">
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    🔥 Labubu热搜
+                  </h3>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {trendingKeywords.map((keyword) => (
+                    <div
+                      key={keyword.keyword}
+                      onClick={() => handleTrendingClick(keyword.keyword)}
+                      className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-bold w-6 text-center ${
+                          keyword.rank <= 3 ? 'text-red-500' : 'text-gray-500'
+                        }`}>
+                          {keyword.rank}
+                        </span>
+                        <span className="text-sm font-medium">{keyword.keyword}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs">{keyword.trendIcon}</span>
+                        <Badge className={`text-xs ${getHeatColor(keyword.heatLevel)}`}>
+                          {(keyword.hotScore || 0).toFixed(0)}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
           {/* 📰 主要内容区域 */}
           <div className="lg:col-span-3 space-y-6">
             
@@ -471,69 +508,6 @@ export function LabubuNewsContent() {
                   )}
                 </>
               )}
-            </div>
-          </div>
-
-          {/* 🔥 侧边栏 - 热搜排行榜 */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8 space-y-6">
-              
-              {/* 热搜排行榜 */}
-              <Card>
-                <CardHeader>
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    🔥 Labubu热搜
-                  </h3>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {trendingKeywords.map((keyword) => (
-                    <div
-                      key={keyword.keyword}
-                      onClick={() => handleTrendingClick(keyword.keyword)}
-                      className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className={`text-sm font-bold w-6 text-center ${
-                          keyword.rank <= 3 ? 'text-red-500' : 'text-gray-500'
-                        }`}>
-                          {keyword.rank}
-                        </span>
-                        <span className="text-sm font-medium">{keyword.keyword}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs">{keyword.trendIcon}</span>
-                        <Badge className={`text-xs ${getHeatColor(keyword.heatLevel)}`}>
-                          {(keyword.hotScore || 0).toFixed(0)}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* 快捷分类 */}
-              <Card>
-                <CardHeader>
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    📂 资讯分类
-                  </h3>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {categories.slice(1).map((category) => (
-                    <Button
-                      key={category.key}
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleCategoryChange(category.key)}
-                      className="w-full justify-start"
-                    >
-                      <span className="mr-2">{category.icon}</span>
-                      {category.label}
-                    </Button>
-                  ))}
-                </CardContent>
-              </Card>
-
             </div>
           </div>
         </div>
