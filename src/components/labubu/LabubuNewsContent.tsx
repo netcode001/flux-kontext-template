@@ -404,8 +404,8 @@ export function LabubuNewsContent() {
               </div>
             )}
 
-            {/* 📰 资讯列表 */}
-            <div className="space-y-6">
+            {/* 📰 资讯列表 - 网格布局 */}
+            <div>
               {isLoading && articles.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
@@ -421,101 +421,101 @@ export function LabubuNewsContent() {
                 </div>
               ) : (
                 <>
-                  {articles.map((article, index) => (
+                  {/* 🎯 一行2个卡片的网格布局 */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {articles.map((article, index) => (
                     <div 
                       key={article.id} 
-                      className="group bg-white/70 backdrop-blur-xl rounded-3xl overflow-hidden shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-500 hover:bg-white/80 hover:scale-[1.02] animate-fade-in-up"
+                      className="group bg-white/70 backdrop-blur-xl rounded-3xl overflow-hidden shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-500 hover:bg-white/80 hover:scale-[1.02] animate-fade-in-up cursor-pointer"
                       style={{ animationDelay: `${index * 100}ms` }}
+                      onClick={() => window.open(article.originalUrl, '_blank')}
                     >
-                      <div className="p-6">
-                        <div className="flex gap-6">
+                      {/* 📸 文章图片 */}
+                      {article.imageUrls.length > 0 && (
+                        <div className="relative overflow-hidden">
+                          <img
+                            src={article.imageUrls[0]}
+                            alt={article.title}
+                            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           
-                          {/* 📸 文章图片 */}
-                          {article.imageUrls.length > 0 && (
-                            <div className="flex-shrink-0">
-                              <div className="relative overflow-hidden rounded-2xl group-hover:scale-105 transition-transform duration-300">
-                                <img
-                                  src={article.imageUrls[0]}
-                                  alt={article.title}
-                                  className="w-32 h-24 object-cover"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          {/* 热度标签 */}
+                          <div className="absolute top-3 right-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                            🔥 {(article.hotScore || 0).toFixed(1)}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="p-6">
+                        {/* 📝 文章内容 */}
+                        <div className="space-y-4">
+                          
+                          {/* 标题和来源 */}
+                          <div>
+                            <h3 className="text-lg font-bold text-slate-800 line-clamp-2 hover:bg-gradient-to-r hover:from-pink-600 hover:to-violet-600 hover:bg-clip-text hover:text-transparent cursor-pointer transition-all duration-300 group-hover:scale-[1.02]">
+                              {article.title}
+                            </h3>
+                            <div className="flex items-center gap-3 mt-2">
+                              <div className="px-3 py-1 bg-gradient-to-r from-pink-100 to-violet-100 text-pink-700 rounded-full text-xs font-medium border border-pink-200">
+                                {article.sourceName}
                               </div>
+                              <span className="text-violet-500 text-xs font-medium">
+                                {formatTime(article.publishedAt)}
+                              </span>
+                              {article.author && (
+                                <span className="text-sky-500 text-xs font-medium">
+                                  by {article.author}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* 摘要 */}
+                          {article.summary && (
+                            <p className="text-slate-600 text-sm line-clamp-2 leading-relaxed">
+                              {article.summary}
+                            </p>
+                          )}
+
+                          {/* 标签 */}
+                          {article.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {article.tags.slice(0, 3).map((tag, tagIndex) => (
+                                <div 
+                                  key={tagIndex} 
+                                  className="px-2 py-1 bg-gradient-to-r from-sky-100 to-cyan-100 text-sky-700 rounded-xl text-xs font-medium border border-sky-200 hover:scale-105 transition-transform duration-200"
+                                >
+                                  #{tag}
+                                </div>
+                              ))}
                             </div>
                           )}
 
-                          {/* 📝 文章内容 */}
-                          <div className="flex-1 space-y-4">
-                            
-                            {/* 标题和来源 */}
-                            <div>
-                              <h3 className="text-lg font-bold text-slate-800 line-clamp-2 hover:bg-gradient-to-r hover:from-pink-600 hover:to-violet-600 hover:bg-clip-text hover:text-transparent cursor-pointer transition-all duration-300 group-hover:scale-[1.02]">
-                                {article.title}
-                              </h3>
-                              <div className="flex items-center gap-3 mt-2">
-                                <div className="px-3 py-1 bg-gradient-to-r from-pink-100 to-violet-100 text-pink-700 rounded-full text-xs font-medium border border-pink-200">
-                                  {article.sourceName}
-                                </div>
-                                <span className="text-violet-500 text-xs font-medium">
-                                  {formatTime(article.publishedAt)}
-                                </span>
-                                {article.author && (
-                                  <span className="text-sky-500 text-xs font-medium">
-                                    by {article.author}
-                                  </span>
-                                )}
-                              </div>
+                          {/* 互动数据 */}
+                          <div className="flex items-center gap-4 text-slate-500 text-sm">
+                            <div className="flex items-center gap-1 hover:text-violet-500 transition-colors duration-200">
+                              <Eye className="w-4 h-4" />
+                              <span className="font-medium">{article.viewCount}</span>
                             </div>
-
-                            {/* 摘要 */}
-                            {article.summary && (
-                              <p className="text-slate-600 text-sm line-clamp-2 leading-relaxed">
-                                {article.summary}
-                              </p>
-                            )}
-
-                            {/* 标签 */}
-                            {article.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-2">
-                                {article.tags.slice(0, 3).map((tag, tagIndex) => (
-                                  <div 
-                                    key={tagIndex} 
-                                    className="px-2 py-1 bg-gradient-to-r from-sky-100 to-cyan-100 text-sky-700 rounded-xl text-xs font-medium border border-sky-200 hover:scale-105 transition-transform duration-200"
-                                  >
-                                    #{tag}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-
-                            {/* 互动数据 */}
-                            <div className="flex items-center gap-6 text-slate-500 text-sm">
-                              <div className="flex items-center gap-2 hover:text-violet-500 transition-colors duration-200">
-                                <Eye className="w-4 h-4" />
-                                <span className="font-medium">{article.viewCount}</span>
-                              </div>
-                              <div className="flex items-center gap-2 hover:text-pink-500 transition-colors duration-200">
-                                <Heart className={`w-4 h-4 ${article.isLiked ? 'text-pink-500 fill-current' : ''}`} />
-                                <span className="font-medium">{article.likeCount}</span>
-                              </div>
-                              <div className="flex items-center gap-2 hover:text-sky-500 transition-colors duration-200">
-                                <Share2 className="w-4 h-4" />
-                                <span className="font-medium">{article.shareCount}</span>
-                              </div>
-                              <div className="flex items-center gap-2 hover:text-emerald-500 transition-colors duration-200">
-                                <TrendingUp className="w-4 h-4" />
-                                <span className="font-bold text-emerald-600">{(article.hotScore || 0).toFixed(1)}</span>
-                              </div>
+                            <div className="flex items-center gap-1 hover:text-pink-500 transition-colors duration-200">
+                              <Heart className={`w-4 h-4 ${article.isLiked ? 'text-pink-500 fill-current' : ''}`} />
+                              <span className="font-medium">{article.likeCount}</span>
+                            </div>
+                            <div className="flex items-center gap-1 hover:text-sky-500 transition-colors duration-200">
+                              <Share2 className="w-4 h-4" />
+                              <span className="font-medium">{article.shareCount}</span>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   ))}
+                  </div>
 
                   {/* 📄 加载更多 */}
                   {hasMore && (
-                    <div className="text-center">
+                    <div className="text-center mt-6">
                       <Button
                         onClick={loadMore}
                         disabled={isLoading}

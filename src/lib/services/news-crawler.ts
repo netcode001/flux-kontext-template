@@ -113,7 +113,7 @@ export class NewsCrawler {
         sourceId: this.getSourceIdFromUrl(url),
         originalUrl: item.link || item.guid || '',
         publishedAt: new Date(item.pubDate || Date.now()),
-        imageUrls: this.extractImages(item.content || item.description || ''),
+        imageUrls: this.extractImages(item.content || item.description || '', item),
         tags: this.extractTags(item.title + ' ' + (item.description || '')),
         category: this.categorizeContent(item.title + ' ' + (item.description || ''))
       }))
@@ -203,24 +203,71 @@ export class NewsCrawler {
       : plainText
   }
 
-  // 🖼️ 提取图片URL
-  private extractImages(content: string): string[] {
-    if (!content) return []
+  // 🖼️ 提取图片URL (增强版)
+  private extractImages(content: string, item?: any): string[] {
+    const imageUrls: string[] = []
     
-    const imgRegex = /<img[^>]+src="([^">]+)"/g
-    const images: string[] = []
-    let match
-    
-    while ((match = imgRegex.exec(content)) !== null) {
-      images.push(match[1])
+    // 1. 从RSS item中提取缩略图
+    if (item?.thumbnail) {
+      imageUrls.push(item.thumbnail)
     }
     
-    // 如果没有图片，返回占位图
-    if (images.length === 0) {
-      images.push(`https://picsum.photos/400/300?random=${Math.floor(Math.random() * 100)}`)
+    // 2. 从RSS item的enclosure中提取图片
+    if (item?.enclosure?.link && item.enclosure.type?.startsWith('image/')) {
+      imageUrls.push(item.enclosure.link)
     }
     
-    return images.slice(0, 3) // 最多3张图片
+    // 3. 从content中提取img标签 (支持单引号和双引号)
+    if (content) {
+      const imgRegex = /<img[^>]+src=["']([^"'>]+)["'][^>]*>/gi
+      let match
+      while ((match = imgRegex.exec(content)) !== null) {
+        const src = match[1]
+        // 过滤掉小图标和无效图片，确保是有效的图片URL
+        if (src && !src.includes('icon') && !src.includes('logo') && 
+            !src.includes('avatar') && src.length > 10 &&
+            (src.startsWith('http') || src.startsWith('//'))) {
+          imageUrls.push(src.startsWith('//') ? 'https:' + src : src)
+        }
+      }
+    }
+    
+    // 4. 从content中提取og:image meta标签
+    if (content) {
+      const ogImageRegex = /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"'>]+)["'][^>]*>/gi
+      let match
+      while ((match = ogImageRegex.exec(content)) !== null) {
+        const src = match[1]
+        if (src && src.startsWith('http')) {
+          imageUrls.push(src)
+        }
+      }
+    }
+    
+    // 去重并过滤有效图片
+    const uniqueImages = [...new Set(imageUrls)].filter(url => {
+      if (!url || url.length < 10) return false
+      
+      // 检查是否为有效的图片格式
+      const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg']
+      const hasValidExtension = validExtensions.some(ext => 
+        url.toLowerCase().includes(ext)
+      )
+      
+      // 或者检查URL是否来自常见的图片服务
+      const isImageService = url.includes('picsum') || url.includes('unsplash') || 
+                            url.includes('pexels') || url.includes('pixabay') ||
+                            url.includes('cdn') || url.includes('media')
+      
+      return hasValidExtension || isImageService
+    })
+    
+    // 如果没有找到有效图片，使用高质量占位图
+    if (uniqueImages.length === 0) {
+      uniqueImages.push(`https://picsum.photos/600/400?random=${Math.floor(Math.random() * 1000)}`)
+    }
+    
+    return uniqueImages.slice(0, 5) // 最多5张图片
   }
 
   // 🏷️ 提取标签
