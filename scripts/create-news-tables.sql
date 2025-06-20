@@ -235,78 +235,141 @@ INSERT INTO public.news_tags (name, category, color) VALUES
 ('限量版', 'limited', '#FF7F50')
 ON CONFLICT (name) DO NOTHING;
 
--- 📰 插入测试资讯文章
+-- 📰 插入测试资讯文章 (包含明星、价格、穿搭等热门内容)
 INSERT INTO public.news_articles (title, content, summary, author, category, hot_score, is_featured, tags, published_at) VALUES
-('Labubu限量版新品发布！粉色系列惊艳亮相', 
-'Labubu品牌今日正式发布了全新的粉色系列限量版产品，包含多款不同造型的玩偶和周边产品。这次发布的粉色系列以温柔的色调和精致的工艺赢得了众多粉丝的喜爱。', 
-'Labubu粉色系列限量版正式发布，精致工艺获粉丝好评', 
-'Labubu官方', 
+('Lisa同款Labubu价格暴涨！限量版拍卖破万元', 
+'自从Lisa在社交媒体晒出Labubu收藏后，相关产品价格一路飙升。据统计，Lisa同款限量版Labubu在二手市场的拍卖价格已突破万元大关，成为潮玩收藏界的新宠。专家提醒收藏者理性消费，警惕价格泡沫。', 
+'Lisa效应带动Labubu价格暴涨，限量版拍卖破万引关注', 
+'财经记者小张', 
 '新品发布', 
-95.5, 
+98.5, 
 true, 
-ARRAY['新品发布', '限量版', '粉色系列'], 
-NOW() - INTERVAL '2 hours'),
+ARRAY['明星同款', '价格', '拍卖', 'Lisa'], 
+NOW() - INTERVAL '1 hour'),
 
-('开箱评测：Labubu盲盒第三弹完整体验', 
-'最新一期的Labubu盲盒开箱来了！这次为大家带来第三弹盲盒的完整开箱体验，包含隐藏款的惊喜发现。从包装设计到产品质量，每一个细节都值得收藏。', 
-'Labubu盲盒第三弹开箱评测，隐藏款惊喜曝光', 
-'潮玩达人小李', 
-'开箱评测', 
-88.2, 
+('Labubu穿搭指南：如何为你的玩偶定制专属造型', 
+'Labubu不仅是收藏品，更是时尚单品！本期为大家带来详细的Labubu穿搭指南，从基础配饰到高级定制，教你打造独一无二的玩偶造型。包含春夏秋冬四季穿搭方案，以及节日主题造型设计。', 
+'Labubu穿搭指南大全，定制专属造型展现个性魅力', 
+'时尚博主小雅', 
+'潮流趋势', 
+92.8, 
+true, 
+ARRAY['穿搭', '定制', '造型', '配饰'], 
+NOW() - INTERVAL '3 hours'),
+
+('独家！Labubu改款升级内幕曝光，新版本即将发售', 
+'据内部消息透露，Labubu品牌正在进行重大改款升级，新版本将在材质、工艺和设计上全面提升。改款后的Labubu将采用更环保的材料，增加可动关节，并推出更多个性化定制选项。预计下月正式发售。', 
+'Labubu改款升级内幕曝光，新版本功能大幅提升', 
+'行业内幕君', 
+'新品发布', 
+89.7, 
 false, 
-ARRAY['开箱评测', '盲盒', '隐藏款'], 
-NOW() - INTERVAL '5 hours'),
+ARRAY['改款', '升级', '新版本', '定制'], 
+NOW() - INTERVAL '6 hours'),
 
-('Labubu收藏攻略：如何辨别正品与获取限量版', 
-'随着Labubu的火爆，市面上出现了不少仿品。本文详细介绍如何辨别正品Labubu的方法，以及获取限量版产品的渠道和技巧，帮助收藏爱好者避免踩坑。', 
-'Labubu正品辨别方法和限量版获取攻略分享', 
-'收藏专家王老师', 
+('明星收藏Labubu成风潮，网红带货效应显著', 
+'继Lisa之后，越来越多明星开始收藏和展示Labubu。从杨幂到迪丽热巴，从欧阳娜娜到宋茜，明星们的Labubu收藏引发粉丝跟风购买。网红带货效应让Labubu销量暴增300%，成为2024年最火潮玩。', 
+'明星收藏Labubu引发跟风潮，网红带货效应推动销量暴增', 
+'娱乐记者小王', 
+'潮流趋势', 
+94.2, 
+true, 
+ARRAY['明星', '网红', '收藏', '带货'], 
+NOW() - INTERVAL '4 hours'),
+
+('Labubu拍卖市场火热，稀有款式价格创新高', 
+'在刚刚结束的潮玩拍卖会上，一只稀有的Labubu隐藏款以15万元的天价成交，创下单只Labubu拍卖价格新纪录。拍卖师表示，Labubu已成为继潮鞋之后的新兴投资收藏品类，未来升值空间巨大。', 
+'Labubu拍卖价格创新高，稀有款式成投资新宠', 
+'拍卖行专家', 
 '收藏攻略', 
-76.8, 
+87.6, 
 false, 
-ARRAY['收藏攻略', '正品辨别', '限量版'], 
-NOW() - INTERVAL '1 day'),
-
-('艺术创作：用Labubu打造梦幻拍摄场景', 
-'摄影师小美分享了她用Labubu玩偶创作的一系列梦幻拍摄作品。通过精心的场景布置和光影运用，让每一个Labubu都仿佛有了生命力，展现出独特的艺术魅力。', 
-'摄影师用Labubu创作梦幻艺术作品，展现独特魅力', 
-'摄影师小美', 
-'艺术创作', 
-82.1, 
-true, 
-ARRAY['艺术创作', '摄影', '梦幻场景'], 
+ARRAY['拍卖', '价格', '投资', '稀有款'], 
 NOW() - INTERVAL '8 hours'),
 
-('潮流趋势：Labubu引领2024年潮玩新风向', 
-'2024年潮玩市场分析报告显示，Labubu已成为最受欢迎的潮玩品牌之一。其独特的设计风格和品牌文化正在引领整个行业的发展方向，成为年轻人的新宠。', 
-'Labubu成2024年潮玩市场新宠，引领行业发展趋势', 
-'潮流观察员', 
-'潮流趋势', 
-91.3, 
+('Labubu定制服务上线，个性化需求引爆市场', 
+'Labubu官方正式推出定制服务，用户可以根据个人喜好定制独特的造型、颜色和配饰。定制服务一经推出就引发抢购热潮，首批1000个定制名额在30分钟内售罄。定制价格从899元到3999元不等。', 
+'Labubu定制服务火爆上线，个性化定制引发抢购潮', 
+'Labubu官方', 
+'新品发布', 
+91.4, 
 true, 
-ARRAY['潮流趋势', '市场分析', '品牌文化'], 
+ARRAY['定制', '个性化', '官方', '服务'], 
 NOW() - INTERVAL '12 hours'),
 
-('活动预告：Labubu主题展览即将开幕', 
-'Labubu品牌官方宣布，将于下月在上海举办大型主题展览。展览将展示品牌历史、设计理念以及最新产品，还有机会获得限量版纪念品。粉丝们不要错过这个难得的机会！', 
-'Labubu上海主题展览下月开幕，限量纪念品等你来', 
-'展览组委会', 
-'活动预告', 
-85.7, 
+('Labubu摄影大赛开启，创意场景拍摄技巧分享', 
+'首届Labubu摄影大赛正式启动，主题为"我的Labubu世界"。专业摄影师分享独家拍摄技巧，从布景搭建到光影控制，教你拍出ins风格的Labubu大片。获奖作品将有机会成为官方宣传素材。', 
+'Labubu摄影大赛启动，专业技巧助你拍出完美大片', 
+'摄影大师老李', 
+'艺术创作', 
+83.9, 
 false, 
-ARRAY['活动预告', '主题展览', '限量纪念品'], 
-NOW() - INTERVAL '6 hours');
+ARRAY['摄影', '大赛', '创意', '技巧'], 
+NOW() - INTERVAL '10 hours'),
 
--- 🔥 插入热搜关键词
+('Labubu联名合作不断，品牌价值持续攀升', 
+'Labubu与多个知名品牌达成联名合作，从奢侈品牌到快消品牌，从时尚界到科技界，Labubu的跨界合作版图不断扩大。业内专家认为，频繁的联名合作正在推动Labubu品牌价值的持续攀升。', 
+'Labubu联名合作版图扩大，品牌价值持续攀升', 
+'品牌分析师', 
+'潮流趋势', 
+86.3, 
+false, 
+ARRAY['联名', '合作', '品牌', '价值'], 
+NOW() - INTERVAL '14 hours');
+
+-- 🔥 插入热搜关键词 (参考小红书和谷歌热搜)
 INSERT INTO public.trending_keywords (keyword, category, search_count, mention_count, hot_score, trend_direction) VALUES
-('Labubu粉色系列', 'product', 1250, 890, 89.5, 'up'),
+-- 🎯 产品相关热搜
 ('Labubu盲盒', 'product', 2100, 1456, 95.2, 'up'),
+('Labubu粉色系列', 'product', 1250, 890, 89.5, 'up'),
 ('Labubu限量版', 'product', 980, 723, 78.3, 'stable'),
+('Labubu隐藏款', 'product', 1180, 834, 85.7, 'up'),
+('Labubu改款', 'product', 756, 523, 68.9, 'up'),
+('Labubu定制', 'product', 645, 478, 62.3, 'up'),
+('Labubu联名', 'product', 892, 634, 74.5, 'up'),
+
+-- 💰 价格相关热搜
+('Labubu价格', 'price', 1890, 1234, 92.8, 'up'),
+('Labubu多少钱', 'price', 1567, 1098, 87.6, 'up'),
+('Labubu拍卖', 'price', 734, 521, 65.8, 'up'),
+('Labubu二手', 'price', 623, 445, 58.9, 'stable'),
+('Labubu涨价', 'price', 456, 312, 52.3, 'up'),
+
+-- 🌟 明星相关热搜
+('Lisa Labubu', 'celebrity', 2890, 2134, 98.7, 'up'),
+('明星同款Labubu', 'celebrity', 1456, 1023, 84.2, 'up'),
+('Labubu代言人', 'celebrity', 789, 567, 69.4, 'stable'),
+('网红Labubu', 'celebrity', 634, 445, 58.9, 'up'),
+
+-- 👗 穿搭相关热搜
+('Labubu穿搭', 'fashion', 1234, 867, 81.5, 'up'),
+('Labubu配饰', 'fashion', 756, 523, 68.9, 'up'),
+('Labubu造型', 'fashion', 645, 478, 62.3, 'stable'),
+('Labubu服装', 'fashion', 567, 398, 56.7, 'up'),
+
+-- 📸 拍摄创作热搜
+('Labubu摄影', 'art', 892, 634, 74.5, 'up'),
+('Labubu拍照', 'art', 734, 521, 65.8, 'stable'),
+('Labubu场景', 'art', 623, 445, 58.9, 'up'),
+('Labubu布景', 'art', 456, 312, 52.3, 'stable'),
+
+-- 🎨 收藏攻略热搜
 ('Labubu收藏', 'guide', 856, 634, 72.1, 'up'),
 ('Labubu正品', 'guide', 734, 521, 65.8, 'stable'),
+('Labubu鉴定', 'guide', 645, 478, 62.3, 'up'),
+('Labubu保养', 'guide', 456, 312, 52.3, 'stable'),
+
+-- 🎪 活动事件热搜
 ('Labubu展览', 'event', 623, 445, 58.9, 'up'),
-('Labubu摄影', 'art', 445, 312, 52.3, 'stable'),
-('Labubu潮流', 'trend', 567, 398, 61.7, 'up');
+('Labubu发售', 'event', 789, 567, 69.4, 'up'),
+('Labubu抽签', 'event', 567, 398, 56.7, 'up'),
+('Labubu快闪店', 'event', 456, 312, 52.3, 'stable'),
+
+-- 🔥 潮流趋势热搜
+('Labubu潮流', 'trend', 567, 398, 61.7, 'up'),
+('Labubu文化', 'trend', 445, 312, 52.3, 'stable'),
+('Labubu社区', 'trend', 389, 267, 48.6, 'up'),
+('Labubu周边', 'trend', 456, 312, 52.3, 'stable');
 
 -- 🎉 数据库设置完成提示
 SELECT '🎉 Labubu资讯聚合数据库设置完成！' as message;
@@ -314,4 +377,14 @@ SELECT '📊 表统计:' as info,
        (SELECT COUNT(*) FROM news_articles) as articles_count,
        (SELECT COUNT(*) FROM trending_keywords) as keywords_count,
        (SELECT COUNT(*) FROM news_sources) as sources_count,
-       (SELECT COUNT(*) FROM news_tags) as tags_count; 
+       (SELECT COUNT(*) FROM news_tags) as tags_count;
+
+-- 📈 热搜关键词分类统计
+SELECT '🔥 热搜关键词分类统计:' as category_stats;
+SELECT 
+  category,
+  COUNT(*) as keyword_count,
+  AVG(hot_score) as avg_hot_score
+FROM trending_keywords 
+GROUP BY category 
+ORDER BY avg_hot_score DESC; 
