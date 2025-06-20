@@ -34,34 +34,15 @@ export class NewsCrawler {
     this.initializeSources()
   }
 
-  // 🚀 初始化数据源
+  // 🚀 初始化Labubu专门数据源
   private initializeSources() {
     this.sources = [
-      // 📰 RSS新闻源
+      // 🎭 玩具和收藏品新闻源 (更有可能包含Labubu内容)
       {
-        id: 'bbc-news',
-        name: 'BBC News',
+        id: 'toy-news',
+        name: 'Toy News International',
         type: 'rss',
-        url: 'https://feeds.bbci.co.uk/news/rss.xml'
-      },
-      {
-        id: 'cnn-news',
-        name: 'CNN',
-        type: 'rss', 
-        url: 'https://rss.cnn.com/rss/edition.rss'
-      },
-      {
-        id: 'reuters',
-        name: 'Reuters',
-        type: 'rss',
-        url: 'https://www.reuters.com/arc/outboundfeeds/rss/?outputType=xml'
-      },
-      // 🎭 娱乐和潮流新闻
-      {
-        id: 'entertainment-weekly',
-        name: 'Entertainment Weekly',
-        type: 'rss',
-        url: 'https://ew.com/feed/'
+        url: 'https://feeds.feedburner.com/ToyNewsInternational'
       },
       {
         id: 'hypebeast',
@@ -69,18 +50,40 @@ export class NewsCrawler {
         type: 'rss',
         url: 'https://hypebeast.com/feed'
       },
-      // 🇨🇳 中文新闻源
+      // 🛍️ 潮流和时尚新闻源
       {
-        id: 'sina-news',
-        name: '新浪新闻',
-        type: 'api',
-        url: 'https://interface.sina.cn/news/wap/fymap2020_data.d.json',
-        config: { category: 'entertainment' }
+        id: 'fashion-news',
+        name: 'Fashion Network',
+        type: 'rss',
+        url: 'https://ww.fashionnetwork.com/rss/news.xml'
+      },
+      // 🎪 娱乐新闻源 (明星同款相关)
+      {
+        id: 'entertainment-weekly',
+        name: 'Entertainment Weekly',
+        type: 'rss',
+        url: 'https://ew.com/feed/'
       }
     ]
   }
 
-  // 📡 获取RSS内容
+  // 🎯 Labubu相关关键词
+  private labubuKeywords = [
+    'labubu', 'lаbubu', '拉布布', '泡泡玛特', 'popmart', 'pop mart',
+    'lisa', 'blackpink', '盲盒', 'blind box', '手办', 'figure',
+    'collectible', 'designer toy', '收藏', '限量', 'limited edition',
+    'kaws', 'molly', 'dimoo', 'skullpanda', 'hirono'
+  ]
+
+  // 🔍 检查内容是否与Labubu相关
+  private isLabubuRelated(text: string): boolean {
+    const lowerText = text.toLowerCase()
+    return this.labubuKeywords.some(keyword => 
+      lowerText.includes(keyword.toLowerCase())
+    )
+  }
+
+  // 📡 获取RSS内容 (只保留Labubu相关)
   private async fetchRSSContent(url: string): Promise<NewsArticle[]> {
     try {
       console.log('🔍 获取RSS内容:', url)
@@ -94,7 +97,15 @@ export class NewsCrawler {
         return []
       }
 
-      const articles: NewsArticle[] = data.items.slice(0, 10).map((item: any) => ({
+      // 🎯 只处理与Labubu相关的文章
+      const relevantItems = data.items.filter((item: any) => {
+        const text = (item.title || '') + ' ' + (item.description || item.content || '')
+        return this.isLabubuRelated(text)
+      })
+
+      console.log(`🎯 过滤后相关文章: ${relevantItems.length}/${data.items.length}`)
+
+      const articles: NewsArticle[] = relevantItems.slice(0, 10).map((item: any) => ({
         title: item.title || '无标题',
         content: item.content || item.description || '',
         summary: this.extractSummary(item.description || item.content || ''),
@@ -107,7 +118,7 @@ export class NewsCrawler {
         category: this.categorizeContent(item.title + ' ' + (item.description || ''))
       }))
 
-      console.log(`✅ RSS解析成功: ${articles.length}篇文章`)
+      console.log(`✅ RSS解析成功: ${articles.length}篇Labubu相关文章`)
       return articles
 
     } catch (error) {
@@ -172,12 +183,10 @@ export class NewsCrawler {
 
   // 🔍 从URL获取数据源ID
   private getSourceIdFromUrl(url: string): string {
-    if (url.includes('bbc')) return 'bbc-news'
-    if (url.includes('cnn')) return 'cnn-news'
-    if (url.includes('reuters')) return 'reuters'
-    if (url.includes('ew.com')) return 'entertainment-weekly'
+    if (url.includes('ToyNewsInternational')) return 'toy-news'
     if (url.includes('hypebeast')) return 'hypebeast'
-    if (url.includes('sina')) return 'sina-news'
+    if (url.includes('fashionnetwork')) return 'fashion-news'
+    if (url.includes('ew.com')) return 'entertainment-weekly'
     return 'unknown-source'
   }
 
