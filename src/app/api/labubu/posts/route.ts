@@ -49,9 +49,55 @@ export async function POST(request: NextRequest) {
   try {
     // 验证用户登录状态
     const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
+    console.log('🔍 API认证检查:', { 
+      hasSession: !!session, 
+      hasUser: !!session?.user, 
+      hasId: !!session?.user?.id,
+      userEmail: session?.user?.email 
+    })
+    
+    if (!session?.user) {
+      console.log('❌ API认证失败: 无session或user')
       return NextResponse.json(
         { success: false, error: '请先登录' },
+        { status: 401 }
+      )
+    }
+    
+    // 🔧 临时修复：如果没有用户ID，从数据库获取
+    let userId = session.user.id
+    if (!userId && session.user.email) {
+      try {
+        console.log('🔍 API尝试从数据库获取用户ID:', session.user.email)
+        
+        const user = await prisma.user.findFirst({
+          where: { email: session.user.email },
+          select: { id: true }
+        })
+        
+        if (user) {
+          userId = user.id
+          console.log('✅ API从数据库获取用户ID成功:', userId)
+        } else {
+          console.error('❌ API从数据库获取用户ID失败: 用户不存在')
+          return NextResponse.json(
+            { success: false, error: '用户身份验证失败' },
+            { status: 401 }
+          )
+        }
+      } catch (error) {
+        console.error('❌ API数据库查询失败:', error)
+        return NextResponse.json(
+          { success: false, error: '用户身份验证失败' },
+          { status: 401 }
+        )
+      }
+    }
+    
+    if (!userId) {
+      console.log('❌ API认证失败: 无法获取用户ID')
+      return NextResponse.json(
+        { success: false, error: '用户身份验证失败' },
         { status: 401 }
       )
     }
@@ -70,7 +116,7 @@ export async function POST(request: NextRequest) {
     // 创建帖子
     const post = await prisma.post.create({
       data: {
-        userId: session.user.id,
+        userId: userId,
         title,
         content,
         imageUrls,

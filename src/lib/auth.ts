@@ -330,14 +330,89 @@ export const authOptions: NextAuthOptions = {
       return `${baseUrl}/generate`
     },
     async session({ session, token }) {
-      // 🎯 会话信息处理
+      // 🔧 修复session用户ID问题 - 确保session包含完整的用户信息
+      if (session?.user && token?.user) {
+        session.user = token.user
+      }
+      
+      // 🔍 如果session中没有用户ID，尝试从数据库获取
+      if (session?.user?.email && !session.user.id) {
+        try {
+          console.log('🔍 Session缺少用户ID，从数据库查询:', session.user.email)
+          
+          const { createAdminClient } = await import('@/lib/supabase/server')
+          const supabase = createAdminClient()
+          
+          const { data: user, error } = await supabase
+            .from('users')
+            .select('id, name, image')
+            .eq('email', session.user.email)
+            .limit(1)
+            .single()
+          
+          if (!error && user) {
+            console.log('✅ 从数据库获取用户ID成功:', user.id)
+            session.user.id = user.id
+            // 更新其他用户信息
+            if (user.name) session.user.name = user.name
+            if (user.image) session.user.image = user.image
+          } else {
+            console.error('❌ 从数据库获取用户ID失败:', error)
+          }
+        } catch (error) {
+          console.error('❌ Session用户ID查询失败:', error)
+        }
+      }
+      
+      console.log('🔍 Session callback完成:', { 
+        hasUser: !!session?.user, 
+        hasId: !!session?.user?.id,
+        userId: session?.user?.id,
+        email: session?.user?.email 
+      })
+      
       return session
     },
     async jwt({ token, user, account }: { token: any; user?: any; account?: any }) {
-      // 🎯 JWT token 处理
+      // 🔧 JWT token处理 - 确保token包含用户ID
       if (user) {
-        token.user = user as any
+        console.log('🔍 JWT callback - 用户登录:', user.email)
+        
+        // 🔍 如果OAuth登录的user没有id，需要从数据库获取
+        if (user.email && !user.id) {
+          try {
+            console.log('🔍 OAuth用户缺少ID，从数据库查询:', user.email)
+            
+            const { createAdminClient } = await import('@/lib/supabase/server')
+            const supabase = createAdminClient()
+            
+            const { data: dbUser, error } = await supabase
+              .from('users')
+              .select('id')
+              .eq('email', user.email)
+              .limit(1)
+              .single()
+            
+            if (!error && dbUser) {
+              console.log('✅ 为OAuth用户设置数据库ID:', dbUser.id)
+              user.id = dbUser.id
+            } else {
+              console.error('❌ 无法获取OAuth用户的数据库ID:', error)
+            }
+          } catch (error) {
+            console.error('❌ JWT用户ID查询失败:', error)
+          }
+        }
+        
+        token.user = user
       }
+      
+      console.log('🔍 JWT callback完成:', { 
+        hasUser: !!token.user, 
+        hasId: !!token.user?.id,
+        email: token.user?.email 
+      })
+      
       return token
     },
   },
