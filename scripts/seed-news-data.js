@@ -1,5 +1,8 @@
 const { createClient } = require('@supabase/supabase-js')
 
+// 🔧 加载环境变量
+require('dotenv').config({ path: '.env.local' })
+
 // 🔧 Supabase客户端配置
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
