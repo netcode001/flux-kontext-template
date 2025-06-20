@@ -154,35 +154,30 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
     )
   }
 
-  // 格式化时间 - 修复日期类型问题
+  // 🕒 格式化时间 - 显示具体发布时间
   const formatTime = (date: Date | string) => {
-    // 🔧 确保date是Date对象
-    const dateObj = typeof date === 'string' ? new Date(date) : date
-    
-    // 🔧 验证日期有效性
-    if (isNaN(dateObj.getTime())) {
-      console.error('Invalid date:', date)
+    try {
+      // 🔧 确保date是Date对象
+      const dateObj = typeof date === 'string' ? new Date(date) : date
+      
+      // 🔧 验证日期有效性
+      if (!dateObj || isNaN(dateObj.getTime())) {
+        console.error('Invalid date:', date)
+        return '时间未知'
+      }
+      
+      // 📅 格式化为具体时间：2024-12-21 14:30
+      const year = dateObj.getFullYear()
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+      const day = String(dateObj.getDate()).padStart(2, '0')
+      const hours = String(dateObj.getHours()).padStart(2, '0')
+      const minutes = String(dateObj.getMinutes()).padStart(2, '0')
+      
+      return `${year}-${month}-${day} ${hours}:${minutes}`
+    } catch (error) {
+      console.error('Time format error:', error)
       return '时间未知'
     }
-    
-    const now = new Date()
-    const diff = now.getTime() - dateObj.getTime()
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    
-    if (days === 0) {
-      const hours = Math.floor(diff / (1000 * 60 * 60))
-      if (hours === 0) {
-        const minutes = Math.floor(diff / (1000 * 60))
-        return minutes <= 0 ? '刚刚' : `${minutes}分钟前`
-      }
-      return `${hours}小时前`
-    }
-    
-    if (days < 7) {
-      return `${days}天前`
-    }
-    
-    return dateObj.toLocaleDateString('zh-CN')
   }
 
   return (
@@ -286,100 +281,102 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
         </div>
       </Card>
 
-      {/* 🎪 详情弹窗 */}
+      {/* 🎪 详情弹窗 - 小红书风格布局 */}
       {showDetailModal && (
         <div 
           className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={handleCloseModal}
         >
           <div 
-            className="w-full max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden flex flex-col"
+            className="w-full max-w-5xl max-h-[90vh] bg-white rounded-xl overflow-hidden flex"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* 弹窗头部 */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-100">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
-                  {post.user?.name?.[0] || post.user?.email?.[0] || 'U'}
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">{post.user?.name || '匿名用户'}</h3>
-                  <p className="text-sm text-gray-500">{formatTime(post.createdAt)}</p>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCloseModal}
-                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full w-8 h-8 p-0"
-              >
-                <X className="w-4 h-4" />
-              </Button>
+            {/* 📸 左侧图片区域 */}
+            <div className="flex-1 relative bg-gray-50 flex items-center justify-center">
+              {post.imageUrls.length > 0 && (
+                <>
+                  <Image
+                    src={post.imageUrls[currentImageIndex]}
+                    alt={`${post.title} - ${currentImageIndex + 1}`}
+                    width={800}
+                    height={600}
+                    className="max-w-full max-h-full object-contain"
+                    onError={() => {
+                      console.error('弹窗图片加载失败:', post.imageUrls[currentImageIndex])
+                    }}
+                  />
+                  
+                  {/* 图片切换按钮 */}
+                  {post.imageUrls.length > 1 && (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handlePrevImage}
+                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full w-10 h-10 p-0"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleNextImage}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full w-10 h-10 p-0"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </Button>
+                      
+                      {/* 图片指示器 */}
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                        {post.imageUrls.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setCurrentImageIndex(index)}
+                            className={`w-2 h-2 rounded-full transition-all ${
+                              index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
             </div>
 
-            {/* 弹窗内容 */}
-            <div className="flex-1 flex overflow-hidden">
-              {/* 图片展示区域 */}
-              <div className="flex-1 relative bg-gray-50 flex items-center justify-center">
-                {post.imageUrls.length > 0 && (
-                  <>
-                    <Image
-                      src={post.imageUrls[currentImageIndex]}
-                      alt={`${post.title} - ${currentImageIndex + 1}`}
-                      width={800}
-                      height={600}
-                      className="max-w-full max-h-full object-contain"
-                      onError={() => {
-                        console.error('弹窗图片加载失败:', post.imageUrls[currentImageIndex])
-                      }}
-                    />
-                    
-                    {/* 图片切换按钮 */}
-                    {post.imageUrls.length > 1 && (
-                      <>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={handlePrevImage}
-                          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full w-10 h-10 p-0"
-                        >
-                          <ChevronLeft className="w-5 h-5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleNextImage}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full w-10 h-10 p-0"
-                        >
-                          <ChevronRight className="w-5 h-5" />
-                        </Button>
-                        
-                        {/* 图片指示器 */}
-                        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                          {post.imageUrls.map((_, index) => (
-                            <button
-                              key={index}
-                              onClick={() => setCurrentImageIndex(index)}
-                              className={`w-2 h-2 rounded-full transition-all ${
-                                index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </>
-                )}
+            {/* 👤 右侧信息区域 */}
+            <div className="w-96 border-l border-gray-100 flex flex-col">
+              {/* 用户信息头部 */}
+              <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white text-lg font-bold">
+                    {post.user?.name?.[0] || post.user?.email?.[0] || 'U'}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 text-base">{post.user?.name || '匿名用户'}</h3>
+                    <p className="text-sm text-gray-500">{formatTime(post.createdAt)}</p>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCloseModal}
+                  className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full w-8 h-8 p-0"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
 
-              {/* 详情信息区域 */}
-              <div className="w-80 border-l border-gray-100 flex flex-col">
-                <div className="p-4 flex-1 overflow-y-auto">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-3">{post.title}</h2>
+              {/* 内容区域 */}
+              <div className="flex-1 overflow-y-auto">
+                <div className="p-4">
+                  {/* 标题 */}
+                  <h2 className="text-lg font-semibold text-gray-900 mb-3 leading-relaxed">{post.title}</h2>
                   
+                  {/* 描述内容 */}
                   {post.content && (
                     <div className="mb-4">
-                      <p className="text-gray-700 leading-relaxed">{post.content}</p>
+                      <p className="text-gray-700 leading-relaxed text-sm">{post.content}</p>
                     </div>
                   )}
                   
@@ -399,55 +396,55 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
                   {/* AI生成信息 */}
                   {post.prompt && (
                     <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                      <h4 className="text-sm font-medium text-gray-700 mb-2">AI提示词</h4>
-                      <p className="text-sm text-gray-600">{post.prompt}</p>
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">🤖 AI提示词</h4>
+                      <p className="text-sm text-gray-600 leading-relaxed">{post.prompt}</p>
                       {post.model && (
-                        <p className="text-xs text-gray-500 mt-1">模型: {post.model}</p>
+                        <p className="text-xs text-gray-500 mt-2">模型: {post.model}</p>
                       )}
                     </div>
                   )}
                 </div>
-                
-                {/* 互动按钮区域 */}
-                <div className="p-4 border-t border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleLike}
-                        disabled={isLoading}
-                        className={`flex items-center space-x-2 ${
-                          isLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
-                        }`}
-                      >
-                        <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                        <span className="text-sm">{likeCount}</span>
-                      </Button>
-
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleBookmark}
-                        disabled={isLoading}
-                        className={`flex items-center space-x-2 ${
-                          isBookmarked ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'
-                        }`}
-                      >
-                        <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
-                        <span className="text-sm">收藏</span>
-                      </Button>
-                    </div>
-                    
+              </div>
+              
+              {/* 底部互动区域 */}
+              <div className="p-4 border-t border-gray-100 bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-6">
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={handleShare}
-                      className="text-gray-400 hover:text-gray-600"
+                      onClick={handleLike}
+                      disabled={isLoading}
+                      className={`flex items-center space-x-2 hover:bg-red-50 ${
+                        isLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
+                      }`}
                     >
-                      <Share2 className="w-4 h-4" />
+                      <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+                      <span className="text-sm font-medium">{likeCount}</span>
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleBookmark}
+                      disabled={isLoading}
+                      className={`flex items-center space-x-2 hover:bg-yellow-50 ${
+                        isBookmarked ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'
+                      }`}
+                    >
+                      <Bookmark className={`w-5 h-5 ${isBookmarked ? 'fill-current' : ''}`} />
+                      <span className="text-sm font-medium">收藏</span>
                     </Button>
                   </div>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleShare}
+                    className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2"
+                  >
+                    <Share2 className="w-5 h-5" />
+                  </Button>
                 </div>
               </div>
             </div>
