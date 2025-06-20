@@ -930,6 +930,19 @@ class SupabaseAdapter {
         if (args?.where?.userId) query = query.eq('user_id', args.where.userId)
         if (args?.where?.isFeatured) query = query.eq('is_featured', args.where.isFeatured)
         
+        // 🔍 添加搜索条件支持
+        if (args?.where?.OR) {
+          // 处理OR搜索条件 - 搜索标题或内容
+          const orConditions = args.where.OR
+          if (orConditions.length === 2 && orConditions[0].title && orConditions[1].content) {
+            const searchTerm = orConditions[0].title.contains
+            if (searchTerm) {
+              // 使用Supabase的or查询语法
+              query = query.or(`title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
+            }
+          }
+        }
+        
         const { data, error } = await query
         
         if (error) throw error

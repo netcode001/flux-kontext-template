@@ -328,20 +328,28 @@ export function LabubuGalleryContent() {
           </div>
         ) : (
           <div className="space-y-8">
-            {/* 作品网格 - 小红书瀑布流布局 */}
+            {/* 作品网格 - 优化的瀑布流布局 */}
             <div className={`${
               viewMode === 'grid' 
-                ? 'columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-3 space-y-3' 
+                ? 'columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-3 masonry-container columns-masonry' 
                 : 'grid grid-cols-1 max-w-2xl mx-auto gap-6'
-            }`}>
-              {posts.map((post) => (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  onLike={handleLike}
-                  onBookmark={handleBookmark}
-                  onShare={handleShare}
-                />
+            } search-transition ${isLoading ? 'searching' : ''}`}>
+              {posts.map((post, index) => (
+                <div 
+                  key={post.id} 
+                  className={viewMode === 'grid' ? 'mb-3 masonry-item' : ''}
+                  style={viewMode === 'grid' ? { 
+                    // 添加轻微的延迟动画，减少布局跳动
+                    animationDelay: `${(index % 5) * 50}ms`
+                  } : {}}
+                >
+                  <PostCard
+                    post={post}
+                    onLike={handleLike}
+                    onBookmark={handleBookmark}
+                    onShare={handleShare}
+                  />
+                </div>
               ))}
             </div>
 
