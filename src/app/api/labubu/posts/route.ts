@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '12')
     const userId = searchParams.get('userId')
     const featured = searchParams.get('featured') === 'true'
+    const search = searchParams.get('search') // 🔍 新增搜索参数
     
     const skip = (page - 1) * limit
     
@@ -19,12 +20,34 @@ export async function GET(request: NextRequest) {
     if (userId) where.userId = userId
     if (featured) where.isFeatured = true
     
-    console.log('🔍 获取帖子列表:', { page, limit, where })
+    // 🔍 添加搜索条件 - 搜索标题或内容
+    if (search && search.trim()) {
+      const searchTerm = search.trim()
+      where.OR = [
+        {
+          title: {
+            contains: searchTerm,
+            mode: 'insensitive' // 不区分大小写
+          }
+        },
+        {
+          content: {
+            contains: searchTerm,
+            mode: 'insensitive' // 不区分大小写
+          }
+        }
+      ]
+    }
+    
+    console.log('🔍 获取帖子列表:', { page, limit, search, where })
     
     const posts = await prisma.post.findMany({
       where,
       skip,
-      take: limit
+      take: limit,
+      orderBy: {
+        createdAt: 'desc' // 按创建时间倒序排列
+      }
     })
     
     console.log('✅ 帖子列表获取成功:', { count: posts.length })

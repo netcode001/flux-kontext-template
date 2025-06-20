@@ -26,7 +26,7 @@ export function LabubuGalleryContent() {
   const [hasMore, setHasMore] = useState(true)
 
   // 获取帖子列表
-  const fetchPosts = async (pageNum = 1, reset = false) => {
+  const fetchPosts = async (pageNum = 1, reset = false, searchTerm = '') => {
     try {
       setIsLoading(true)
       const params = new URLSearchParams({
@@ -36,6 +36,11 @@ export function LabubuGalleryContent() {
       
       if (currentFilter === 'featured') {
         params.append('featured', 'true')
+      }
+      
+      // 🔍 添加搜索参数
+      if (searchTerm.trim()) {
+        params.append('search', searchTerm.trim())
       }
       
       const response = await fetch(`/api/labubu/posts?${params}`)
@@ -58,13 +63,22 @@ export function LabubuGalleryContent() {
 
   // 初始加载
   useEffect(() => {
-    fetchPosts(1, true)
+    fetchPosts(1, true, searchQuery)
   }, [currentFilter])
 
-  // 处理搜索
+  // 🔍 搜索防抖效果
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      setPage(1) // 重置页码
+      fetchPosts(1, true, searchQuery)
+    }, 500) // 500ms 防抖
+    
+    return () => clearTimeout(debounceTimer)
+  }, [searchQuery])
+
+  // 🔍 处理搜索输入
   const handleSearch = (query: string) => {
     setSearchQuery(query)
-    // 这里可以实现搜索逻辑
   }
 
   // 处理筛选
@@ -78,7 +92,7 @@ export function LabubuGalleryContent() {
     if (hasMore && !isLoading) {
       const nextPage = page + 1
       setPage(nextPage)
-      fetchPosts(nextPage)
+      fetchPosts(nextPage, false, searchQuery) // 传递当前搜索词
     }
   }
 
@@ -167,11 +181,19 @@ export function LabubuGalleryContent() {
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder="搜索创意作品..."
+                placeholder="搜索标题或内容..."
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="pl-10 border-purple-200 focus:border-purple-400"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => handleSearch('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              )}
             </div>
 
             {/* 筛选器 */}
@@ -242,17 +264,59 @@ export function LabubuGalleryContent() {
 
       {/* 主要内容区域 */}
       <div className="container mx-auto px-4 py-8">
+        {/* 🔍 搜索结果状态提示 */}
+        {searchQuery && (
+          <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Search className="w-4 h-4 text-purple-600" />
+                <span className="text-purple-700">
+                  搜索 "<span className="font-semibold">{searchQuery}</span>" 的结果
+                </span>
+                {!isLoading && (
+                  <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+                    {posts.length} 个结果
+                  </Badge>
+                )}
+              </div>
+              <button
+                onClick={() => handleSearch('')}
+                className="text-purple-600 hover:text-purple-800 text-sm"
+              >
+                清除搜索
+              </button>
+            </div>
+          </div>
+        )}
+
         {isLoading && posts.length === 0 ? (
           <div className="text-center py-16">
             <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-600">加载中...</p>
+            <p className="text-gray-600">
+              {searchQuery ? `搜索 "${searchQuery}" 中...` : '加载中...'}
+            </p>
           </div>
         ) : posts.length === 0 ? (
           <div className="text-center py-16">
-            <div className="text-6xl mb-4">🎭</div>
-            <h3 className="text-xl font-bold text-gray-700 mb-2">还没有作品</h3>
-            <p className="text-gray-500 mb-6">成为第一个分享Labubu创意的人吧！</p>
-            {session && (
+            <div className="text-6xl mb-4">{searchQuery ? '🔍' : '🎭'}</div>
+            <h3 className="text-xl font-bold text-gray-700 mb-2">
+              {searchQuery ? '没有找到相关作品' : '还没有作品'}
+            </h3>
+            <p className="text-gray-500 mb-6">
+              {searchQuery 
+                ? `尝试使用其他关键词搜索，或者浏览所有作品` 
+                : '成为第一个分享Labubu创意的人吧！'
+              }
+            </p>
+            {searchQuery ? (
+              <Button
+                onClick={() => handleSearch('')}
+                variant="outline"
+                className="border-purple-200 text-purple-600 hover:bg-purple-50"
+              >
+                查看所有作品
+              </Button>
+            ) : session && (
               <Button
                 onClick={() => setShowPublisher(true)}
                 className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
