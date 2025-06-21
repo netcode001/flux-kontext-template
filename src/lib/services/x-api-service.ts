@@ -111,13 +111,12 @@ export class XApiService {
     limit: 100
   }
   
-  // Labubu相关搜索关键词
+  // Labubu相关搜索关键词 (精简版)
   private readonly labubuKeywords = [
-    'labubu', 'lаbubu', '拉布布', '泡泡玛特', 'popmart', 'pop mart',
-    'lisa labubu', 'blackpink labubu', 'labubu lisa', 'labubu blackpink',
-    'labubu 盲盒', 'labubu blind box', 'labubu collectible',
-    'labubu figure', 'labubu toy', 'labubu limited',
-    'popmart labubu', '泡泡玛特 labubu'
+    'labubu',
+    'popmart labubu',
+    'lisa labubu',
+    'labubu blind box'
   ]
 
   constructor() {
@@ -260,23 +259,16 @@ export class XApiService {
     })
   }
 
-  // 🏗️ 构建搜索查询字符串
+  // 🏗️ 构建搜索查询字符串 (精简版)
   private buildSearchQuery(sinceHours: number): string {
     const since = new Date(Date.now() - sinceHours * 60 * 60 * 1000).toISOString()
     
-    // 构建关键词查询 (使用OR逻辑)
-    const keywordQuery = this.labubuKeywords
-      .map(keyword => `"${keyword}"`)
-      .join(' OR ')
-    
-    // 组合查询条件
+    // 简化的查询条件
     const query = [
-      `(${keywordQuery})`,
-      '-is:retweet',           // 排除转推
-      '-is:reply',             // 排除回复
-      'has:images OR has:videos', // 优先有媒体内容的推文
-      `since:${since}`,        // 时间限制
-      'lang:en OR lang:zh OR lang:ja OR lang:ko', // 多语言支持
+      'labubu',              // 核心关键词
+      '-is:retweet',         // 排除转推
+      '-is:reply',           // 排除回复
+      `since:${since}`,      // 时间限制
     ].join(' ')
 
     return query
