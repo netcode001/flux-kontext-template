@@ -258,86 +258,145 @@ class PythonSocialCrawler:
         return results
     
     async def crawl_twitter_data(self) -> List[SocialContent]:
-        """爬取Twitter数据"""
-        logger.info("🐦 开始爬取Twitter数据...")
+        """使用Twitter API v2获取Labubu相关内容"""
+        logger.info("🐦 开始使用X API v2获取数据...")
         results = []
         
         try:
-            # 方法1: 使用官方API (如果有token)
-            if self.config['twitter']['bearer_token']:
-                auth = tweepy.Client(bearer_token=self.config['twitter']['bearer_token'])
+            # 检查配置
+            bearer_token = self.config['twitter']['bearer_token']
+            if not bearer_token:
+                logger.warning("⚠️ Twitter Bearer Token未配置，跳过Twitter数据获取")
+                return results
+            
+            # 使用requests直接调用Twitter API v2
+            headers = {
+                'Authorization': f'Bearer {bearer_token}',
+                'Content-Type': 'application/json'
+            }
+            
+            # 构建搜索查询 - 针对Labubu优化
+            labubu_query = ' OR '.join([f'"{keyword}"' for keyword in self.labubu_keywords[:8]])
+            query = f"({labubu_query}) -is:retweet -is:reply has:images OR has:videos lang:en OR lang:zh OR lang:ja OR lang:ko"
+            
+            # API参数
+            params = {
+                'query': query,
+                'max_results': 100,
+                'tweet.fields': 'id,text,author_id,created_at,public_metrics,context_annotations,entities,attachments,referenced_tweets',
+                'user.fields': 'id,name,username,verified,verified_type,profile_image_url,public_metrics',
+                'media.fields': 'media_key,type,url,preview_image_url,duration_ms,height,width,alt_text',
+                'expansions': 'author_id,attachments.media_keys,referenced_tweets.id',
+                'sort_order': 'recency'
+            }
+            
+            logger.info(f"🔍 X API搜索查询: {query[:100]}...")
+            
+            # 调用API
+            api_url = 'https://api.twitter.com/2/tweets/search/recent'
+            response = requests.get(api_url, headers=headers, params=params, timeout=30)
+            
+            if response.status_code == 401:
+                logger.error("❌ X API认证失败，请检查Bearer Token")
+                return results
+            
+            if response.status_code == 429:
+                logger.warning("⚠️ X API速率限制超出，跳过本次抓取")
+                return results
+            
+            if response.status_code != 200:
+                logger.error(f"❌ X API请求失败: {response.status_code} - {response.text}")
+                return results
+            
+            data = response.json()
+            tweets = data.get('data', [])
+            includes = data.get('includes', {})
+            users = {user['id']: user for user in includes.get('users', [])}
+            media = {m['media_key']: m for m in includes.get('media', [])}
+            
+            logger.info(f"🔍 获取到 {len(tweets)} 条原始推文")
+            
+            for tweet in tweets:
+                # 相关性检查
+                if not self._is_labubu_related(tweet['text']):
+                    continue
                 
-                # 搜索相关推文
-                query = ' OR '.join(self.labubu_keywords[:5])  # 限制查询长度
-                tweets = auth.search_recent_tweets(
-                    query=query,
-                    max_results=50,
-                    tweet_fields=['author_id', 'created_at', 'public_metrics', 'lang']
+                # 质量过滤
+                metrics = tweet['public_metrics']
+                total_engagement = metrics['like_count'] + metrics['retweet_count'] + metrics['reply_count']
+                if total_engagement < 5:  # 过滤低质量内容
+                    continue
+                
+                # 垃圾内容过滤
+                text_lower = tweet['text'].lower()
+                spam_indicators = ['buy now', 'click here', 'discount', 'sale', 'promo']
+                if any(indicator in text_lower for indicator in spam_indicators):
+                    continue
+                
+                # 获取用户信息
+                user = users.get(tweet['author_id'], {})
+                
+                # 获取媒体信息
+                image_urls = []
+                if 'attachments' in tweet and 'media_keys' in tweet['attachments']:
+                    for media_key in tweet['attachments']['media_keys']:
+                        if media_key in media:
+                            media_item = media[media_key]
+                            if media_item.get('url'):
+                                image_urls.append(media_item['url'])
+                            elif media_item.get('preview_image_url'):
+                                image_urls.append(media_item['preview_image_url'])
+                
+                # 检测语言
+                detected_lang = 'en'
+                if any(char in tweet['text'] for char in '中文汉字'):
+                    detected_lang = 'zh'
+                elif any(char in tweet['text'] for char in 'ひらがなカタカナ'):
+                    detected_lang = 'ja'
+                elif any(char in tweet['text'] for char in '한글'):
+                    detected_lang = 'ko'
+                
+                # 创建内容对象
+                content = SocialContent(
+                    id=f"twitter_{tweet['id']}",
+                    title=tweet['text'][:100] + ('...' if len(tweet['text']) > 100 else ''),
+                    content=tweet['text'],
+                    summary=tweet['text'][:200] + ('...' if len(tweet['text']) > 200 else ''),
+                    author=user.get('name', user.get('username', 'Unknown')),
+                    platform='twitter',
+                    url=f"https://twitter.com/{user.get('username', 'i')}/status/{tweet['id']}",
+                    published_at=datetime.fromisoformat(tweet['created_at'].replace('Z', '+00:00')),
+                    language=detected_lang,
+                    country='global',
+                    image_urls=image_urls,
+                    tags=self._extract_hashtags(tweet['text']),
+                    category='social',
+                    engagement={
+                        'likes': metrics['like_count'],
+                        'shares': metrics['retweet_count'],
+                        'comments': metrics['reply_count'],
+                        'views': metrics.get('impression_count', 0)
+                    },
+                    raw_data={
+                        'tweet_id': tweet['id'],
+                        'author_id': tweet['author_id'],
+                        'public_metrics': metrics,
+                        'user_info': user,
+                        'context_annotations': tweet.get('context_annotations', []),
+                        'entities': tweet.get('entities', {}),
+                        'verified_user': user.get('verified', False)
+                    }
                 )
                 
-                if tweets.data:
-                    for tweet in tweets.data:
-                        content = SocialContent(
-                            id=f"twitter_{tweet.id}",
-                            title=tweet.text[:100] + '...' if len(tweet.text) > 100 else tweet.text,
-                            content=tweet.text,
-                            summary=tweet.text[:200] + '...' if len(tweet.text) > 200 else tweet.text,
-                            author=f"user_{tweet.author_id}",
-                            platform='twitter',
-                            url=f"https://twitter.com/user/status/{tweet.id}",
-                            published_at=tweet.created_at,
-                            language=tweet.lang,
-                            country='Unknown',
-                            image_urls=[],
-                            tags=self._extract_hashtags(tweet.text),
-                            category='Social',
-                            engagement={
-                                'likes': tweet.public_metrics['like_count'],
-                                'shares': tweet.public_metrics['retweet_count'],
-                                'comments': tweet.public_metrics['reply_count'],
-                                'views': tweet.public_metrics.get('impression_count', 0)
-                            },
-                            raw_data={'tweet_id': tweet.id, 'author_id': tweet.author_id}
-                        )
-                        results.append(content)
-            
-            # 方法2: 使用twscrape (如果配置了账户)
-            elif os.path.exists('twscrape_accounts.txt'):
-                try:
-                    api = TwScrapeAPI()
-                    query = f"{' OR '.join(self.labubu_keywords[:3])} -is:retweet"
-                    
-                    async for tweet in api.search(query, limit=30):
-                        content = SocialContent(
-                            id=f"twitter_scrape_{tweet.id}",
-                            title=tweet.rawContent[:100] + '...' if len(tweet.rawContent) > 100 else tweet.rawContent,
-                            content=tweet.rawContent,
-                            summary=tweet.rawContent[:200] + '...' if len(tweet.rawContent) > 200 else tweet.rawContent,
-                            author=tweet.user.username,
-                            platform='twitter_scrape',
-                            url=tweet.url,
-                            published_at=tweet.date,
-                            language=tweet.lang,
-                            country='Unknown',
-                            image_urls=[],
-                            tags=self._extract_hashtags(tweet.rawContent),
-                            category='Social',
-                            engagement={
-                                'likes': tweet.likeCount,
-                                'shares': tweet.retweetCount,
-                                'comments': tweet.replyCount,
-                                'views': tweet.viewCount if hasattr(tweet, 'viewCount') else 0
-                            },
-                            raw_data={'tweet_id': tweet.id, 'user_id': tweet.user.id}
-                        )
-                        results.append(content)
-                except Exception as e:
-                    logger.warning(f"⚠️ twscrape获取失败: {e}")
+                results.append(content)
+                
+            logger.info(f"✅ X API: 获取到 {len(results)} 条高质量Labubu相关内容")
             
         except Exception as e:
-            logger.error(f"❌ Twitter数据获取失败: {e}")
-        
-        logger.info(f"🐦 Twitter爬取完成，获得 {len(results)} 条内容")
+            logger.error(f"❌ X API数据获取失败: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            
         return results
     
     def _extract_hashtags(self, text: str) -> List[str]:
