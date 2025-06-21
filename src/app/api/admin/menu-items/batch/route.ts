@@ -56,13 +56,13 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case 'reorder': {
-        // 📊 批量更新排序
+        // 📊 批量更新排序 (暂时不存储updated_by，避免UUID格式问题)
         const updatePromises = items.map(item => 
           supabase
             .from('menu_items')
             .update({
-              sort_order: item.sort_order,
-              updated_by: session?.user?.id
+              sort_order: item.sort_order
+              // 注意: 暂时跳过updated_by字段，因为Google用户ID不是UUID格式
             })
             .eq('id', item.id)
         )
@@ -91,13 +91,13 @@ export async function POST(request: NextRequest) {
       }
 
       case 'toggle_visibility': {
-        // 👁️ 批量切换可见性
+        // 👁️ 批量切换可见性 (暂时不存储updated_by，避免UUID格式问题)
         const updatePromises = items.map(item => 
           supabase
             .from('menu_items')
             .update({
-              is_visible: item.is_visible,
-              updated_by: session?.user?.id
+              is_visible: item.is_visible
+              // 注意: 暂时跳过updated_by字段，因为Google用户ID不是UUID格式
             })
             .eq('id', item.id)
         )
@@ -126,9 +126,10 @@ export async function POST(request: NextRequest) {
       }
 
       case 'bulk_update': {
-        // 🔄 批量综合更新
+        // 🔄 批量综合更新 (暂时不存储updated_by，避免UUID格式问题)
         const updatePromises = items.map(item => {
-          const updateData: any = { updated_by: session?.user?.id }
+          const updateData: any = {}
+          // 注意: 暂时跳过updated_by字段，因为Google用户ID不是UUID格式
           
           if (item.sort_order !== undefined) {
             updateData.sort_order = item.sort_order

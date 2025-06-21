@@ -166,13 +166,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 创建菜单项
+    // 创建菜单项 (暂时不存储created_by和updated_by，避免UUID格式问题)
     const { data: newMenuItem, error } = await supabase
       .from('menu_items')
       .insert({
-        ...validatedData,
-        created_by: session?.user?.id,
-        updated_by: session?.user?.id
+        ...validatedData
+        // 注意: 暂时跳过created_by和updated_by字段，因为Google用户ID不是UUID格式
       })
       .select()
       .single()
@@ -278,12 +277,12 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    // 更新菜单项
+    // 更新菜单项 (暂时不存储updated_by，避免UUID格式问题)
     const { data: updatedMenuItem, error } = await supabase
       .from('menu_items')
       .update({
-        ...updateData,
-        updated_by: session?.user?.id
+        ...updateData
+        // 注意: 暂时跳过updated_by字段，因为Google用户ID不是UUID格式
       })
       .eq('id', id)
       .select()
