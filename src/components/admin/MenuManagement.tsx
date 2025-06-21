@@ -287,7 +287,7 @@ export function MenuManagement() {
             )}
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-medium">{item.label}</span>
+                <span className="font-medium text-black text-base">{item.label || '未命名菜单'}</span>
                 <Badge variant={item.is_dropdown ? "secondary" : "outline"} className="text-xs">
                   {item.is_dropdown ? '下拉菜单' : '普通链接'}
                 </Badge>
@@ -297,10 +297,10 @@ export function MenuManagement() {
                   </Badge>
                 )}
               </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
-                <span>Key: {item.key}</span>
+              <div className="flex items-center space-x-2 text-sm text-gray-700 mt-1">
+                <span className="font-mono bg-gray-100 px-2 py-1 rounded text-xs">Key: {item.key}</span>
                 <span>•</span>
-                <span>{item.href}</span>
+                <span className="text-blue-600">{item.href}</span>
                 {item.target === '_blank' && (
                   <ExternalLink className="w-3 h-3" />
                 )}
