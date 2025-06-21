@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Navigation } from "@/components/Navigation";
+import { DynamicNavigation } from "@/components/DynamicNavigation";
 import { LabubuNewsContent } from "@/components/labubu/LabubuNewsContent";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export default function LabubuNewsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
       {/* 统一的导航栏 */}
-      <Navigation />
+      <DynamicNavigation />
       
       {/* 📰 Labubu资讯内容 */}
       <div className="pt-16">

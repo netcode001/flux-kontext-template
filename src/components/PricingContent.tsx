@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Navigation } from "@/components/Navigation"
+import { DynamicNavigation } from "@/components/DynamicNavigation"
 import { Footer } from "@/components/Footer"
 import { ProductSchema } from "@/components/StructuredData"
 import { 
@@ -133,7 +133,7 @@ function PricingMainContent() {
 
   return (
     <>
-      <Navigation />
+      <DynamicNavigation />
       
       {/* 添加产品结构化数据 */}
       <ProductSchema />

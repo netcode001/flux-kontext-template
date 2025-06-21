@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Navigation } from "@/components/Navigation"
+import { DynamicNavigation } from "@/components/DynamicNavigation"
 import { Footer } from "@/components/Footer"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -155,7 +155,7 @@ export function ApiDocumentation() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <DynamicNavigation />
       
       {/* Hero Section */}
       <section className="pt-20 pb-12 px-4">

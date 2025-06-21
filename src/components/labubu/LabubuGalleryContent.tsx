@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { Navigation } from '@/components/Navigation'
+import { DynamicNavigation } from '@/components/DynamicNavigation'
 import { PostCard } from './PostCard'
 import { PostPublisher } from './PostPublisher'
 import { PostWithUser } from '@/lib/database'
@@ -201,7 +201,7 @@ export function LabubuGalleryContent() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 统一的导航栏 */}
-      <Navigation />
+      <DynamicNavigation />
       
       {/* 页面头部 */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100 pt-16">

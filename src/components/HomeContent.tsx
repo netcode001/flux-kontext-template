@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Script from "next/script"
 import { Button } from "@/components/ui/button"
-import { Navigation } from "@/components/Navigation"
+import { DynamicNavigation } from "@/components/DynamicNavigation"
 import { TwitterShowcase } from "@/components/TwitterShowcase"
 import { KeyFeatures } from "@/components/KeyFeatures"
 import { HowToSteps } from "@/components/HowToSteps"
@@ -16,7 +16,7 @@ export function HomeContent() {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <Navigation />
+      <DynamicNavigation />
 
       {/* 结构化数据 - Structured Data */}
       <OrganizationSchema />

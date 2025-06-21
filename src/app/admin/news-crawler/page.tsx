@@ -6,7 +6,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { NewsCrawlerControl } from '@/components/admin/NewsCrawlerControl'
-import { Navigation } from '@/components/Navigation'
+import { DynamicNavigation } from '@/components/DynamicNavigation'
 
 export default async function NewsCrawlerAdminPage() {
   // 🔐 验证管理员权限
@@ -25,7 +25,7 @@ export default async function NewsCrawlerAdminPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       {/* 统一的导航栏 */}
-      <Navigation />
+      <DynamicNavigation />
       
       {/* 主要内容区域 */}
       <div className="container mx-auto px-4 py-8 pt-24">
