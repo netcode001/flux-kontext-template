@@ -1,0 +1,74 @@
+# 🐍 Python社交媒体数据获取依赖包
+# 用于增强现有Next.js项目的内容引擎
+
+# 核心网络请求和解析
+requests>=2.31.0
+urllib3>=2.0.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+html5lib>=1.1
+
+# 新闻数据获取
+newspaper4k>=0.9.3        # 最强的新闻文章提取库
+feedparser>=6.0.10        # RSS/Atom feeds解析
+news-please>=1.6.0        # 开源新闻爬虫
+
+# 社交媒体API
+tweepy>=4.14.0            # Twitter官方API
+twscrape>=0.12.0          # Twitter数据抓取 (无需API)
+praw>=7.7.0               # Reddit API Wrapper
+facebook-sdk>=3.1.0       # Facebook Graph API
+
+# 网页爬虫框架
+scrapy>=2.11.0            # 分布式爬虫框架
+selenium>=4.15.0          # 浏览器自动化
+playwright>=1.40.0        # 现代浏览器自动化
+
+# 数据处理和分析
+pandas>=2.1.0             # 数据分析
+numpy>=1.24.0             # 数值计算
+sqlite3                   # 内置数据库 (Python自带)
+
+# 自然语言处理
+nltk>=3.8.1              # NLP工具包
+textblob>=0.17.1         # 情感分析
+langdetect>=1.0.9        # 语言检测
+googletrans>=4.0.0       # Google翻译
+
+# 异步处理
+aiohttp>=3.9.0           # 异步HTTP客户端
+asyncio                  # 异步IO (Python自带)
+
+# 工具库
+python-dotenv>=1.0.0     # 环境变量管理
+tqdm>=4.66.0             # 进度条
+schedule>=1.2.0          # 任务调度
+python-dateutil>=2.8.2   # 日期处理
+
+# 数据验证和序列化
+pydantic>=2.5.0          # 数据验证
+marshmallow>=3.20.0      # 序列化
+
+# 代理和反爬虫
+fake-useragent>=1.4.0    # 随机User-Agent
+requests-ip-rotator>=1.0.0  # IP轮换
+cloudscraper>=1.2.71     # Cloudflare绕过
+
+# 图像处理 (新闻图片提取)
+Pillow>=10.1.0           # 图像处理
+opencv-python>=4.8.0    # 计算机视觉
+
+# 可选: 机器学习增强
+scikit-learn>=1.3.0      # 机器学习
+transformers>=4.35.0     # 预训练模型
+torch>=2.1.0             # PyTorch (可选，用于高级NLP)
+
+# 可选: 数据库连接 (如果需要直接连接项目数据库)
+psycopg2-binary>=2.9.7   # PostgreSQL
+pymongo>=4.6.0           # MongoDB
+redis>=5.0.1             # Redis
+
+# 开发和调试
+jupyterlab>=4.0.0        # 数据分析环境
+ipython>=8.17.0          # 交互式Python
+pytest>=7.4.0           # 测试框架 
