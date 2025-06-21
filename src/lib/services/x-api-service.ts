@@ -104,6 +104,13 @@ export class XApiService {
   private bearerToken: string
   private readonly baseURL = 'https://api.twitter.com/2'
   
+  // 速率限制状态
+  private rateLimitStatus = {
+    remaining: 100,
+    reset: Date.now() + 15 * 60 * 1000, // 15分钟后重置
+    limit: 100
+  }
+  
   // Labubu相关搜索关键词
   private readonly labubuKeywords = [
     'labubu', 'lаbubu', '拉布布', '泡泡玛特', 'popmart', 'pop mart',
@@ -132,18 +139,80 @@ export class XApiService {
     console.log('✅ X API服务初始化成功')
   }
 
+  // 🔄 智能重试机制
+  private async retryWithBackoff<T>(
+    operation: () => Promise<T>,
+    maxRetries: number = 3,
+    baseDelay: number = 1000
+  ): Promise<T> {
+    let lastError: any
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation()
+      } catch (error: any) {
+        lastError = error
+
+        // 如果是429错误，等待速率限制重置
+        if (error.response?.status === 429) {
+          const resetTime = this.rateLimitStatus.reset
+          const waitTime = Math.max(resetTime - Date.now(), 0)
+          
+          if (waitTime > 0 && attempt < maxRetries) {
+            console.log(`⏳ 速率限制触发，等待 ${Math.ceil(waitTime / 1000)} 秒后重试...`)
+            await this.sleep(waitTime)
+            continue
+          }
+        }
+
+        // 其他错误使用指数退避
+        if (attempt < maxRetries) {
+          const delay = baseDelay * Math.pow(2, attempt)
+          console.log(`🔄 第 ${attempt + 1} 次重试失败，${delay}ms 后重试...`)
+          await this.sleep(delay)
+        }
+      }
+    }
+
+    throw lastError
+  }
+
+  // 💤 延迟函数
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
+  // 📊 更新速率限制状态
+  private updateRateLimitStatus(headers: any) {
+    if (headers['x-rate-limit-remaining']) {
+      this.rateLimitStatus.remaining = parseInt(headers['x-rate-limit-remaining'])
+    }
+    if (headers['x-rate-limit-reset']) {
+      this.rateLimitStatus.reset = parseInt(headers['x-rate-limit-reset']) * 1000
+    }
+    if (headers['x-rate-limit-limit']) {
+      this.rateLimitStatus.limit = parseInt(headers['x-rate-limit-limit'])
+    }
+  }
+
   // 🔍 搜索Labubu相关推文
   async searchLabubuTweets(options: {
     maxResults?: number
     sinceHours?: number
     lang?: string
   } = {}): Promise<{ tweets: XTweet[], users: XUser[], media: XMedia[] }> {
-    try {
+    return await this.retryWithBackoff(async () => {
       const {
         maxResults = 100,
         sinceHours = 24,
         lang = 'en'
       } = options
+
+      // 检查速率限制
+      if (this.rateLimitStatus.remaining <= 1 && Date.now() < this.rateLimitStatus.reset) {
+        const waitTime = this.rateLimitStatus.reset - Date.now()
+        throw new Error(`速率限制中，请等待 ${Math.ceil(waitTime / 1000)} 秒`)
+      }
 
       // 构建搜索查询
       const query = this.buildSearchQuery(sinceHours)
@@ -175,6 +244,9 @@ export class XApiService {
         params
       })
 
+      // 更新速率限制状态
+      this.updateRateLimitStatus(response.headers)
+
       const { data: tweets = [], includes = {} } = response.data
       const { users = [], media = [] } = includes
 
@@ -185,20 +257,7 @@ export class XApiService {
         users,
         media
       }
-
-    } catch (error: any) {
-      console.error('❌ X API搜索失败:', error.response?.data || error.message)
-      
-      if (error.response?.status === 429) {
-        throw new Error('X API速率限制超出，请稍后重试')
-      }
-      
-      if (error.response?.status === 401) {
-        throw new Error('X API认证失败，请检查Bearer Token')
-      }
-      
-      throw new Error(`X API请求失败: ${error.message}`)
-    }
+    })
   }
 
   // 🏗️ 构建搜索查询字符串
@@ -377,9 +436,22 @@ export class XApiService {
     remaining: number
     reset: number
     limit: number
+    status: 'healthy' | 'limited' | 'error'
+    resetTime?: string
   }> {
     try {
-      // 这个信息通常在响应头中返回
+      // 优先返回缓存的速率限制状态
+      if (this.rateLimitStatus.remaining > 0) {
+        return {
+          remaining: this.rateLimitStatus.remaining,
+          reset: this.rateLimitStatus.reset,
+          limit: this.rateLimitStatus.limit,
+          status: this.rateLimitStatus.remaining > 10 ? 'healthy' : 'limited',
+          resetTime: new Date(this.rateLimitStatus.reset).toLocaleString()
+        }
+      }
+
+      // 如果没有缓存数据，发送轻量级请求获取
       const response = await this.client.get('/tweets/search/recent', {
         params: {
           query: 'labubu',
@@ -387,16 +459,37 @@ export class XApiService {
         }
       })
 
-      const headers = response.headers
+      // 更新速率限制状态
+      this.updateRateLimitStatus(response.headers)
+
       return {
-        remaining: parseInt(headers['x-rate-limit-remaining'] || '0'),
-        reset: parseInt(headers['x-rate-limit-reset'] || '0'),
-        limit: parseInt(headers['x-rate-limit-limit'] || '0')
+        remaining: this.rateLimitStatus.remaining,
+        reset: this.rateLimitStatus.reset,
+        limit: this.rateLimitStatus.limit,
+        status: this.rateLimitStatus.remaining > 10 ? 'healthy' : 'limited',
+        resetTime: new Date(this.rateLimitStatus.reset).toLocaleString()
       }
 
     } catch (error: any) {
-      console.error('❌ 获取API使用情况失败:', error.message)
-      return { remaining: 0, reset: 0, limit: 0 }
+      console.error('❌ 获取API使用情况失败:', error.response?.data || error.message)
+      
+      // 如果是429错误，说明速率限制触发
+      if (error.response?.status === 429) {
+        return {
+          remaining: 0,
+          reset: this.rateLimitStatus.reset,
+          limit: this.rateLimitStatus.limit,
+          status: 'limited',
+          resetTime: new Date(this.rateLimitStatus.reset).toLocaleString()
+        }
+      }
+
+      return {
+        remaining: 0,
+        reset: 0,
+        limit: 0,
+        status: 'error'
+      }
     }
   }
 }

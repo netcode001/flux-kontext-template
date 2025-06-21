@@ -49,7 +49,7 @@
 # X (Twitter) API v2 配置
 TWITTER_CLIENT_ID="SURPQWhwVHp0ZHhhU2FUMnMzQVc6MTpjaQ"
 TWITTER_CLIENT_SECRET="8uEwsdH08xSWyOYZaLBFU2Rco0qEewC4Y4pcybDEB4wVZRUbt0"
-TWITTER_BEARER_TOKEN="YOUR_BEARER_TOKEN_HERE"
+TWITTER_BEARER_TOKEN="AAAAAAAAAAAAAAAAAAAAACKb2gEAAAAAY7%2BGvZv4lD5hfQ3tvewtIKjymCw%3DntgMvWGUUqW557JyLFZASjlv4xV834nu3RcXhygn8iwAIMKlgH"
 
 # 可选：其他X API凭据（如需要）
 TWITTER_API_KEY="your_twitter_api_key_here"
@@ -66,7 +66,7 @@ NEXT_PUBLIC_ENABLE_SOCIAL_CRAWLER="true"
 ```bash
 # 测试X API连接
 curl -X GET "https://api.twitter.com/2/tweets/search/recent?query=labubu&max_results=10" \
-  -H "Authorization: Bearer YOUR_BEARER_TOKEN_HERE"
+  -H "Authorization: Bearer AAAAAAAAAAAAAAAAAAAAACKb2gEAAAAAY7%2BGvZv4lD5hfQ3tvewtIKjymCw%3DntgMvWGUUqW557JyLFZASjlv4xV834nu3RcXhygn8iwAIMKlgH"
 ```
 
 ### 4. 访问管理界面

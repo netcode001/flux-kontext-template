@@ -17,6 +17,8 @@ interface XApiStatus {
     remaining: number
     reset: number
     limit: number
+    status: 'healthy' | 'limited' | 'error'
+    resetTime?: string
   }
   database_stats: {
     total_tweets: number
@@ -102,7 +104,27 @@ export function XApiCrawlerControl() {
   // 格式化时间戳
   const formatResetTime = (timestamp: number) => {
     if (!timestamp) return '未知'
-    return new Date(timestamp * 1000).toLocaleString('zh-CN')
+    return new Date(timestamp).toLocaleString('zh-CN')
+  }
+
+  // 获取API状态颜色
+  const getApiStatusColor = (status: string) => {
+    switch (status) {
+      case 'healthy': return 'text-green-600'
+      case 'limited': return 'text-yellow-600'
+      case 'error': return 'text-red-600'
+      default: return 'text-gray-600'
+    }
+  }
+
+  // 获取API状态文本
+  const getApiStatusText = (status: string) => {
+    switch (status) {
+      case 'healthy': return '✅ 正常'
+      case 'limited': return '⚠️ 限制中'
+      case 'error': return '❌ 错误'
+      default: return '❓ 未知'
+    }
   }
 
   // 计算使用率
@@ -149,19 +171,55 @@ export function XApiCrawlerControl() {
             {/* API使用情况 */}
             {status.api_configured && (
               <>
+                <div className="flex items-center justify-between">
+                  <span>API运行状态:</span>
+                  <Badge 
+                    variant={status.api_usage.status === 'healthy' ? 'default' : 
+                            status.api_usage.status === 'limited' ? 'secondary' : 'destructive'}
+                    className={getApiStatusColor(status.api_usage.status)}
+                  >
+                    {getApiStatusText(status.api_usage.status)}
+                  </Badge>
+                </div>
+
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>API使用情况:</span>
+                    <span>请求配额:</span>
                     <span>
                       {status.api_usage.remaining}/{status.api_usage.limit} 次剩余
                     </span>
                   </div>
-                  <Progress value={getUsagePercentage()} className="h-2" />
+                  <Progress 
+                    value={getUsagePercentage()} 
+                    className={`h-2 ${status.api_usage.status === 'limited' ? 'bg-yellow-100' : ''}`}
+                  />
                 </div>
                 
                 <div className="text-sm text-gray-600">
-                  重置时间: {formatResetTime(status.api_usage.reset)}
+                  重置时间: {status.api_usage.resetTime || formatResetTime(status.api_usage.reset)}
                 </div>
+
+                {status.api_usage.status === 'limited' && (
+                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-yellow-600">⚠️</span>
+                      <span className="text-sm text-yellow-700">
+                        API配额不足，建议等待重置后再进行大量抓取
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {status.api_usage.status === 'error' && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-red-600">❌</span>
+                      <span className="text-sm text-red-700">
+                        API访问异常，请检查配置或稍后重试
+                      </span>
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
