@@ -1,0 +1,107 @@
+# 🎥 媒体API密钥配置模板
+# 使用说明：复制此文件为 .env.media 或添加到主 .env 文件中
+# 注意：包含敏感信息的实际配置文件请勿提交到版本控制系统
+
+# ================================
+# 🌍 国际平台API配置
+# ================================
+
+# YouTube Data API v3 ✅ 已配置
+YOUTUBE_API_KEY=AIzaSyBJoYM69KK0l4f2agtuEn_Pt9958jxC6Zo
+
+# Facebook & Instagram API
+FACEBOOK_APP_ID=your_facebook_app_id_here
+FACEBOOK_APP_SECRET=your_facebook_app_secret_here
+FACEBOOK_ACCESS_TOKEN=your_facebook_access_token_here
+INSTAGRAM_ACCESS_TOKEN=your_instagram_access_token_here
+
+# X (Twitter) API v2
+TWITTER_API_KEY=your_twitter_api_key_here
+TWITTER_API_SECRET=your_twitter_api_secret_here
+TWITTER_BEARER_TOKEN=your_twitter_bearer_token_here
+TWITTER_ACCESS_TOKEN=your_twitter_access_token_here
+TWITTER_ACCESS_TOKEN_SECRET=your_twitter_access_token_secret_here
+
+# TikTok for Developers
+TIKTOK_CLIENT_KEY=your_tiktok_client_key_here
+TIKTOK_CLIENT_SECRET=your_tiktok_client_secret_here
+
+# ================================
+# 🇨🇳 国内平台API配置
+# ================================
+
+# 微博开放平台
+WEIBO_APP_KEY=your_weibo_app_key_here
+WEIBO_APP_SECRET=your_weibo_app_secret_here
+WEIBO_ACCESS_TOKEN=your_weibo_access_token_here
+WEIBO_REDIRECT_URI=your_weibo_redirect_uri_here
+
+# 抖音开放平台
+DOUYIN_CLIENT_KEY=your_douyin_client_key_here
+DOUYIN_CLIENT_SECRET=your_douyin_client_secret_here
+DOUYIN_ACCESS_TOKEN=your_douyin_access_token_here
+
+# 哔哩哔哩 (B站)
+BILIBILI_ACCESS_KEY=your_bilibili_access_key_here
+BILIBILI_SECRET_KEY=your_bilibili_secret_key_here
+BILIBILI_SESSDATA=your_bilibili_sessdata_here
+
+# 百度贴吧API
+BAIDU_API_KEY=your_baidu_api_key_here
+BAIDU_SECRET_KEY=your_baidu_secret_key_here
+
+# ================================
+# 🌏 地区特色平台API配置
+# ================================
+
+# Naver Open API (韩国)
+NAVER_CLIENT_ID=your_naver_client_id_here
+NAVER_CLIENT_SECRET=your_naver_client_secret_here
+
+# LINE Messaging API (日本)
+LINE_CHANNEL_ACCESS_TOKEN=your_line_channel_access_token_here
+LINE_CHANNEL_SECRET=your_line_channel_secret_here
+
+# ================================
+# 🛡️ 安全和代理配置
+# ================================
+
+# 用户代理
+USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+
+# 代理配置 (可选)
+HTTP_PROXY=
+HTTPS_PROXY=
+SOCKS_PROXY=
+
+# 请求限制
+REQUEST_DELAY=2
+MAX_RETRIES=3
+TIMEOUT=30
+
+# ================================
+# 📊 第三方数据服务配置
+# ================================
+
+# 数据服务商API (示例)
+DATA_SERVICE_API_KEY=your_data_service_api_key_here
+DATA_SERVICE_ENDPOINT=https://api.dataservice.com/v1
+
+# 爬虫服务配置
+SCRAPER_SERVICE_API_KEY=your_scraper_service_api_key_here
+SCRAPER_SERVICE_ENDPOINT=https://api.scraperservice.com/v1
+
+# ================================
+# 🔧 开发和调试配置
+# ================================
+
+# 调试模式
+DEBUG_MODE=false
+LOG_LEVEL=INFO
+
+# 测试环境标识
+ENVIRONMENT=production
+
+# API调用统计
+ENABLE_ANALYTICS=true
+ANALYTICS_ENDPOINT=https://analytics.yourapp.com/api 
