@@ -78,16 +78,27 @@ Python爬虫 → JSON输出 → Next.js集成 → Supabase → 前端展示
 
 **API集成进度**:
 - ✅ **已完成**: YouTube Data API v3 - 密钥配置成功，数据获取正常，剩余配额9899
-- 🎯 **高优先级**: Instagram API、Facebook Graph API
+- 📝 **文档完成**: Instagram Basic Display API、Facebook Graph API
 - 🔄 **中优先级**: X(Twitter) API v2、TikTok for Developers
 - 🌏 **地区特色**: Naver Open API(韩国)、LINE API(日本)
 - 💰 **成本预算**: $150-400/月，预期ROI 300-500%
 
-**YouTube API集成详情**:
-- 🔑 **API密钥**: `AIzaSyBJoYM69KK0l4f2agtuEn_Pt9958jxC6Zo` (已验证)
-- 🎥 **功能**: 视频搜索、详情获取、热度计算、数据转换
-- 📊 **测试结果**: 成功获取5个Labubu相关视频，配额使用101/10000
-- 🔧 **技术栈**: YouTubeService类、API接口、测试脚本
+**已完成API集成**:
+- 🎥 **YouTube Data API v3** - 已启用并测试成功
+  - 密钥: `AIzaSyBJoYM69KK0l4f2agtuEn_Pt9958jxC6Zo` (已验证)
+  - 功能: 视频搜索、详情获取、热度计算、数据转换
+  - 测试结果: 成功获取5个Labubu相关视频，配额使用101/10000
+  - 文档: [docs/YouTube-API-启用指南.md](./docs/YouTube-API-启用指南.md)
+
+**已完成文档指南**:
+- 📸 **Instagram Basic Display API** - 详细启用指南
+  - 申请难度: ⭐⭐⭐ (中等)，费用: 免费
+  - 文档: [docs/Instagram-API-启用指南.md](./docs/Instagram-API-启用指南.md)
+- 📘 **Facebook Graph API** - 详细启用指南
+  - 申请难度: ⭐⭐⭐ (中等)，费用: 免费 (基础版)
+  - 文档: [docs/Facebook-Graph-API-启用指南.md](./docs/Facebook-Graph-API-启用指南.md)
+- 📚 **API指南汇总** - 所有平台API文档索引
+  - 文档: [docs/API启用指南汇总.md](./docs/API启用指南汇总.md)
 
 **ROI分析**: 开发投入1-2周，内容质量提升200-300%，运营成本降低80%
 
