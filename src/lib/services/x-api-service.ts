@@ -104,11 +104,11 @@ export class XApiService {
   private bearerToken: string
   private readonly baseURL = 'https://api.twitter.com/2'
   
-  // 速率限制状态
+  // 速率限制状态 (初始化为未知状态)
   private rateLimitStatus = {
-    remaining: 100,
+    remaining: -1,  // -1表示未获取
     reset: Date.now() + 15 * 60 * 1000, // 15分钟后重置
-    limit: 100
+    limit: -1       // -1表示未获取
   }
   
   // Labubu相关搜索关键词 (精简版)
@@ -207,8 +207,8 @@ export class XApiService {
         lang = 'en'
       } = options
 
-      // 检查速率限制
-      if (this.rateLimitStatus.remaining <= 1 && Date.now() < this.rateLimitStatus.reset) {
+      // 检查速率限制 (只有在已获取真实数据时才检查)
+      if (this.rateLimitStatus.remaining === 0 && Date.now() < this.rateLimitStatus.reset) {
         const waitTime = this.rateLimitStatus.reset - Date.now()
         throw new Error(`速率限制中，请等待 ${Math.ceil(waitTime / 1000)} 秒`)
       }
@@ -423,7 +423,7 @@ export class XApiService {
     return Math.round(finalScore * 100) / 100
   }
 
-  // 📊 获取API使用情况
+  // 📊 获取API使用情况 (强制实时获取)
   async getApiUsage(): Promise<{
     remaining: number
     reset: number
@@ -432,18 +432,7 @@ export class XApiService {
     resetTime?: string
   }> {
     try {
-      // 优先返回缓存的速率限制状态
-      if (this.rateLimitStatus.remaining > 0) {
-        return {
-          remaining: this.rateLimitStatus.remaining,
-          reset: this.rateLimitStatus.reset,
-          limit: this.rateLimitStatus.limit,
-          status: this.rateLimitStatus.remaining > 10 ? 'healthy' : 'limited',
-          resetTime: new Date(this.rateLimitStatus.reset).toLocaleString()
-        }
-      }
-
-      // 如果没有缓存数据，发送轻量级请求获取
+      // 发送轻量级请求获取真实的速率限制状态
       const response = await this.client.get('/tweets/search/recent', {
         params: {
           query: 'labubu',
@@ -454,11 +443,18 @@ export class XApiService {
       // 更新速率限制状态
       this.updateRateLimitStatus(response.headers)
 
+      console.log('📊 实时API配额状态:', {
+        remaining: this.rateLimitStatus.remaining,
+        limit: this.rateLimitStatus.limit,
+        reset: new Date(this.rateLimitStatus.reset).toLocaleString()
+      })
+
       return {
         remaining: this.rateLimitStatus.remaining,
         reset: this.rateLimitStatus.reset,
         limit: this.rateLimitStatus.limit,
-        status: this.rateLimitStatus.remaining > 10 ? 'healthy' : 'limited',
+        status: this.rateLimitStatus.remaining > 10 ? 'healthy' : 
+                this.rateLimitStatus.remaining > 0 ? 'limited' : 'error',
         resetTime: new Date(this.rateLimitStatus.reset).toLocaleString()
       }
 
@@ -467,10 +463,15 @@ export class XApiService {
       
       // 如果是429错误，说明速率限制触发
       if (error.response?.status === 429) {
+        // 尝试从错误响应头获取速率限制信息
+        if (error.response?.headers) {
+          this.updateRateLimitStatus(error.response.headers)
+        }
+        
         return {
           remaining: 0,
           reset: this.rateLimitStatus.reset,
-          limit: this.rateLimitStatus.limit,
+          limit: this.rateLimitStatus.limit > 0 ? this.rateLimitStatus.limit : 100,
           status: 'limited',
           resetTime: new Date(this.rateLimitStatus.reset).toLocaleString()
         }
