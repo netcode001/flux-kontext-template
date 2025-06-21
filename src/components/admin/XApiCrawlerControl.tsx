@@ -26,6 +26,12 @@ interface XApiStatus {
   }
 }
 
+interface CrawlerConfig {
+  crawler_name: string
+  is_enabled: boolean
+  config: Record<string, any>
+}
+
 interface CrawlStats {
   tweets_found: number
   tweets_saved: number
@@ -41,10 +47,27 @@ export function XApiCrawlerControl() {
   const [crawlStats, setCrawlStats] = useState<CrawlStats | null>(null)
   const [message, setMessage] = useState('')
   
+  // 爬虫配置状态 (临时使用localStorage)
+  const [isEnabled, setIsEnabled] = useState(false)
+  const [isToggling, setIsToggling] = useState(false)
+  
   // 爬取参数
   const [maxResults, setMaxResults] = useState(100)
   const [sinceHours, setSinceHours] = useState(24)
   const [lang, setLang] = useState('en')
+
+  // 获取爬虫配置 (从localStorage)
+  const fetchCrawlerConfig = () => {
+    try {
+      const savedStates = localStorage.getItem('crawler_states')
+      if (savedStates) {
+        const states = JSON.parse(savedStates)
+        setIsEnabled(states['x_api_crawler'] || false)
+      }
+    } catch (error) {
+      console.error('获取爬虫配置失败:', error)
+    }
+  }
 
   // 获取API状态
   const fetchStatus = async () => {
@@ -62,6 +85,30 @@ export function XApiCrawlerControl() {
       setMessage(`❌ 获取状态失败: ${error}`)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  // 切换爬虫开关 (使用localStorage)
+  const toggleCrawler = () => {
+    setIsToggling(true)
+    try {
+      const newStatus = !isEnabled
+      setIsEnabled(newStatus)
+      
+      // 保存到localStorage
+      const savedStates = localStorage.getItem('crawler_states')
+      const states = savedStates ? JSON.parse(savedStates) : {}
+      states['x_api_crawler'] = newStatus
+      localStorage.setItem('crawler_states', JSON.stringify(states))
+      
+      setMessage(`✅ X API爬虫 ${newStatus ? '已启用' : '已关闭'}`)
+      
+      // 3秒后清除消息
+      setTimeout(() => setMessage(''), 3000)
+    } catch (error) {
+      setMessage(`❌ 切换开关失败: ${error}`)
+    } finally {
+      setIsToggling(false)
     }
   }
 
@@ -135,6 +182,7 @@ export function XApiCrawlerControl() {
 
   useEffect(() => {
     fetchStatus()
+    fetchCrawlerConfig()
   }, [])
 
   return (
@@ -145,13 +193,28 @@ export function XApiCrawlerControl() {
           <h2 className="text-2xl font-bold">🐦 X API内容爬虫</h2>
           <p className="text-gray-600">管理X平台Labubu相关内容抓取</p>
         </div>
-        <Button
-          onClick={fetchStatus}
-          disabled={isLoading}
-          variant="outline"
-        >
-          {isLoading ? '🔄 刷新中...' : '🔄 刷新状态'}
-        </Button>
+        <div className="flex gap-2">
+          {/* 爬虫总开关 */}
+                      <Button
+              onClick={toggleCrawler}
+              disabled={isToggling}
+              variant={isEnabled ? "destructive" : "default"}
+              className="min-w-24"
+            >
+              {isToggling ? '🔄' : isEnabled ? '🔴 关闭' : '🟢 启用'}
+            </Button>
+          
+          <Button
+            onClick={() => {
+              fetchStatus()
+              fetchCrawlerConfig()
+            }}
+            disabled={isLoading}
+            variant="outline"
+          >
+            {isLoading ? '🔄 刷新中...' : '🔄 刷新状态'}
+          </Button>
+        </div>
       </div>
 
       {/* API状态卡片 */}
@@ -160,6 +223,14 @@ export function XApiCrawlerControl() {
         
         {status ? (
           <div className="space-y-4">
+            {/* 爬虫开关状态 */}
+            <div className="flex items-center justify-between">
+              <span>爬虫开关状态:</span>
+              <Badge variant={isEnabled ? "default" : "secondary"}>
+                {isEnabled ? '🟢 已启用' : '🔴 已关闭'}
+              </Badge>
+            </div>
+
             {/* 配置状态 */}
             <div className="flex items-center justify-between">
               <span>API配置状态:</span>
@@ -310,7 +381,7 @@ export function XApiCrawlerControl() {
         <div className="space-y-4">
           <Button
             onClick={startCrawl}
-            disabled={isCrawling || !status?.api_configured}
+            disabled={isCrawling || !status?.api_configured || !isEnabled}
             className="w-full"
             size="lg"
           >
@@ -319,12 +390,20 @@ export function XApiCrawlerControl() {
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                 正在获取数据...
               </>
+            ) : !isEnabled ? (
+              '🔴 爬虫已关闭'
             ) : (
               '🐦 开始获取X平台数据'
             )}
           </Button>
           
-          {!status?.api_configured && (
+          {!isEnabled && (
+            <p className="text-sm text-red-600">
+              🔴 请先启用爬虫开关才能执行数据抓取
+            </p>
+          )}
+          
+          {!status?.api_configured && isEnabled && (
             <p className="text-sm text-amber-600">
               ⚠️ 请先配置X API凭据才能开始爬取
             </p>

@@ -6,6 +6,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { XApiService, getXApiUsage } from '@/lib/services/x-api-service'
 import { createAdminClient } from '@/lib/supabase/server'
+// import { isCrawlerEnabled, CRAWLER_NAMES } from '@/lib/services/crawler-config'
 
 // 🛡️ 管理员权限验证
 async function verifyAdminAccess(request: NextRequest) {
@@ -94,6 +95,10 @@ export async function POST(request: NextRequest) {
   try {
     const authError = await verifyAdminAccess(request)
     if (authError) return authError
+
+    // 🎛️ 检查爬虫开关状态 (临时简化版本)
+    // 注意：这里暂时跳过开关检查，因为前端已经处理了
+    // 后续可以添加服务器端的状态验证
 
     const body = await request.json()
     const {
