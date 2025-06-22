@@ -57,6 +57,47 @@ export const labubuStyles = {
     scaleSmall: 'active:scale-98',
   },
 
+  // 文本样式
+  text: {
+    // 标题样式
+    heading: {
+      h1: 'text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-labubu-600 to-warm-500 bg-clip-text text-transparent',
+      h2: 'text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-labubu-600 to-warm-500 bg-clip-text text-transparent',
+      h3: 'text-xl md:text-2xl lg:text-3xl font-semibold text-labubu-700',
+      h4: 'text-lg md:text-xl lg:text-2xl font-semibold text-labubu-600',
+    },
+
+    // 正文样式
+    body: {
+      large: 'text-lg text-soft-700 leading-relaxed',
+      default: 'text-base text-soft-600 leading-relaxed',
+      small: 'text-sm text-soft-500 leading-relaxed',
+    },
+
+    // 强调样式
+    accent: {
+      primary: 'text-labubu-600 font-medium',
+      secondary: 'text-warm-500 font-medium',
+    },
+  },
+
+  // 布局样式
+  layout: {
+    // 网格布局
+    grid: {
+      responsive: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
+      gallery: 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4',
+      auto: 'grid grid-cols-auto-fit gap-6',
+    },
+
+    // 弹性布局
+    flex: {
+      center: 'flex items-center justify-center',
+      between: 'flex items-center justify-between',
+      column: 'flex flex-col items-center',
+    },
+  },
+
   // 常用组件样式
   components: {
     // 按钮样式
