@@ -2136,7 +2136,7 @@ export function FluxKontextGenerator() {
                   {/* 🔧 编辑图像描述 */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <Label className="text-sm font-medium text-yellow-400">
+                      <Label className="text-sm font-medium text-yellow-400 !text-yellow-400">
                         Image Description
                       </Label>
                       <Button 
@@ -2204,13 +2204,13 @@ export function FluxKontextGenerator() {
                       value={uploadedImages.length > 0 ? editPrompt : textPrompt}
                       onChange={(e) => uploadedImages.length > 0 ? setEditPrompt(e.target.value) : setTextPrompt(e.target.value)}
                       onPaste={handlePaste}
-                      className="resize-none text-sm text-purple-300 h-72"
+                      className="resize-none text-sm text-purple-300 !text-purple-300 h-72"
                     />
                   </div>
 
                   {/* 🔧 参考图像 */}
                   <div>
-                    <Label className="text-sm font-medium mb-1 block text-yellow-400">
+                    <Label className="text-sm font-medium mb-1 block text-yellow-400 !text-yellow-400">
                       Reference Images (Optional)
                     </Label>
                     <div 
@@ -2269,10 +2269,10 @@ export function FluxKontextGenerator() {
                       ) : (
                         <div>
                           <ImageIcon className="h-16 w-16 text-muted-foreground mx-auto mb-3" />
-                          <p className="text-sm text-purple-300 mb-1">
+                          <p className="text-sm text-purple-300 !text-purple-300 mb-1">
                             Click, drag & drop, or paste images
                           </p>
-                          <p className="text-xs text-purple-300/60">
+                          <p className="text-xs text-purple-300/60 !text-purple-300/60">
                             Supports JPG, PNG, WebP (optional)
                           </p>
                         </div>
@@ -2287,7 +2287,7 @@ export function FluxKontextGenerator() {
                 {/* 🔧 图像数量和比例 */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label className="text-sm font-medium mb-1 block text-yellow-400">Images Count</Label>
+                    <Label className="text-sm font-medium mb-1 block text-yellow-400 !text-yellow-400">Images Count</Label>
                     <select
                       value={numImages.toString()}
                       onChange={(e) => {
@@ -2296,7 +2296,7 @@ export function FluxKontextGenerator() {
                           setNumImages(selectedCount)
                         }
                       }}
-                      className="w-full p-2 border border-border rounded text-sm bg-background text-purple-300 h-8"
+                      className="w-full p-2 border border-border rounded text-sm bg-background text-purple-300 !text-purple-300 h-8"
                     >
                       {imageCountOptions.map((option) => (
                         <option 
@@ -2330,13 +2330,13 @@ export function FluxKontextGenerator() {
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium mb-1 block text-yellow-400">
+                    <Label className="text-sm font-medium mb-1 block text-yellow-400 !text-yellow-400">
                       {uploadedImages.length > 0 ? "Output Ratio" : "Aspect Ratio"}
                     </Label>
                     <select
                       value={aspectRatio}
                       onChange={(e) => setAspectRatio(e.target.value)}
-                      className="w-full p-2 border border-border rounded text-sm bg-background text-purple-300 h-8"
+                      className="w-full p-2 border border-border rounded text-sm bg-background text-purple-300 !text-purple-300 h-8"
                     >
                       {aspectRatioOptions.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -2365,7 +2365,7 @@ export function FluxKontextGenerator() {
                     {isTurnstileEnabled && checkTurnstileRequired() ? (
                       <div>
                         <div className="flex items-center justify-center md:justify-start mb-2">
-                          <Label className="text-sm font-medium flex items-center gap-1 text-yellow-400">
+                          <Label className="text-sm font-medium flex items-center gap-1 text-yellow-400 !text-yellow-400">
                             <Shield className="h-4 w-4" />
                             Security
                           </Label>
@@ -2427,7 +2427,7 @@ export function FluxKontextGenerator() {
                       </div>
                     ) : (
                       <div>
-                        <Label className="text-sm font-medium flex items-center justify-center md:justify-start gap-1 text-yellow-400 mb-2">
+                        <Label className="text-sm font-medium flex items-center justify-center md:justify-start gap-1 text-yellow-400 !text-yellow-400 mb-2">
                           <Shield className="h-4 w-4" />
                           Security
                         </Label>
@@ -2447,7 +2447,7 @@ export function FluxKontextGenerator() {
                   <div className="col-span-1 md:col-span-2 flex flex-col justify-center">
                     <div className="flex justify-center md:justify-end md:pr-8">
                       <div className="text-center">
-                        <Label className="text-sm font-medium flex items-center justify-center gap-2 text-yellow-400 mb-3">
+                        <Label className="text-sm font-medium flex items-center justify-center gap-2 text-yellow-400 !text-yellow-400 mb-3">
                           <Zap className="h-5 w-5" />
                         Generate Images
                       </Label>
