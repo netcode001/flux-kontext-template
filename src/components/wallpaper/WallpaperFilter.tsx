@@ -3,15 +3,18 @@
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
+import { Image, Play } from 'lucide-react'
 import type { WallpaperFilterProps } from '@/types/wallpaper'
 
 export function WallpaperFilter({
   categories,
   selectedCategory,
   selectedTags,
+  selectedMediaType = 'all',
   sortBy,
   onCategoryChange,
   onTagsChange,
+  onMediaTypeChange,
   onSortChange,
   onSearch
 }: WallpaperFilterProps) {
@@ -27,6 +30,36 @@ export function WallpaperFilter({
     <Card>
       <CardContent className="p-6">
         <div className="space-y-6">
+          {/* 媒体类型筛选 */}
+          <div>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">媒体类型</h3>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant={selectedMediaType === 'all' ? "default" : "outline"}
+                size="sm"
+                onClick={() => onMediaTypeChange('all')}
+              >
+                全部
+              </Button>
+              <Button
+                variant={selectedMediaType === 'image' ? "default" : "outline"}
+                size="sm"
+                onClick={() => onMediaTypeChange('image')}
+              >
+                <Image className="w-4 h-4 mr-1" />
+                静态壁纸
+              </Button>
+              <Button
+                variant={selectedMediaType === 'video' ? "default" : "outline"}
+                size="sm"
+                onClick={() => onMediaTypeChange('video')}
+              >
+                <Play className="w-4 h-4 mr-1" />
+                动态壁纸
+              </Button>
+            </div>
+          </div>
+
           {/* 分类筛选 */}
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white mb-3">分类</h3>

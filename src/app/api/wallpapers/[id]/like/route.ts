@@ -18,8 +18,9 @@ const likeParamsSchema = z.object({
 // 💝 POST /api/wallpapers/[id]/like - 点赞壁纸
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params
   try {
     // 🛡️ 验证路径参数
     const validatedParams = likeParamsSchema.parse(params)
@@ -164,8 +165,9 @@ export async function POST(
 // 💔 DELETE /api/wallpapers/[id]/like - 取消点赞
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params
   try {
     // 🛡️ 验证路径参数
     const validatedParams = likeParamsSchema.parse(params)

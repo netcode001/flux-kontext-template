@@ -150,8 +150,9 @@ function detectBot(userAgent: string, headers: Headers): {
 // 📥 POST /api/wallpapers/[id]/download - 下载壁纸
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params
   try {
     // 🛡️ 验证路径参数
     const validatedParams = downloadParamsSchema.parse(params)

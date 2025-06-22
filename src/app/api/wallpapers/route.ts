@@ -158,8 +158,11 @@ export async function GET(request: NextRequest) {
       ...wallpaper,
       is_liked: userLikes.includes(wallpaper.id),
       can_download: isAuthenticated, // 只有登录用户可以下载
-      // 🔒 对于未登录用户，不显示高分辨率图片URL（防止盗链）
-      image_url: isAuthenticated ? wallpaper.image_url : wallpaper.thumbnail_url || wallpaper.image_url
+      // 🔒 对于未登录用户，不显示高分辨率URL（防止盗链）
+      image_url: isAuthenticated ? wallpaper.image_url : wallpaper.thumbnail_url || wallpaper.image_url,
+      video_url: isAuthenticated ? wallpaper.video_url : undefined, // 未登录用户不能获取视频URL
+      // 🎬 视频预览：未登录用户可以看到GIF预览，但不能获取完整视频
+      preview_gif_url: wallpaper.preview_gif_url // GIF预览对所有用户开放
     }))
 
     // 📊 构建分页信息

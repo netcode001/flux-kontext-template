@@ -14,7 +14,7 @@ import { home, common, seo } from "@/lib/content"
 
 export function HomeContent() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-hero-gradient">
       {/* Navigation */}
       <DynamicNavigation />
 
@@ -53,22 +53,21 @@ export function HomeContent() {
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-5xl text-center">
-          <div className="hero-gradient absolute inset-0 pointer-events-none" />
           <div className="relative z-10">
-            <div className="inline-block px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary text-sm mb-6">
+            <div className="inline-block px-6 py-3 bg-gradient-to-r from-labubu-100 to-warm-100 border border-labubu-300/30 rounded-full text-labubu-600 text-sm font-medium mb-6 shadow-soft hover:shadow-labubu transition-all duration-300 hover:scale-105">
               {home.hero.badge}
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight bg-gradient-to-r from-labubu-600 via-labubu-500 to-warm-500 bg-clip-text text-transparent">
               {home.hero.title}
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto px-4 md:px-0 leading-relaxed">
+            <p className="text-lg md:text-xl text-soft-600 mb-8 max-w-3xl mx-auto px-4 md:px-0 leading-relaxed">
               {home.hero.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/generate">
                 <Button 
                   size="lg" 
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg"
+                  className="bg-gradient-to-r from-labubu-500 to-labubu-600 text-white hover:from-labubu-600 hover:to-labubu-700 hover:scale-105 active:scale-95 transition-all duration-300 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg shadow-labubu hover:shadow-hover rounded-2xl"
                 >
                   <svg className="w-4 h-4 md:w-5 md:h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2L2 7V10C2 16 6 20.5 12 22C18 20.5 22 16 22 10V7L12 2Z" fill="currentColor"/>
@@ -80,7 +79,7 @@ export function HomeContent() {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="hover:scale-105 active:scale-95 transition-all duration-200 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg"
+                  className="border-labubu-300 text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 hover:scale-105 active:scale-95 transition-all duration-300 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg rounded-2xl hover:border-labubu-400 hover:shadow-soft"
                 >
                   {common.buttons.viewPricing}
                 </Button>

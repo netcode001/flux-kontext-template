@@ -14,18 +14,34 @@ CREATE TABLE wallpaper_categories (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 2. 壁纸主表
+-- 2. 壁纸主表（扩展支持视频）
 CREATE TABLE wallpapers (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title VARCHAR(200) NOT NULL, -- 壁纸标题
   title_en VARCHAR(200), -- 英文标题
   description TEXT, -- 壁纸描述
   category_id UUID REFERENCES wallpaper_categories(id) ON DELETE SET NULL, -- 分类ID
-  image_url TEXT NOT NULL, -- 图片URL
+  
+  -- 媒体类型和URL字段
+  media_type VARCHAR(20) DEFAULT 'image' CHECK (media_type IN ('image', 'video')), -- 媒体类型
+  image_url TEXT, -- 图片URL（静态壁纸）
+  video_url TEXT, -- 视频URL（动态壁纸）
   thumbnail_url TEXT, -- 缩略图URL
+  preview_gif_url TEXT, -- 预览GIF URL（用于视频预览）
+  
+  -- 文件信息
   original_filename VARCHAR(255), -- 原始文件名
   file_size BIGINT, -- 文件大小(字节)
-  dimensions JSONB, -- 图片尺寸 {"width": 1920, "height": 1080}
+  dimensions JSONB, -- 尺寸信息 {"width": 1920, "height": 1080}
+  
+  -- 视频特有属性
+  duration INTEGER, -- 视频时长(秒)
+  frame_rate DECIMAL(5,2), -- 帧率
+  video_codec VARCHAR(50), -- 视频编码格式
+  audio_codec VARCHAR(50), -- 音频编码格式（如果有）
+  has_audio BOOLEAN DEFAULT false, -- 是否包含音频
+  
+  -- 通用属性
   tags TEXT[], -- 标签数组
   is_premium BOOLEAN DEFAULT false, -- 是否需要会员
   is_featured BOOLEAN DEFAULT false, -- 是否精选
@@ -37,9 +53,15 @@ CREATE TABLE wallpapers (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   
-  -- 索引
+  -- 约束检查
   CONSTRAINT wallpapers_title_check CHECK (length(title) > 0),
-  CONSTRAINT wallpapers_image_url_check CHECK (length(image_url) > 0)
+  CONSTRAINT wallpapers_media_url_check CHECK (
+    (media_type = 'image' AND image_url IS NOT NULL) OR 
+    (media_type = 'video' AND video_url IS NOT NULL)
+  ),
+  CONSTRAINT wallpapers_video_duration_check CHECK (
+    (media_type = 'video' AND duration > 0) OR media_type = 'image'
+  )
 );
 
 -- 3. 壁纸下载记录表
@@ -73,6 +95,7 @@ CREATE INDEX idx_wallpapers_category ON wallpapers(category_id);
 CREATE INDEX idx_wallpapers_active ON wallpapers(is_active);
 CREATE INDEX idx_wallpapers_featured ON wallpapers(is_featured);
 CREATE INDEX idx_wallpapers_premium ON wallpapers(is_premium);
+CREATE INDEX idx_wallpapers_media_type ON wallpapers(media_type); -- 新增：媒体类型索引
 CREATE INDEX idx_wallpapers_created_at ON wallpapers(created_at DESC);
 CREATE INDEX idx_wallpapers_download_count ON wallpapers(download_count DESC);
 CREATE INDEX idx_wallpapers_tags ON wallpapers USING GIN(tags);
@@ -84,25 +107,44 @@ CREATE INDEX idx_wallpaper_downloads_date ON wallpaper_downloads(download_at DES
 CREATE INDEX idx_wallpaper_likes_user ON wallpaper_likes(user_id);
 CREATE INDEX idx_wallpaper_likes_wallpaper ON wallpaper_likes(wallpaper_id);
 
--- 插入默认分类数据
+-- 插入默认分类数据（包含动态壁纸分类）
 INSERT INTO wallpaper_categories (name, name_en, description, sort_order) VALUES
 ('抽象艺术', 'Abstract', '抽象风格的艺术壁纸', 1),
 ('自然风景', 'Nature', '美丽的自然风景壁纸', 2),
 ('城市建筑', 'Architecture', '现代城市和建筑壁纸', 3),
 ('动漫卡通', 'Anime', '动漫和卡通风格壁纸', 4),
 ('简约设计', 'Minimalist', '简约风格设计壁纸', 5),
-('科技未来', 'Technology', '科技和未来主题壁纸', 6);
+('科技未来', 'Technology', '科技和未来主题壁纸', 6),
+('动态壁纸', 'Live Wallpapers', '动态视频壁纸合集', 7); -- 新增动态壁纸分类
 
--- 插入示例壁纸数据
-INSERT INTO wallpapers (title, title_en, description, category_id, image_url, thumbnail_url, dimensions, tags, is_featured) 
+-- 插入示例壁纸数据（静态）
+INSERT INTO wallpapers (title, title_en, description, category_id, media_type, image_url, thumbnail_url, dimensions, tags, is_featured) 
 SELECT 
   '梦幻抽象', 'Dream Abstract', '色彩丰富的梦幻抽象艺术', 
   (SELECT id FROM wallpaper_categories WHERE name_en = 'Abstract' LIMIT 1),
+  'image',
   'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1920&h=1080&fit=crop',
   'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=400&h=300&fit=crop',
   '{"width": 1920, "height": 1080}',
   ARRAY['抽象', '艺术', '色彩'],
   true;
+
+-- 插入示例视频壁纸数据
+INSERT INTO wallpapers (title, title_en, description, category_id, media_type, video_url, thumbnail_url, preview_gif_url, dimensions, duration, frame_rate, has_audio, tags, is_featured, is_premium) 
+SELECT 
+  '流动星空', 'Flowing Stars', '梦幻的流动星空动态壁纸', 
+  (SELECT id FROM wallpaper_categories WHERE name_en = 'Live Wallpapers' LIMIT 1),
+  'video',
+  'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4', -- 示例视频URL
+  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+  'https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif', -- 示例GIF预览
+  '{"width": 1280, "height": 720}',
+  30, -- 30秒
+  30.0, -- 30fps
+  false, -- 无音频
+  ARRAY['星空', '动态', '梦幻', '流动'],
+  true,
+  true; -- 设为Premium内容
 
 -- 更新菜单表，添加壁纸菜单项
 DO $$
@@ -153,6 +195,7 @@ CREATE TRIGGER update_wallpapers_updated_at
   FOR EACH ROW EXECUTE FUNCTION update_wallpaper_updated_at();
 
 -- 显示创建结果
-SELECT 'Wallpaper tables created successfully!' as status;
+SELECT 'Wallpaper tables with video support created successfully!' as status;
 SELECT COUNT(*) as category_count FROM wallpaper_categories;
-SELECT COUNT(*) as wallpaper_count FROM wallpapers; 
+SELECT COUNT(*) as wallpaper_count FROM wallpapers;
+SELECT COUNT(*) as video_wallpaper_count FROM wallpapers WHERE media_type = 'video'; 

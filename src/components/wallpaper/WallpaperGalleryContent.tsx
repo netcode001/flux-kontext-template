@@ -35,6 +35,7 @@ export function WallpaperGalleryContent() {
   })
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedMediaType, setSelectedMediaType] = useState<'all' | 'image' | 'video'>('all')
   
   // 🎨 UI状态
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
@@ -123,6 +124,17 @@ export function WallpaperGalleryContent() {
     
     setSelectedTags(newTags)
     applyFilters({ tags: newTags.length > 0 ? newTags : undefined })
+  }
+
+  // 🎬 媒体类型处理
+  const handleMediaTypeChange = (mediaType: 'all' | 'image' | 'video') => {
+    setSelectedMediaType(mediaType)
+    // 根据媒体类型构建筛选参数
+    const mediaFilters: any = {}
+    if (mediaType !== 'all') {
+      mediaFilters.media_type = mediaType
+    }
+    applyFilters(mediaFilters)
   }
 
   // 💝 点赞处理
@@ -282,19 +294,21 @@ export function WallpaperGalleryContent() {
         {/* 筛选组件 */}
         {showFilters && (
           <div className="mb-6">
-                         <WallpaperFilter
-               categories={categories}
-               selectedCategory={filters.category_id}
-               selectedTags={selectedTags}
-               sortBy={filters.sort || 'latest'}
-               onCategoryChange={(categoryId: string) => applyFilters({ category_id: categoryId || undefined })}
-               onTagsChange={(tags: string[]) => {
-                 setSelectedTags(tags)
-                 applyFilters({ tags: tags.length > 0 ? tags : undefined })
-               }}
-               onSortChange={(sort: string) => applyFilters({ sort: sort as any })}
-               onSearch={handleSearch}
-             />
+            <WallpaperFilter
+              categories={categories}
+              selectedCategory={filters.category_id}
+              selectedTags={selectedTags}
+              selectedMediaType={selectedMediaType}
+              sortBy={filters.sort || 'latest'}
+              onCategoryChange={(categoryId: string) => applyFilters({ category_id: categoryId || undefined })}
+              onTagsChange={(tags: string[]) => {
+                setSelectedTags(tags)
+                applyFilters({ tags: tags.length > 0 ? tags : undefined })
+              }}
+              onMediaTypeChange={handleMediaTypeChange}
+              onSortChange={(sort: string) => applyFilters({ sort: sort as any })}
+              onSearch={handleSearch}
+            />
           </div>
         )}
 

@@ -19,17 +19,72 @@ async function checkAdminPermission(session: any): Promise<boolean> {
   return adminEmails.includes(session.user.email)
 }
 
-// 📝 壁纸创建/更新验证Schema
-const wallpaperSchema = z.object({
+// 📝 基础壁纸字段Schema
+const baseWallpaperSchema = z.object({
   title: z.string().min(1, '标题不能为空').max(200, '标题太长'),
   title_en: z.string().max(200, '英文标题太长').optional(),
   description: z.string().max(1000, '描述太长').optional(),
   category_id: z.string().uuid('无效的分类ID').optional(),
+  
+  // 媒体类型和URL
+  media_type: z.enum(['image', 'video'], { required_error: '必须指定媒体类型' }),
+  image_url: z.string().url('无效的图片URL').optional(),
+  video_url: z.string().url('无效的视频URL').optional(),
+  thumbnail_url: z.string().url('无效的缩略图URL').optional(),
+  preview_gif_url: z.string().url('无效的预览GIF URL').optional(),
+  
+  // 文件信息
+  original_filename: z.string().max(255).optional(),
+  file_size: z.number().positive().optional(),
+  dimensions: z.object({
+    width: z.number().positive(),
+    height: z.number().positive()
+  }).optional(),
+  
+  // 视频特有字段
+  duration: z.number().positive().optional(),
+  frame_rate: z.number().positive().optional(),
+  video_codec: z.string().max(50).optional(),
+  audio_codec: z.string().max(50).optional(),
+  has_audio: z.boolean().default(false),
+  
+  // 通用字段
   tags: z.array(z.string().min(1).max(50)).max(20, '标签数量不能超过20个'),
   is_premium: z.boolean().default(false),
   is_featured: z.boolean().default(false),
   is_active: z.boolean().default(true)
 })
+
+// 📝 壁纸创建验证Schema（带完整性检查）
+const wallpaperCreateSchema = baseWallpaperSchema.refine(
+  (data) => {
+    // 确保图片类型有image_url，视频类型有video_url
+    if (data.media_type === 'image' && !data.image_url) {
+      return false
+    }
+    if (data.media_type === 'video' && !data.video_url) {
+      return false
+    }
+    return true
+  },
+  {
+    message: '图片类型必须提供image_url，视频类型必须提供video_url'
+  }
+).refine(
+  (data) => {
+    // 视频类型必须有时长
+    if (data.media_type === 'video' && !data.duration) {
+      return false
+    }
+    return true
+  },
+  {
+    message: '视频类型必须提供duration（时长）'
+  }
+)
+
+// 📝 壁纸更新验证Schema（部分字段可选）
+const wallpaperUpdateSchema = baseWallpaperSchema.partial()
 
 // 📝 查询参数验证Schema
 const querySchema = z.object({
@@ -198,7 +253,7 @@ export async function POST(request: NextRequest) {
 
     // 📝 解析请求体
     const body = await request.json()
-    const validatedData = wallpaperSchema.parse(body)
+    const validatedData = wallpaperCreateSchema.parse(body)
 
     console.log('📝 创建壁纸:', validatedData)
 
@@ -276,7 +331,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const validatedData = wallpaperSchema.partial().parse(updateData)
+    const validatedData = wallpaperUpdateSchema.parse(updateData)
 
     console.log('✏️ 更新壁纸:', { id, ...validatedData })
 

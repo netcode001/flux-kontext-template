@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { labubuStyles } from '@/lib/styles/labubu-theme'
 
 // 📰 资讯文章接口定义
 interface NewsArticle {
@@ -255,19 +256,19 @@ export function LabubuNewsContent() {
   }, [currentCategory, currentSort])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-sky-50 to-emerald-50">
+    <div className="min-h-screen bg-hero-gradient">
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-4 gap-8">
           
           {/* 🔥 左侧边栏 - 热搜标签 */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
-              <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 hover:bg-white/80">
+              <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 shadow-card border border-labubu-200/30 hover:shadow-hover transition-all duration-300">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full flex items-center justify-center animate-pulse">
+                  <div className="w-8 h-8 bg-gradient-to-r from-labubu-500 to-warm-500 rounded-full flex items-center justify-center animate-pulse">
                     <span className="text-white text-sm">🔥</span>
                   </div>
-                  <h3 className="text-lg font-bold bg-gradient-to-r from-pink-600 to-violet-600 bg-clip-text text-transparent">
+                  <h3 className="text-lg font-bold bg-gradient-to-r from-labubu-600 to-warm-600 bg-clip-text text-transparent">
                     Labubu热搜
                   </h3>
                 </div>
@@ -278,10 +279,10 @@ export function LabubuNewsContent() {
                       onClick={() => handleTrendingClick(keyword.keyword)}
                       className={`group inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm cursor-pointer transition-all duration-300 hover:scale-110 hover:rotate-1 animate-fade-in-up ${
                         keyword.rank <= 3 
-                          ? 'bg-gradient-to-r from-pink-400 to-rose-400 text-white shadow-lg hover:shadow-pink-300/50 hover:from-pink-500 hover:to-rose-500' 
+                          ? 'bg-gradient-to-r from-labubu-500 to-labubu-600 text-white shadow-labubu hover:shadow-hover hover:from-labubu-600 hover:to-labubu-700' 
                           : keyword.rank <= 6
-                          ? 'bg-gradient-to-r from-violet-400 to-purple-400 text-white shadow-lg hover:shadow-violet-300/50 hover:from-violet-500 hover:to-purple-500'
-                          : 'bg-gradient-to-r from-sky-400 to-cyan-400 text-white shadow-lg hover:shadow-sky-300/50 hover:from-sky-500 hover:to-cyan-500'
+                          ? 'bg-gradient-to-r from-warm-400 to-warm-500 text-white shadow-warm hover:shadow-hover hover:from-warm-500 hover:to-warm-600'
+                          : 'bg-gradient-to-r from-labubu-300 to-warm-300 text-labubu-700 shadow-soft hover:shadow-card hover:from-labubu-400 hover:to-warm-400'
                       }`}
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
@@ -303,13 +304,13 @@ export function LabubuNewsContent() {
           <div className="lg:col-span-3 space-y-6">
             
             {/* 🔍 搜索和筛选栏 */}
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 hover:bg-white/80">
+            <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 shadow-card border border-labubu-200/30 hover:shadow-hover transition-all duration-300">
               <div className="flex flex-col gap-6">
                 
                 {/* 搜索框 */}
                 <div className="relative group">
                   <Search 
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-violet-400 w-5 h-5 cursor-pointer hover:text-pink-500 transition-all duration-300 group-hover:scale-110" 
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-labubu-400 w-5 h-5 cursor-pointer hover:text-labubu-600 transition-all duration-300 group-hover:scale-110" 
                     onClick={handleSearch}
                   />
                   <Input
@@ -317,12 +318,12 @@ export function LabubuNewsContent() {
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onKeyPress={handleSearchKeyPress}
-                    className="pl-12 pr-12 h-12 text-lg border-2 border-violet-200 focus:border-pink-400 rounded-2xl bg-gradient-to-r from-violet-50/50 to-pink-50/50 focus:bg-white transition-all duration-300 focus:shadow-lg focus:shadow-pink-200/50"
+                    className="pl-12 pr-12 h-12 text-lg border-2 border-labubu-200/50 focus:border-labubu-400 focus:ring-labubu-400/20 rounded-2xl bg-gradient-to-r from-labubu-50/50 to-warm-50/50 focus:bg-white transition-all duration-300 focus:shadow-labubu"
                   />
                   {searchInput && (
                     <button
                       onClick={clearSearch}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-violet-400 hover:text-pink-500 transition-all duration-300 hover:scale-110 hover:rotate-90"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-labubu-400 hover:text-labubu-600 transition-all duration-300 hover:scale-110 hover:rotate-90"
                     >
                       ✕
                     </button>
@@ -339,8 +340,8 @@ export function LabubuNewsContent() {
                       onClick={() => handleCategoryChange(category.key)}
                       className={`flex items-center gap-2 px-4 py-2 rounded-2xl transition-all duration-300 hover:scale-105 animate-fade-in-up ${
                         currentCategory === category.key
-                          ? 'bg-gradient-to-r from-pink-500 to-violet-500 text-white shadow-lg hover:shadow-pink-300/50 hover:from-pink-600 hover:to-violet-600'
-                          : 'border-2 border-violet-200 text-violet-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-pink-50 hover:border-pink-300'
+                          ? 'bg-gradient-to-r from-labubu-500 to-labubu-600 text-white shadow-labubu hover:shadow-hover hover:from-labubu-600 hover:to-labubu-700'
+                          : 'border-2 border-labubu-200/50 text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 hover:border-labubu-400'
                       }`}
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
@@ -352,8 +353,8 @@ export function LabubuNewsContent() {
 
                 {/* 排序选项 */}
                 <div className="flex items-center gap-4">
-                  <span className="text-violet-600 text-sm font-medium flex items-center gap-2">
-                    <span className="w-2 h-2 bg-gradient-to-r from-pink-400 to-violet-400 rounded-full animate-pulse"></span>
+                  <span className="text-labubu-600 text-sm font-medium flex items-center gap-2">
+                    <span className="w-2 h-2 bg-gradient-to-r from-labubu-400 to-warm-400 rounded-full animate-pulse"></span>
                     排序方式
                   </span>
                   <div className="flex flex-wrap gap-2">
@@ -365,8 +366,8 @@ export function LabubuNewsContent() {
                         onClick={() => handleSortChange(option.key)}
                         className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:scale-105 animate-fade-in-up ${
                           currentSort === option.key
-                            ? 'bg-gradient-to-r from-sky-400 to-cyan-400 text-white shadow-md hover:shadow-sky-300/50'
-                            : 'text-violet-600 hover:bg-gradient-to-r hover:from-sky-50 hover:to-cyan-50 hover:text-sky-600'
+                            ? 'bg-gradient-to-r from-warm-400 to-warm-500 text-white shadow-warm hover:shadow-hover'
+                            : 'text-labubu-600 hover:bg-gradient-to-r hover:from-warm-50 hover:to-labubu-50 hover:text-warm-600'
                         }`}
                         style={{ animationDelay: `${index * 50}ms` }}
                       >
@@ -381,22 +382,22 @@ export function LabubuNewsContent() {
 
             {/* 📊 搜索结果提示 */}
             {searchQuery && (
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <div className="bg-labubu-50 border border-labubu-200/50 rounded-2xl p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <Search className="w-4 h-4 text-purple-600" />
-                    <span className="text-purple-700">
+                    <Search className="w-4 h-4 text-labubu-600" />
+                    <span className="text-labubu-700">
                       搜索 "<span className="font-semibold">{searchQuery}</span>" 的结果
                     </span>
                     {!isLoading && (
-                      <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+                      <Badge variant="secondary" className="bg-labubu-100 text-labubu-700 rounded-full">
                         {articles.length} 个结果
                       </Badge>
                     )}
                   </div>
                   <button
                     onClick={clearSearch}
-                    className="text-purple-600 hover:text-purple-800 text-sm"
+                    className="text-labubu-600 hover:text-labubu-800 text-sm hover:scale-105 transition-all duration-300"
                   >
                     清除搜索
                   </button>
@@ -408,14 +409,14 @@ export function LabubuNewsContent() {
             <div>
               {isLoading && articles.length === 0 ? (
                 <div className="text-center py-16">
-                  <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-                  <p className="text-gray-600">加载中...</p>
+                  <div className="animate-spin w-8 h-8 border-4 border-labubu-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+                  <p className="text-soft-600">加载中...</p>
                 </div>
               ) : articles.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="text-6xl mb-4">📰</div>
-                  <h3 className="text-xl font-bold text-gray-700 mb-2">暂无资讯</h3>
-                  <p className="text-gray-500">
+                  <h3 className="text-xl font-bold text-labubu-700 mb-2">暂无资讯</h3>
+                  <p className="text-soft-500">
                     {searchQuery ? '没有找到相关资讯' : '资讯内容正在建设中...'}
                   </p>
                 </div>
@@ -426,7 +427,7 @@ export function LabubuNewsContent() {
                     {articles.map((article, index) => (
                     <div 
                       key={article.id} 
-                      className="group bg-white/70 backdrop-blur-xl rounded-3xl overflow-hidden shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-500 hover:bg-white/80 hover:scale-[1.02] animate-fade-in-up cursor-pointer"
+                      className="group bg-white/95 backdrop-blur-lg rounded-3xl overflow-hidden shadow-card border border-labubu-200/30 hover:shadow-hover transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1 animate-fade-in-up cursor-pointer"
                       style={{ animationDelay: `${index * 100}ms` }}
                       onClick={() => window.open(article.originalUrl, '_blank')}
                     >
