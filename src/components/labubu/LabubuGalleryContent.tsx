@@ -9,6 +9,8 @@ import { PostWithUser } from '@/lib/database'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+// Labubu风格组件
+import { LabubuCard, LabubuButton, LabubuInput, LabubuBadge, LabubuHeading, LabubuText, LabubuContainer } from '@/components/ui/labubu-ui'
 import { Plus, Search, Filter, Sparkles, Star, Grid, List } from 'lucide-react'
 
 type ViewMode = 'grid' | 'list'
@@ -199,45 +201,46 @@ export function LabubuGalleryContent() {
   ] as const
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <LabubuContainer className="min-h-screen">
       {/* 统一的导航栏 */}
       <DynamicNavigation />
       
       {/* 页面头部 */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100 pt-16">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-labubu-200 pt-16">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-500 to-pink-600 bg-clip-text text-transparent">
+            <LabubuHeading level={1} className="text-4xl font-bold">
               🎨 创意秀场
-            </h1>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            </LabubuHeading>
+            <LabubuText variant="large" className="text-soft-600 max-w-2xl mx-auto">
               展示Labubu收藏爱好者的原创作品，发现无限创意可能
-            </p>
+            </LabubuText>
           </div>
         </div>
       </div>
 
       {/* 搜索和筛选栏 */}
-      <div className="bg-white/60 backdrop-blur-sm border-b border-purple-100">
+      <div className="bg-white/60 backdrop-blur-sm border-b border-labubu-200">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             {/* 搜索框 */}
             <div className="relative flex-1 max-w-md">
               <Search 
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 cursor-pointer hover:text-purple-600 transition-colors" 
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-soft-400 w-4 h-4 cursor-pointer hover:text-labubu-600 transition-colors" 
                 onClick={executeSearch}
               />
-              <Input
+              <LabubuInput
+                variant="search"
                 placeholder="搜索标题或内容..."
                 value={searchInput}
                 onChange={(e) => handleSearchInputChange(e.target.value)}
                 onKeyPress={handleSearchKeyPress}
-                className="pl-10 pr-10 border-purple-200 focus:border-purple-400"
+                className="pl-10 pr-10"
               />
               {searchInput && (
                 <button
                   onClick={clearSearch}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-soft-400 hover:text-soft-600"
                 >
                   ✕
                 </button>
@@ -249,53 +252,47 @@ export function LabubuGalleryContent() {
               {filters.map((filter) => {
                 const Icon = filter.icon
                 return (
-                  <Button
+                  <LabubuButton
                     key={filter.key}
-                    variant={currentFilter === filter.key ? "default" : "outline"}
+                    variant={currentFilter === filter.key ? "primary" : "secondary"}
                     size="sm"
                     onClick={() => handleFilter(filter.key as FilterType)}
-                    className={`flex items-center gap-2 ${
-                      currentFilter === filter.key
-                        ? 'bg-purple-500 hover:bg-purple-600'
-                        : 'border-purple-200 text-purple-600 hover:bg-purple-50'
-                    }`}
+                    className="flex items-center gap-2"
                   >
                     <Icon className="w-4 h-4" />
                     {filter.label}
-                  </Button>
+                  </LabubuButton>
                 )
               })}
             </div>
 
             {/* 视图切换和发布按钮 */}
             <div className="flex items-center gap-2">
-              <div className="flex border border-purple-200 rounded-lg overflow-hidden">
-                <Button
-                  variant={viewMode === 'grid' ? "default" : "ghost"}
+              <div className="flex border border-labubu-200 rounded-2xl overflow-hidden">
+                <LabubuButton
+                  variant={viewMode === 'grid' ? "primary" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode('grid')}
-                  className={`${viewMode === 'grid' ? 'bg-purple-500' : 'hover:bg-purple-50'}`}
                 >
                   <Grid className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant={viewMode === 'list' ? "default" : "ghost"}
+                </LabubuButton>
+                <LabubuButton
+                  variant={viewMode === 'list' ? "primary" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode('list')}
-                  className={`${viewMode === 'list' ? 'bg-purple-500' : 'hover:bg-purple-50'}`}
                 >
                   <List className="w-4 h-4" />
-                </Button>
+                </LabubuButton>
               </div>
 
               {session && (
-                <Button
+                <LabubuButton
+                  variant="warm"
                   onClick={() => setShowPublisher(true)}
-                  className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   发布作品
-                </Button>
+                </LabubuButton>
               )}
             </div>
           </div>
@@ -314,64 +311,65 @@ export function LabubuGalleryContent() {
       <div className="container mx-auto px-4 py-8">
         {/* 🔍 搜索结果状态提示 */}
         {searchQuery && (
-          <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+          <LabubuCard variant="interactive" className="mb-6 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Search className="w-4 h-4 text-purple-600" />
-                <span className="text-purple-700">
+                <Search className="w-4 h-4 text-labubu-600" />
+                <LabubuText className="text-labubu-700">
                   搜索 "<span className="font-semibold">{searchQuery}</span>" 的结果
-                </span>
+                </LabubuText>
                 {!isLoading && (
-                  <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+                  <LabubuBadge variant="primary">
                     {posts.length} 个结果
-                  </Badge>
+                  </LabubuBadge>
                 )}
               </div>
-              <button
+              <LabubuButton
+                variant="ghost"
+                size="sm"
                 onClick={clearSearch}
-                className="text-purple-600 hover:text-purple-800 text-sm"
+                className="text-labubu-600 hover:text-labubu-800"
               >
                 清除搜索
-              </button>
+              </LabubuButton>
             </div>
-          </div>
+          </LabubuCard>
         )}
 
         {isLoading && posts.length === 0 ? (
           <div className="text-center py-16">
-            <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-600">
+            <div className="animate-spin w-8 h-8 border-4 border-labubu-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <LabubuText className="text-soft-600">
               {searchQuery ? `搜索 "${searchQuery}" 中...` : '加载中...'}
-            </p>
+            </LabubuText>
           </div>
         ) : posts.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">{searchQuery ? '🔍' : '🎭'}</div>
-            <h3 className="text-xl font-bold text-gray-700 mb-2">
+            <LabubuHeading level={3} className="text-xl font-bold text-soft-700 mb-2">
               {searchQuery ? '没有找到相关作品' : '还没有作品'}
-            </h3>
-            <p className="text-gray-500 mb-6">
+            </LabubuHeading>
+            <LabubuText className="text-soft-500 mb-6">
               {searchQuery 
                 ? `尝试使用其他关键词搜索，或者浏览所有作品` 
                 : '成为第一个分享Labubu创意的人吧！'
               }
-            </p>
+            </LabubuText>
             {searchQuery ? (
-              <Button
+              <LabubuButton
+                variant="secondary"
                 onClick={clearSearch}
-                variant="outline"
-                className="border-purple-200 text-purple-600 hover:bg-purple-50"
               >
                 查看所有作品
-              </Button>
+              </LabubuButton>
             ) : session && (
-              <Button
+              <LabubuButton
+                variant="warm"
                 onClick={() => setShowPublisher(true)}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 发布第一个作品
-              </Button>
+              </LabubuButton>
             )}
           </div>
         ) : (
@@ -404,19 +402,18 @@ export function LabubuGalleryContent() {
             {/* 加载更多按钮 */}
             {hasMore && (
               <div className="text-center">
-                <Button
+                <LabubuButton
+                  variant="secondary"
                   onClick={loadMore}
                   disabled={isLoading}
-                  variant="outline"
-                  className="border-purple-200 text-purple-600 hover:bg-purple-50"
                 >
                   {isLoading ? '加载中...' : '加载更多'}
-                </Button>
+                </LabubuButton>
               </div>
             )}
           </div>
         )}
       </div>
-    </div>
+    </LabubuContainer>
   )
 } 

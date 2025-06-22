@@ -8,6 +8,8 @@ import { WallpaperFilter } from './WallpaperFilter'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+// Labubu风格组件
+import { LabubuCard, LabubuButton, LabubuInput, LabubuBadge, LabubuHeading, LabubuText, LabubuContainer } from '@/components/ui/labubu-ui'
 import { Loader2, Search, Filter, Grid, List } from 'lucide-react'
 import type { 
   Wallpaper, 
@@ -223,70 +225,74 @@ export function WallpaperGalleryContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-purple-900">
+    <LabubuContainer className="min-h-screen">
       {/* 导航栏 */}
       <DynamicNavigation />
 
-      <div className="container mx-auto px-4 py-8">
-        {/* 页面标题 */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            🖼️ 壁纸画廊
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            精美的AI生成壁纸集合，支持多种分类和高清下载
-            {!session && (
-              <span className="block mt-2 text-sm text-orange-600 dark:text-orange-400">
-                💡 登录后可以下载高清壁纸和点赞收藏
-              </span>
-            )}
-          </p>
+      {/* 页面头部 */}
+      <div className="bg-white/80 backdrop-blur-sm border-b border-labubu-200 pt-16">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center space-y-4">
+            <LabubuHeading level={1} className="text-4xl font-bold">
+              🖼️ 壁纸画廊
+            </LabubuHeading>
+            <LabubuText variant="large" className="text-soft-600 max-w-2xl mx-auto">
+              精美的AI生成壁纸集合，支持多种分类和高清下载
+              {!session && (
+                <span className="block mt-2 text-sm text-warm-600">
+                  💡 登录后可以下载高清壁纸和点赞收藏
+                </span>
+              )}
+            </LabubuText>
+          </div>
         </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8">
 
         {/* 搜索和筛选工具栏 */}
         <div className="flex flex-col lg:flex-row gap-4 mb-6">
           {/* 搜索框 */}
           <div className="flex-1 flex gap-2">
-            <Input
+            <LabubuInput
+              variant="search"
               placeholder="搜索壁纸标题或描述..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               className="flex-1"
             />
-            <Button onClick={handleSearch} variant="outline" size="icon">
+            <LabubuButton variant="secondary" size="sm" onClick={handleSearch}>
               <Search className="w-4 h-4" />
-            </Button>
+            </LabubuButton>
           </div>
 
           {/* 工具按钮 */}
           <div className="flex gap-2">
-            <Button
-              variant={showFilters ? "default" : "outline"}
+            <LabubuButton
+              variant={showFilters ? "primary" : "secondary"}
               onClick={() => setShowFilters(!showFilters)}
               size="sm"
             >
               <Filter className="w-4 h-4 mr-2" />
               筛选
-            </Button>
+            </LabubuButton>
             
-            <div className="flex border rounded-md">
-              <Button
-                variant={viewMode === 'grid' ? "default" : "ghost"}
+            <div className="flex border border-labubu-200 rounded-2xl overflow-hidden">
+              <LabubuButton
+                variant={viewMode === 'grid' ? "primary" : "ghost"}
                 onClick={() => setViewMode('grid')}
                 size="sm"
-                className="rounded-r-none"
               >
                 <Grid className="w-4 h-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? "default" : "ghost"}
+              </LabubuButton>
+              <LabubuButton
+                variant={viewMode === 'list' ? "primary" : "ghost"}
                 onClick={() => setViewMode('list')}
                 size="sm"
-                className="rounded-l-none"
               >
                 <List className="w-4 h-4" />
-              </Button>
+              </LabubuButton>
             </div>
           </div>
         </div>
@@ -314,38 +320,38 @@ export function WallpaperGalleryContent() {
 
         {/* 活跃标签显示 */}
         {selectedTags.length > 0 && (
-          <div className="mb-6">
-            <div className="flex flex-wrap gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">活跃标签:</span>
+          <LabubuCard variant="interactive" className="mb-6 p-4">
+            <div className="flex flex-wrap gap-2 items-center">
+              <LabubuText variant="small" className="text-soft-600">活跃标签:</LabubuText>
               {selectedTags.map(tag => (
-                <Badge
+                <LabubuBadge
                   key={tag}
-                  variant="secondary"
-                  className="cursor-pointer hover:bg-red-100 hover:text-red-700"
+                  variant="warm"
+                  className="cursor-pointer hover:bg-red-100 hover:text-red-700 transition-colors"
                   onClick={() => handleTagClick(tag)}
                 >
                   {tag} ×
-                </Badge>
+                </LabubuBadge>
               ))}
             </div>
-          </div>
+          </LabubuCard>
         )}
 
         {/* 壁纸网格 */}
         {loading ? (
           <div className="flex justify-center items-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
-            <span className="ml-2 text-gray-600 dark:text-gray-400">加载中...</span>
+            <Loader2 className="w-8 h-8 animate-spin text-labubu-600" />
+            <LabubuText className="ml-2 text-soft-600">加载中...</LabubuText>
           </div>
         ) : wallpapers.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <LabubuHeading level={3} className="text-xl font-semibold text-soft-900 mb-2">
               没有找到壁纸
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
+            </LabubuHeading>
+            <LabubuText className="text-soft-600">
               尝试调整搜索条件或筛选选项
-            </p>
+            </LabubuText>
           </div>
         ) : (
           <>
@@ -367,11 +373,11 @@ export function WallpaperGalleryContent() {
             {/* 加载更多按钮 */}
             {hasMore && (
               <div className="text-center mt-8">
-                <Button
+                <LabubuButton
+                  variant="secondary"
+                  size="lg"
                   onClick={loadMore}
                   disabled={loadingMore}
-                  variant="outline"
-                  size="lg"
                 >
                   {loadingMore ? (
                     <>
@@ -381,12 +387,12 @@ export function WallpaperGalleryContent() {
                   ) : (
                     '加载更多'
                   )}
-                </Button>
+                </LabubuButton>
               </div>
             )}
           </>
         )}
       </div>
-    </div>
+    </LabubuContainer>
   )
 } 
