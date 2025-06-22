@@ -2136,7 +2136,7 @@ export function FluxKontextGenerator() {
                   {/* 🔧 编辑图像描述 */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <Label className="text-sm font-medium text-yellow-400 !text-yellow-400">
+                      <Label className="text-sm font-medium" style={{ color: '#facc15 !important' }}>
                         Image Description
                       </Label>
                       <Button 
@@ -2204,13 +2204,14 @@ export function FluxKontextGenerator() {
                       value={uploadedImages.length > 0 ? editPrompt : textPrompt}
                       onChange={(e) => uploadedImages.length > 0 ? setEditPrompt(e.target.value) : setTextPrompt(e.target.value)}
                       onPaste={handlePaste}
-                      className="resize-none text-sm text-purple-300 !text-purple-300 h-72"
+                      className="resize-none text-sm h-72"
+                      style={{ color: '#d8b4fe !important' }}
                     />
                   </div>
 
                   {/* 🔧 参考图像 */}
                   <div>
-                    <Label className="text-sm font-medium mb-1 block text-yellow-400 !text-yellow-400">
+                    <Label className="text-sm font-medium mb-1 block" style={{ color: '#facc15 !important' }}>
                       Reference Images (Optional)
                     </Label>
                     <div 
@@ -2269,10 +2270,10 @@ export function FluxKontextGenerator() {
                       ) : (
                         <div>
                           <ImageIcon className="h-16 w-16 text-muted-foreground mx-auto mb-3" />
-                          <p className="text-sm text-purple-300 !text-purple-300 mb-1">
+                          <p className="text-sm mb-1" style={{ color: '#d8b4fe !important' }}>
                             Click, drag & drop, or paste images
                           </p>
-                          <p className="text-xs text-purple-300/60 !text-purple-300/60">
+                          <p className="text-xs" style={{ color: 'rgba(216, 180, 254, 0.6) !important' }}>
                             Supports JPG, PNG, WebP (optional)
                           </p>
                         </div>
@@ -2287,7 +2288,7 @@ export function FluxKontextGenerator() {
                 {/* 🔧 图像数量和比例 */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label className="text-sm font-medium mb-1 block text-yellow-400 !text-yellow-400">Images Count</Label>
+                    <Label className="text-sm font-medium mb-1 block" style={{ color: '#facc15 !important' }}>Images Count</Label>
                     <select
                       value={numImages.toString()}
                       onChange={(e) => {
@@ -2330,7 +2331,7 @@ export function FluxKontextGenerator() {
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium mb-1 block text-yellow-400 !text-yellow-400">
+                    <Label className="text-sm font-medium mb-1 block" style={{ color: '#facc15 !important' }}>
                       {uploadedImages.length > 0 ? "Output Ratio" : "Aspect Ratio"}
                     </Label>
                     <select
@@ -2365,7 +2366,7 @@ export function FluxKontextGenerator() {
                     {isTurnstileEnabled && checkTurnstileRequired() ? (
                       <div>
                         <div className="flex items-center justify-center md:justify-start mb-2">
-                          <Label className="text-sm font-medium flex items-center gap-1 text-yellow-400 !text-yellow-400">
+                          <Label className="text-sm font-medium flex items-center gap-1" style={{ color: '#facc15 !important' }}>
                             <Shield className="h-4 w-4" />
                             Security
                           </Label>
@@ -2427,7 +2428,7 @@ export function FluxKontextGenerator() {
                       </div>
                     ) : (
                       <div>
-                        <Label className="text-sm font-medium flex items-center justify-center md:justify-start gap-1 text-yellow-400 !text-yellow-400 mb-2">
+                        <Label className="text-sm font-medium flex items-center justify-center md:justify-start gap-1 mb-2" style={{ color: '#facc15 !important' }}>
                           <Shield className="h-4 w-4" />
                           Security
                         </Label>
@@ -2447,7 +2448,7 @@ export function FluxKontextGenerator() {
                   <div className="col-span-1 md:col-span-2 flex flex-col justify-center">
                     <div className="flex justify-center md:justify-end md:pr-8">
                       <div className="text-center">
-                        <Label className="text-sm font-medium flex items-center justify-center gap-2 text-yellow-400 !text-yellow-400 mb-3">
+                        <Label className="text-sm font-medium flex items-center justify-center gap-2 mb-3" style={{ color: '#facc15 !important' }}>
                           <Zap className="h-5 w-5" />
                         Generate Images
                       </Label>
@@ -2796,57 +2797,57 @@ export function FluxKontextGenerator() {
       {/* 🔧 AI平台常见问题部分 */}
       <section className="mt-8 py-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-8">
+          <LabubuHeading level={2} className="text-3xl text-center mb-8">
             Frequently Asked Questions
-          </h2>
+          </LabubuHeading>
           <div className="space-y-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-3">What is Flux Kontext?</h3>
-              <p className="text-muted-foreground">
+            <LabubuCard className="p-6 bg-gradient-to-br from-white to-labubu-50/20">
+              <LabubuHeading level={3} className="mb-3">What is Flux Kontext?</LabubuHeading>
+              <LabubuText variant="default" className="text-gray-700">
                 Our platform is a suite of generative flow matching models for image generation and editing. 
                 Unlike traditional text-to-image models, it understands both text and images as input for true in-context generation.
-              </p>
-            </Card>
+              </LabubuText>
+            </LabubuCard>
             
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-3">What makes this platform special?</h3>
-              <p className="text-muted-foreground">
+            <LabubuCard className="p-6 bg-gradient-to-br from-white to-warm-50/20">
+              <LabubuHeading level={3} className="mb-3">What makes this platform special?</LabubuHeading>
+              <LabubuText variant="default" className="text-gray-700">
                 The system offers four key capabilities: character consistency across scenes, smart editing with AI precision, 
                 style reference for new scenes, and interactive speed with minimal latency.
-              </p>
-            </Card>
+              </LabubuText>
+            </LabubuCard>
             
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-3">Which model should I choose?</h3>
-              <p className="text-muted-foreground">
+            <LabubuCard className="p-6 bg-gradient-to-br from-white to-labubu-50/20">
+              <LabubuHeading level={3} className="mb-3">Which model should I choose?</LabubuHeading>
+              <LabubuText variant="default" className="text-gray-700">
                 Pro model (16 credits) excels at fast iterative editing while maintaining character consistency. 
                 Max model (32 credits) provides maximum performance with improved prompt adherence and typography.
-              </p>
-            </Card>
+              </LabubuText>
+            </LabubuCard>
             
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-3">How does the platform achieve character consistency?</h3>
-              <p className="text-muted-foreground">
+            <LabubuCard className="p-6 bg-gradient-to-br from-white to-warm-50/20">
+              <LabubuHeading level={3} className="mb-3">How does the platform achieve character consistency?</LabubuHeading>
+              <LabubuText variant="default" className="text-gray-700">
                 The AI preserves elements across scenes by understanding visual context. 
                 It builds upon previous edits while maintaining characters, identities, styles, and features consistent.
-              </p>
-            </Card>
+              </LabubuText>
+            </LabubuCard>
             
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-3">How does smart editing work?</h3>
-              <p className="text-muted-foreground">
+            <LabubuCard className="p-6 bg-gradient-to-br from-white to-labubu-50/20">
+              <LabubuHeading level={3} className="mb-3">How does smart editing work?</LabubuHeading>
+              <LabubuText variant="default" className="text-gray-700">
                 Smart editing uses AI to make intelligent modifications while preserving image quality. 
                 This capability enables precise enhancements while maintaining overall composition.
-              </p>
-            </Card>
+              </LabubuText>
+            </LabubuCard>
             
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-3">Can the platform handle style reference?</h3>
-              <p className="text-muted-foreground">
+            <LabubuCard className="p-6 bg-gradient-to-br from-white to-warm-50/20">
+              <LabubuHeading level={3} className="mb-3">Can the platform handle style reference?</LabubuHeading>
+              <LabubuText variant="default" className="text-gray-700">
                 Yes, the AI generates new scenes in existing styles. 
                 It analyzes style elements from reference images to create consistent visual aesthetics across generations.
-              </p>
-            </Card>
+              </LabubuText>
+            </LabubuCard>
           </div>
         </div>
       </section>
@@ -2854,18 +2855,18 @@ export function FluxKontextGenerator() {
       {/* 🔧 AI模型比较部分 */}
       <section className="mt-8 py-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-8">
+          <LabubuHeading level={2} className="text-3xl text-center mb-8">
             AI Model Comparison
-          </h2>
+          </LabubuHeading>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card className="p-6 border-2 border-primary/20">
+            <LabubuCard className="p-6 border-2 border-labubu-200 bg-gradient-to-br from-white to-labubu-50/30">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-2xl font-bold">Pro Model</h3>
-                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">16 Credits</Badge>
+                <LabubuHeading level={3} className="text-2xl">Pro Model</LabubuHeading>
+                <LabubuBadge variant="secondary" className="bg-labubu-100 text-labubu-700 border-labubu-200">16 Credits</LabubuBadge>
               </div>
-              <p className="text-muted-foreground mb-6">
+              <LabubuText variant="default" className="mb-6 text-gray-700">
                 Perfect for fast iterative editing and character consistency
-              </p>
+              </LabubuText>
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center">
                   <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
@@ -2880,8 +2881,8 @@ export function FluxKontextGenerator() {
                   <span className="text-sm">Style reference support</span>
                 </li>
               </ul>
-              <Button 
-                variant={selectedModel === 'pro' ? 'default' : 'outline'} 
+              <LabubuButton 
+                variant={selectedModel === 'pro' ? 'primary' : 'secondary'} 
                 className="w-full"
                 onClick={() => {
                   if (!availableModels.includes('pro')) {
@@ -2897,17 +2898,17 @@ export function FluxKontextGenerator() {
                     Upgrade Required
                   </>
                 ) : selectedModel === 'pro' ? 'Selected' : 'Select Pro Model'}
-              </Button>
-            </Card>
+              </LabubuButton>
+            </LabubuCard>
             
-            <Card className="p-6 border-2 border-purple-500/20">
+            <LabubuCard className="p-6 border-2 border-warm-200 bg-gradient-to-br from-white to-warm-50/30">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-2xl font-bold">Max Model</h3>
-                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">32 Credits</Badge>
+                <LabubuHeading level={3} className="text-2xl">Max Model</LabubuHeading>
+                <LabubuBadge variant="warm" className="bg-warm-100 text-warm-700 border-warm-200">32 Credits</LabubuBadge>
               </div>
-              <p className="text-muted-foreground mb-6">
+              <LabubuText variant="default" className="mb-6 text-gray-700">
                 Maximum performance with enhanced prompt adherence
-              </p>
+              </LabubuText>
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center">
                   <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
@@ -2926,8 +2927,8 @@ export function FluxKontextGenerator() {
                   <span className="text-sm">Professional-grade results</span>
                 </li>
               </ul>
-              <Button 
-                variant={selectedModel === 'max' ? 'default' : 'outline'} 
+              <LabubuButton 
+                variant={selectedModel === 'max' ? 'warm' : 'secondary'} 
                 className="w-full"
                 onClick={() => {
                   if (!availableModels.includes('max')) {
@@ -2943,8 +2944,8 @@ export function FluxKontextGenerator() {
                     Upgrade Required
                   </>
                 ) : selectedModel === 'max' ? 'Selected' : 'Select Max Model'}
-              </Button>
-            </Card>
+              </LabubuButton>
+            </LabubuCard>
           </div>
         </div>
       </section>

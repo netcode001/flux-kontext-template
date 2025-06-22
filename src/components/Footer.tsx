@@ -10,40 +10,40 @@ export function Footer() {
   ]
 
   return (
-    <footer className="bg-card border-t border-border mt-16">
+    <footer className="bg-gradient-to-br from-labubu-900 to-warm-900 border-t border-labubu-700/30 mt-16">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <div className="text-2xl font-bold text-primary">
+            <div className="text-2xl font-bold bg-gradient-to-r from-labubu-300 to-warm-300 bg-clip-text text-transparent">
               {footer.brand.name}
             </div>
-            <p className="text-muted-foreground text-sm leading-relaxed">
+            <p className="text-labubu-100 text-sm leading-relaxed">
               {footer.brand.description}
             </p>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-labubu-200">
               {footer.brand.copyright}
             </div>
           </div>
 
           {/* Contact & Legal - 右侧栏目 */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">{footer.contact.title}</h3>
+            <h3 className="font-semibold text-labubu-200">{footer.contact.title}</h3>
             <a
               href={`mailto:${footer.contact.email}`}
-              className="block text-muted-foreground hover:text-primary hover:font-semibold active:scale-95 transition-all duration-200 text-sm"
+              className="block text-labubu-300 hover:text-labubu-100 hover:font-semibold active:scale-95 transition-all duration-200 text-sm"
             >
               {footer.contact.email}
             </a>
 
             <div className="pt-4">
-              <h3 className="font-semibold text-foreground mb-3">{footer.legal.title}</h3>
+              <h3 className="font-semibold text-labubu-200 mb-3">{footer.legal.title}</h3>
               <div className="space-y-2">
                 {legalLinks.map((link) => (
                   <a
                     key={link.href}
                     href={link.href}
-                    className="block text-muted-foreground hover:text-primary hover:font-semibold active:scale-95 transition-all duration-200 text-sm"
+                    className="block text-labubu-300 hover:text-labubu-100 hover:font-semibold active:scale-95 transition-all duration-200 text-sm"
                   >
                     {link.label}
                   </a>
@@ -54,15 +54,15 @@ export function Footer() {
         </div>
 
         {/* Bottom Border */}
-        <div className="mt-12 pt-8 border-t border-border">
+        <div className="mt-12 pt-8 border-t border-labubu-700/30">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-labubu-200">
               {footer.social.builtWith}
             </div>
             <div className="flex space-x-6">
               <a 
                 href="https://x.com/fluxkontext" 
-                className="text-muted-foreground hover:text-primary hover:scale-110 active:scale-95 transition-all duration-200" 
+                className="text-labubu-300 hover:text-labubu-100 hover:scale-110 active:scale-95 transition-all duration-200" 
                 aria-label="Follow us on X (Twitter)"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -71,7 +71,7 @@ export function Footer() {
               </a>
               <a 
                 href="https://twitter.com/fluxkontext" 
-                className="text-muted-foreground hover:text-primary hover:scale-110 active:scale-95 transition-all duration-200" 
+                className="text-labubu-300 hover:text-labubu-100 hover:scale-110 active:scale-95 transition-all duration-200" 
                 aria-label="Follow us on Twitter"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -80,7 +80,7 @@ export function Footer() {
               </a>
               <a 
                 href="https://pinterest.com/fluxkontext" 
-                className="text-muted-foreground hover:text-primary hover:scale-110 active:scale-95 transition-all duration-200" 
+                className="text-labubu-300 hover:text-labubu-100 hover:scale-110 active:scale-95 transition-all duration-200" 
                 aria-label="Follow us on Pinterest"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
