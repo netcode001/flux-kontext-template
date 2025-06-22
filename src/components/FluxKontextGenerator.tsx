@@ -41,8 +41,10 @@ import { useRouter } from "next/navigation"
 import { generator, common } from "@/lib/content"
 // Labubu风格组件
 import { LabubuCard, LabubuButton, LabubuInput, LabubuBadge, LabubuHeading, LabubuText, LabubuLoader } from "@/components/ui/labubu-ui"
+// Labubu主题样式
+import { labubuStyles, lb } from "@/lib/styles/labubu-theme"
 
-// ûֲϵ
+// 用户权限系统
 import { 
   UserType, 
   getCurrentUserType, 
@@ -1917,10 +1919,10 @@ export function FluxKontextGenerator() {
                 {/* 🔧 生成图像标题 */}
                 <div className="text-center mb-6">
                   <LabubuHeading level={1} className="mb-3">
-                    Flux Kontext AI Generator
+                    Labubu AI Generator
                   </LabubuHeading>
                   <LabubuText variant="large" className="mb-4">
-                    Create and edit professional images with advanced AI technology
+                    Create and edit Labubu images with advanced AI technology
                   </LabubuText>
                   <div className="flex flex-wrap justify-center gap-2">
                     <LabubuBadge variant="primary">Character Consistency</LabubuBadge>
@@ -1932,7 +1934,7 @@ export function FluxKontextGenerator() {
                 {/* 🔧 模型选择 */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <Label className="text-sm font-medium text-yellow-400">
+                    <Label className={`text-sm font-medium ${lb.text.accent.primary}`}>
                       {uploadedImages.length > 0 ? "Image Editing Model" : "Text to Image Model"}
                     </Label>
                     {currentModelInfo?.recommended && (
@@ -1953,7 +1955,7 @@ export function FluxKontextGenerator() {
                         setSelectedModel(newModel as any)
                       }
                     }}
-                    className="w-full p-2 border border-border rounded text-sm bg-background text-purple-300"
+                    className="w-full p-3 border border-labubu-200/50 rounded-xl text-sm bg-white/90 text-gray-700 hover:border-labubu-400 focus:border-labubu-500 focus:ring-2 focus:ring-labubu-200/30 transition-all duration-300"
                   >
                     {getAvailableModelsForContext().map((model) => (
                         <option 
@@ -1973,27 +1975,27 @@ export function FluxKontextGenerator() {
                     <div className="mt-2 p-3 bg-muted/20 border border-border rounded-lg">
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                          <span className="text-yellow-400 font-medium">Credits:</span>
-                          <span className="ml-1 text-purple-300">{currentModelInfo.credits}</span>
+                          <span className="text-gray-500 font-medium">Credits:</span>
+                          <span className="ml-1 text-gray-800">{currentModelInfo.credits}</span>
                         </div>
                         <div>
-                          <span className="text-yellow-400 font-medium">Speed:</span>
-                          <span className="ml-1 text-purple-300">{currentModelInfo.speed}</span>
+                          <span className="text-gray-500 font-medium">Speed:</span>
+                          <span className="ml-1 text-gray-800">{currentModelInfo.speed}</span>
                         </div>
                         <div>
-                          <span className="text-yellow-400 font-medium">Quality:</span>
-                          <span className="ml-1 text-purple-300">{currentModelInfo.quality}</span>
+                          <span className="text-gray-500 font-medium">Quality:</span>
+                          <span className="ml-1 text-gray-800">{currentModelInfo.quality}</span>
                         </div>
                         <div>
-                          <span className="text-yellow-400 font-medium">Type:</span>
-                          <span className="ml-1 text-purple-300">
+                          <span className="text-gray-500 font-medium">Type:</span>
+                          <span className="ml-1 text-gray-800">
                             {uploadedImages.length > 0 ? "Editing" : "Generation"}
                           </span>
                         </div>
                       </div>
                       
                       <div className="mt-2">
-                        <p className="text-xs text-yellow-300/80 mb-1">
+                        <p className="text-xs text-gray-600 mb-1">
                           {currentModelInfo.description}
                         </p>
                         <div className="flex flex-wrap gap-1">
@@ -2001,7 +2003,7 @@ export function FluxKontextGenerator() {
                             <Badge 
                               key={index} 
                               variant="outline" 
-                              className="bg-primary/5 text-primary border-primary/20 text-xs px-1 py-0"
+                              className="bg-gray-50 text-gray-700 border-gray-200 text-xs px-2 py-1"
                             >
                               {feature}
                             </Badge>
@@ -2038,7 +2040,7 @@ export function FluxKontextGenerator() {
 
                 {/* 🔧 高级设置 */}
                 <div>
-                  <h3 className="text-sm font-medium text-yellow-400 flex items-center gap-2 mb-2">
+                  <h3 className={`text-sm font-medium ${lb.text.accent.primary} flex items-center gap-2 mb-2`}>
                     <Settings className="h-4 w-4" />
                     Advanced Settings
                   </h3>
@@ -2046,7 +2048,7 @@ export function FluxKontextGenerator() {
                   <div className="grid grid-cols-2 gap-3">
                     {/* 🔧 强度 */}
                     <div>
-                      <Label className="text-xs font-medium mb-1 block text-yellow-400">
+                      <Label className={`text-xs font-medium mb-1 block ${lb.text.accent.primary}`}>
                         Strength: {guidanceScale}
                       </Label>
                       <div className="space-y-1">
@@ -2059,7 +2061,7 @@ export function FluxKontextGenerator() {
                           onChange={(e) => setGuidanceScale(parseFloat(e.target.value))}
                           className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer slider"
                         />
-                        <div className="flex justify-between text-xs text-yellow-300/60">
+                        <div className={`flex justify-between text-xs ${lb.text.body.small} opacity-70`}>
                           <span>Creative</span>
                           <span>Strict</span>
                         </div>
@@ -2068,7 +2070,7 @@ export function FluxKontextGenerator() {
 
                     {/* 🔧 安全设置 */}
                     <div>
-                      <Label className="text-xs font-medium mb-1 block text-yellow-400">
+                      <Label className={`text-xs font-medium mb-1 block ${lb.text.accent.primary}`}>
                         Safety: {safetyTolerance}
                       </Label>
                       <div className="space-y-1">
@@ -2081,7 +2083,7 @@ export function FluxKontextGenerator() {
                           onChange={(e) => setSafetyTolerance(e.target.value)}
                           className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer"
                         />
-                        <div className="flex justify-between text-xs text-yellow-300/60">
+                        <div className={`flex justify-between text-xs ${lb.text.body.small} opacity-70`}>
                           <span>Strict</span>
                           <span>Permissive</span>
                         </div>
@@ -2090,21 +2092,21 @@ export function FluxKontextGenerator() {
 
                     {/* 🔧 随机种子 */}
                     <div>
-                      <Label className="text-xs font-medium mb-1 block text-yellow-400">Seed</Label>
+                      <Label className={`text-xs font-medium mb-1 block ${lb.text.accent.primary}`}>Seed</Label>
                       <div className="flex gap-1">
                         <Input
                           type="number"
                           placeholder="Random"
                           value={seed || ""}
                           onChange={(e) => setSeed(e.target.value ? parseInt(e.target.value) : undefined)}
-                          className="flex-1 h-7 text-xs text-purple-300"
+                          className="flex-1 h-7 text-xs p-2 border border-labubu-200/50 rounded-lg bg-white/90 text-gray-700 placeholder:text-gray-400 hover:border-labubu-400 focus:border-labubu-500 focus:ring-2 focus:ring-labubu-200/30 transition-all duration-300"
                         />
                         <Button 
                           variant="outline" 
                           size="sm"
                           onClick={() => setSeed(Math.floor(Math.random() * 1000000))}
                           title="Generate random seed"
-                          className="h-7 w-7 p-0"
+                          className="h-7 w-7 p-0 hover:bg-labubu-100 hover:border-labubu-300 hover:text-labubu-700 transition-all duration-300"
                         >
                           🎲
                         </Button>
@@ -2113,11 +2115,11 @@ export function FluxKontextGenerator() {
 
                     {/* 🔧 输出格式 */}
                     <div>
-                      <Label className="text-xs font-medium mb-1 block text-yellow-400">Format</Label>
+                      <Label className={`text-xs font-medium mb-1 block ${lb.text.accent.primary}`}>Format</Label>
                       <select
                         value={outputFormat}
                         onChange={(e) => setOutputFormat(e.target.value)}
-                        className="w-full p-1 border border-border rounded text-xs bg-background text-purple-300 h-7"
+                        className="w-full p-1 border border-labubu-200/50 rounded-lg text-xs bg-white/90 text-gray-700 hover:border-labubu-400 focus:border-labubu-500 focus:ring-2 focus:ring-labubu-200/30 transition-all duration-300 h-7"
                       >
                         <option value="jpeg">JPEG</option>
                         <option value="png">PNG</option>
@@ -2136,7 +2138,7 @@ export function FluxKontextGenerator() {
                   {/* 🔧 编辑图像描述 */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <Label className="text-sm font-medium" style={{ color: '#facc15 !important' }}>
+                      <Label className={`text-sm font-medium ${lb.text.accent.primary}`}>
                         Image Description
                       </Label>
                       <Button 
@@ -2190,7 +2192,7 @@ export function FluxKontextGenerator() {
                             }
                           }
                         }}
-                        className="h-6 text-xs px-2"
+                        className="h-6 text-xs px-2 hover:bg-labubu-100 hover:border-labubu-300 hover:text-labubu-700 transition-all duration-300"
                       >
                         ✨ AI Enhance
                       </Button>
@@ -2204,14 +2206,13 @@ export function FluxKontextGenerator() {
                       value={uploadedImages.length > 0 ? editPrompt : textPrompt}
                       onChange={(e) => uploadedImages.length > 0 ? setEditPrompt(e.target.value) : setTextPrompt(e.target.value)}
                       onPaste={handlePaste}
-                      className="resize-none text-sm h-72"
-                      style={{ color: '#d8b4fe !important' }}
+                      className="resize-none text-sm h-72 p-4 border border-labubu-200/50 rounded-xl bg-white/90 text-gray-700 placeholder:text-gray-400 hover:border-labubu-400 focus:border-labubu-500 focus:ring-2 focus:ring-labubu-200/30 transition-all duration-300"
                     />
                   </div>
 
                   {/* 🔧 参考图像 */}
                   <div>
-                    <Label className="text-sm font-medium mb-1 block" style={{ color: '#facc15 !important' }}>
+                    <Label className={`text-sm font-medium mb-1 block ${lb.text.accent.primary}`}>
                       Reference Images (Optional)
                     </Label>
                     <div 
@@ -2270,10 +2271,10 @@ export function FluxKontextGenerator() {
                       ) : (
                         <div>
                           <ImageIcon className="h-16 w-16 text-muted-foreground mx-auto mb-3" />
-                          <p className="text-sm mb-1" style={{ color: '#d8b4fe !important' }}>
+                          <p className={`text-sm mb-1 ${lb.text.body.default}`}>
                             Click, drag & drop, or paste images
                           </p>
-                          <p className="text-xs" style={{ color: 'rgba(216, 180, 254, 0.6) !important' }}>
+                          <p className={`text-xs ${lb.text.body.small} opacity-70`}>
                             Supports JPG, PNG, WebP (optional)
                           </p>
                         </div>
@@ -2288,7 +2289,7 @@ export function FluxKontextGenerator() {
                 {/* 🔧 图像数量和比例 */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label className="text-sm font-medium mb-1 block" style={{ color: '#facc15 !important' }}>Images Count</Label>
+                    <Label className="text-sm font-medium mb-1 block text-gray-700">Images Count</Label>
                     <select
                       value={numImages.toString()}
                       onChange={(e) => {
@@ -2297,7 +2298,7 @@ export function FluxKontextGenerator() {
                           setNumImages(selectedCount)
                         }
                       }}
-                      className="w-full p-2 border border-border rounded text-sm bg-background text-purple-300 !text-purple-300 h-8"
+                      className="w-full p-2 border border-labubu-200/50 rounded-lg text-sm bg-white/90 text-gray-700 hover:border-labubu-400 focus:border-labubu-500 focus:ring-2 focus:ring-labubu-200/30 transition-all duration-300 h-8"
                     >
                       {imageCountOptions.map((option) => (
                         <option 
@@ -2331,13 +2332,13 @@ export function FluxKontextGenerator() {
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium mb-1 block" style={{ color: '#facc15 !important' }}>
+                    <Label className="text-sm font-medium mb-1 block text-gray-700">
                       {uploadedImages.length > 0 ? "Output Ratio" : "Aspect Ratio"}
                     </Label>
                     <select
                       value={aspectRatio}
                       onChange={(e) => setAspectRatio(e.target.value)}
-                      className="w-full p-2 border border-border rounded text-sm bg-background text-purple-300 !text-purple-300 h-8"
+                      className="w-full p-2 border border-labubu-200/50 rounded-lg text-sm bg-white/90 text-gray-700 hover:border-labubu-400 focus:border-labubu-500 focus:ring-2 focus:ring-labubu-200/30 transition-all duration-300 h-8"
                     >
                       {aspectRatioOptions.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -2347,7 +2348,7 @@ export function FluxKontextGenerator() {
                     </select>
                     {/* 🔧 图像编辑模式下的提示 */}
                     {uploadedImages.length > 0 && (
-                      <div className="mt-1 text-xs text-yellow-300/70 bg-blue-50/10 border border-blue-200/20 rounded p-2">
+                      <div className="mt-1 text-xs text-gray-600 bg-blue-50/10 border border-blue-200/20 rounded p-2">
                         <div className="flex items-center gap-1">
                           <Info className="h-3 w-3 text-blue-400" />
                           <span className="text-blue-300">
@@ -2366,7 +2367,7 @@ export function FluxKontextGenerator() {
                     {isTurnstileEnabled && checkTurnstileRequired() ? (
                       <div>
                         <div className="flex items-center justify-center md:justify-start mb-2">
-                          <Label className="text-sm font-medium flex items-center gap-1" style={{ color: '#facc15 !important' }}>
+                          <Label className="text-sm font-medium flex items-center gap-1 text-gray-700">
                             <Shield className="h-4 w-4" />
                             Security
                           </Label>
@@ -2428,7 +2429,7 @@ export function FluxKontextGenerator() {
                       </div>
                     ) : (
                       <div>
-                        <Label className="text-sm font-medium flex items-center justify-center md:justify-start gap-1 mb-2" style={{ color: '#facc15 !important' }}>
+                        <Label className="text-sm font-medium flex items-center justify-center md:justify-start gap-1 mb-2 text-gray-700">
                           <Shield className="h-4 w-4" />
                           Security
                         </Label>
@@ -2448,10 +2449,10 @@ export function FluxKontextGenerator() {
                   <div className="col-span-1 md:col-span-2 flex flex-col justify-center">
                     <div className="flex justify-center md:justify-end md:pr-8">
                       <div className="text-center">
-                        <Label className="text-sm font-medium flex items-center justify-center gap-2 mb-3" style={{ color: '#facc15 !important' }}>
+                        <Label className="text-sm font-medium flex items-center justify-center gap-2 mb-3 text-labubu-600">
                           <Zap className="h-5 w-5" />
-                        Generate Images
-                      </Label>
+                          Generate Images
+                        </Label>
                         <LabubuButton 
                           onClick={
                             uploadedImages.length > 0 ? handleImageEdit : handleTextToImage
@@ -2476,10 +2477,10 @@ export function FluxKontextGenerator() {
                               )}
                             </div>
                           ) : (
-                            <>
-                              <Zap className="mr-2 h-5 w-5" />
-                              Generate
-                            </>
+                            <div className="flex items-center justify-center gap-2">
+                              <Zap className="h-5 w-5" />
+                              <span>Generate</span>
+                            </div>
                           )}
                         </LabubuButton>
                         {!canUseImageCount(numImages) && (
@@ -2720,9 +2721,9 @@ export function FluxKontextGenerator() {
               <div className="w-16 h-16 bg-gradient-to-br from-labubu-100 to-labubu-200 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Upload className="w-8 h-8 text-labubu-600" />
               </div>
-              <LabubuHeading level={3} className="mb-3">1. Upload Your Image</LabubuHeading>
+              <LabubuHeading level={3} className="mb-3">1. Upload Labubu Image</LabubuHeading>
               <LabubuText>
-                Upload your image for character consistency and style analysis.
+                Upload  Labubu image for character consistency and style analysis.
               </LabubuText>
             </div>
             <div className="text-center">
