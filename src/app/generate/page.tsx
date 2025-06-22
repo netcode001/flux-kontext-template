@@ -27,7 +27,7 @@ export const metadata: Metadata = generateMultilingualMetadata({
 
 export default function GeneratePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-hero-gradient">
       <DynamicNavigation />
       
       <main className="container mx-auto px-4 pt-24 pb-16">

@@ -39,6 +39,8 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 // İģ
 import { generator, common } from "@/lib/content"
+// Labubu风格组件
+import { LabubuCard, LabubuButton, LabubuInput, LabubuBadge, LabubuHeading, LabubuText, LabubuLoader } from "@/components/ui/labubu-ui"
 
 // ûֲϵ
 import { 
@@ -1861,7 +1863,7 @@ export function FluxKontextGenerator() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* 🔧 错误提示 */}
       {error && (
-        <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2">
+        <LabubuCard className="mb-6 p-4 bg-red-50 border border-red-200/50 rounded-2xl flex items-center gap-2">
           <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0" />
           <span className="text-destructive flex-1">{error}</span>
           <div className="flex gap-2">
@@ -1895,7 +1897,7 @@ export function FluxKontextGenerator() {
               <X className="h-4 w-4" />
             </Button>
           </div>
-        </div>
+        </LabubuCard>
       )}
 
       {/* 🔧 生成图像部分 */}
@@ -1910,20 +1912,20 @@ export function FluxKontextGenerator() {
           {/* 🔧 生成图像和编辑图像 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {/* 🔧 生成图像 */}
-            <Card className="p-3">
-              <div className="space-y-3">
+            <LabubuCard className="p-6">
+              <div className="space-y-4">
                 {/* 🔧 生成图像标题 */}
-                <div className="text-center mb-4">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-yellow-400 mb-1">
+                <div className="text-center mb-6">
+                  <LabubuHeading level={1} className="mb-3">
                     Flux Kontext AI Generator
-                  </h1>
-                  <p className="text-base text-yellow-300/80 mb-2">
+                  </LabubuHeading>
+                  <LabubuText variant="large" className="mb-4">
                     Create and edit professional images with advanced AI technology
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-1">
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs">Character Consistency</Badge>
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs">Style Transfer</Badge>
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs">Multi-Image Support</Badge>
+                  </LabubuText>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <LabubuBadge variant="primary">Character Consistency</LabubuBadge>
+                    <LabubuBadge variant="warm">Style Transfer</LabubuBadge>
+                    <LabubuBadge variant="secondary">Multi-Image Support</LabubuBadge>
                   </div>
                 </div>
 
@@ -2124,10 +2126,10 @@ export function FluxKontextGenerator() {
                   </div>
                 </div>
               </div>
-            </Card>
+            </LabubuCard>
 
             {/* 🔧 编辑图像 */}
-            <Card className="p-3">
+            <LabubuCard className="p-6">
               <div className="space-y-3">
                 {/* 🔧 编辑图像描述 */}
                 <div className="grid grid-cols-2 gap-3 mb-4">
@@ -2496,7 +2498,7 @@ export function FluxKontextGenerator() {
                   </div>
                 </div>
               </div>
-            </Card>
+            </LabubuCard>
           </div>
         </div>
       </section>
@@ -2516,43 +2518,45 @@ export function FluxKontextGenerator() {
 
         {/* 🔧 图片展示区域 */}
             {generatedImages.length === 0 ? (
-              <Card className="h-96">
+              <LabubuCard className="h-96">
                 <CardContent className="h-full flex items-center justify-center">
                   <div className="text-center">
                 {isGenerating ? (
                   <>
-                    <Loader2 className="h-16 w-16 text-primary/50 mx-auto mb-4 animate-spin" />
-                    <h3 className="text-xl font-medium text-muted-foreground mb-2">
+                    <div className="mb-4">
+                      <LabubuLoader size="lg" />
+                    </div>
+                    <LabubuHeading level={3} className="mb-2">
                       Creating your image...
-                    </h3>
+                    </LabubuHeading>
                     {countdown > 0 && (
-                      <p className="text-sm text-muted-foreground/60">
+                      <LabubuText variant="small" className="text-soft-500">
                         Estimated time remaining: ~{countdown} seconds
-                      </p>
+                      </LabubuText>
                     )}
                   </>
                 ) : (
                   <>
-                    <ImageIcon className="h-24 w-24 text-muted-foreground/30 mx-auto mb-6" />
-                    <h3 className="text-xl font-medium text-muted-foreground mb-3">
+                    <ImageIcon className="h-24 w-24 text-labubu-300 mx-auto mb-6" />
+                    <LabubuHeading level={3} className="mb-3">
                       Generated images will appear here
-                    </h3>
-                    <p className="text-muted-foreground/60 max-w-md mx-auto">
+                    </LabubuHeading>
+                    <LabubuText className="max-w-md mx-auto">
                       {uploadedImages.length > 0 
                         ? `Ready to edit ${uploadedImages.length} image${uploadedImages.length > 1 ? 's' : ''}. Add your editing instructions and click the generate button.`
                         : "Enter a description and click generate to create new images."
                       }
-                    </p>
+                    </LabubuText>
                   </>
                 )}
                   </div>
                 </CardContent>
-              </Card>
+              </LabubuCard>
             ) : (
               <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {generatedImages.map((image, index) => (
-                    <Card key={index} className="group overflow-hidden">
+                    <LabubuCard key={index} className="group overflow-hidden hover:shadow-labubu transition-all duration-300">
                       <div className="relative">
                         <img 
                           src={image.url} 
