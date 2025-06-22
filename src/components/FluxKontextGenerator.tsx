@@ -2451,7 +2451,7 @@ export function FluxKontextGenerator() {
                           <Zap className="h-5 w-5" />
                         Generate Images
                       </Label>
-                        <Button 
+                        <LabubuButton 
                           onClick={
                             uploadedImages.length > 0 ? handleImageEdit : handleTextToImage
                           }
@@ -2460,8 +2460,9 @@ export function FluxKontextGenerator() {
                             (uploadedImages.length === 0 && !textPrompt.trim())
                             // 🔧 修改：移除图像编辑模式下对editPrompt的强制要求，允许使用默认提示词进行图像编辑
                           }
-                          className="w-full md:w-56 h-16 text-base font-semibold"
+                          variant="primary"
                           size="lg"
+                          className="w-full md:w-56 h-16 text-base font-semibold"
                         >
                           {isGenerating ? (
                             <div className="flex items-center justify-center gap-2">
@@ -2479,7 +2480,7 @@ export function FluxKontextGenerator() {
                               Generate
                             </>
                           )}
-                        </Button>
+                        </LabubuButton>
                         {!canUseImageCount(numImages) && (
                           <div className="mt-3">
                             <Button 
@@ -2506,10 +2507,10 @@ export function FluxKontextGenerator() {
       {/* 🔧 生成图像 */}
       <section className="py-4 pb-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-          <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
-            <ImageIcon className="h-6 w-6" />
+          <LabubuHeading level={2} className="flex items-center gap-2">
+            <ImageIcon className="h-6 w-6 text-labubu-500" />
             Generated Images
-          </h2>
+          </LabubuHeading>
           <CreditDisplay 
             showBuyButton={true}
             className="flex-shrink-0"
@@ -2565,8 +2566,8 @@ export function FluxKontextGenerator() {
                         />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                          <Button 
-                            variant="outline" 
+                          <LabubuButton 
+                            variant="primary"
                             size="sm"
                             onClick={() => {
                               // 🔧 快速编辑：获取对应输入框的文本并自动处理
@@ -2587,19 +2588,19 @@ export function FluxKontextGenerator() {
                               }
                             }}
                             title="Quick edit this image"
-                            className="h-8 w-8 p-0 bg-purple-600 hover:bg-purple-700 text-white border-purple-600"
+                            className="h-8 w-8 p-0"
                           >
                             <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="outline" 
+                          </LabubuButton>
+                          <LabubuButton 
+                            variant="warm"
                             size="sm" 
                             onClick={() => handleDownloadImage(image)}
                             title="Download image"
-                            className="h-8 w-8 p-0 bg-purple-600 hover:bg-purple-700 text-white border-purple-600"
+                            className="h-8 w-8 p-0"
                           >
                             <Download className="h-4 w-4" />
-                          </Button>
+                          </LabubuButton>
                         </div>
                       </div>
                       <CardContent className="p-3">
@@ -2607,9 +2608,9 @@ export function FluxKontextGenerator() {
                           "{image.prompt}"
                         </p>
                         <div className="flex items-center justify-between text-xs mb-3">
-                          <Badge variant="outline" className="text-xs">
+                          <LabubuBadge variant="secondary" className="text-xs">
                             {image.action.replace('-', ' ')}
-                          </Badge>
+                          </LabubuBadge>
                           <span className="text-muted-foreground">
                             {image.width && image.height 
                               ? `${image.width}×${image.height}`
@@ -2619,8 +2620,8 @@ export function FluxKontextGenerator() {
                         </div>
                         
                         <div className="grid grid-cols-3 gap-1 mb-2">
-                          <Button 
-                            variant="outline" 
+                          <LabubuButton 
+                            variant="secondary"
                             size="sm"
                             className="h-8 text-xs"
                             onClick={async () => {
@@ -2632,9 +2633,9 @@ export function FluxKontextGenerator() {
                           >
                             <Copy className="w-3 h-3 mr-1" />
                             COPY
-                          </Button>
-                          <Button 
-                            variant="outline" 
+                          </LabubuButton>
+                          <LabubuButton 
+                            variant="secondary"
                             size="sm"
                             onClick={() => {
                               // 🔧 新页面打开图片
@@ -2646,9 +2647,9 @@ export function FluxKontextGenerator() {
                           >
                             <Eye className="w-3 h-3 mr-1" />
                             OPEN
-                          </Button>
-                          <Button 
-                            variant="outline" 
+                          </LabubuButton>
+                          <LabubuButton 
+                            variant="secondary"
                             size="sm"
                             onClick={() => handleDownloadImage(image)}
                             title="Download image"
@@ -2656,7 +2657,7 @@ export function FluxKontextGenerator() {
                           >
                             <Download className="w-3 h-3 mr-1" />
                             DOWN
-                          </Button>
+                          </LabubuButton>
                         </div>
                     
                         {/* 🔧 复制成功提示 - 设为固定位置，不影响布局 */}
@@ -2668,7 +2669,7 @@ export function FluxKontextGenerator() {
                         
                         <div className="border-t pt-3">
                           <div className="flex gap-2">
-                            <Input
+                            <LabubuInput
                               placeholder="Edit this image..."
                               className="flex-1 h-8 text-xs"
                               onKeyDown={(e) => {
@@ -2679,8 +2680,8 @@ export function FluxKontextGenerator() {
                                 }
                               }}
                             />
-                            <Button
-                              variant="outline"
+                            <LabubuButton
+                              variant="primary"
                               size="sm"
                               onClick={(e) => {
                                 const inputElement = (e.target as HTMLElement).closest('.flex')?.querySelector('input') as HTMLInputElement
@@ -2696,11 +2697,11 @@ export function FluxKontextGenerator() {
                               title="Quick edit and generate"
                             >
                               <Zap className="h-3 w-3" />
-                            </Button>
+                            </LabubuButton>
                           </div>
                         </div>
                       </CardContent>
-                    </Card>
+                    </LabubuCard>
                   ))}
                 </div>
               </div>
@@ -2708,86 +2709,86 @@ export function FluxKontextGenerator() {
       </section>
 
       {/* 🔧 如何使用AI平台部分 */}
-      <section className="mt-8 py-6 px-6 bg-muted/30 rounded-lg">
+      <section className="mt-8 py-8 px-6 bg-gradient-to-r from-labubu-50/50 to-warm-50/50 rounded-3xl">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-6">
+          <LabubuHeading level={2} className="text-center mb-8">
             How to Use Our AI Platform
-          </h2>
+          </LabubuHeading>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Upload className="w-8 h-8 text-primary" />
+              <div className="w-16 h-16 bg-gradient-to-br from-labubu-100 to-labubu-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Upload className="w-8 h-8 text-labubu-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">1. Upload Your Image</h3>
-              <p className="text-muted-foreground">
+              <LabubuHeading level={3} className="mb-3">1. Upload Your Image</LabubuHeading>
+              <LabubuText>
                 Upload your image for character consistency and style analysis.
-              </p>
+              </LabubuText>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Edit className="w-8 h-8 text-primary" />
+              <div className="w-16 h-16 bg-gradient-to-br from-warm-100 to-warm-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Edit className="w-8 h-8 text-warm-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">2. Write Editing Prompt</h3>
-              <p className="text-muted-foreground">
+              <LabubuHeading level={3} className="mb-3">2. Write Editing Prompt</LabubuHeading>
+              <LabubuText>
                 Describe your edits. The AI handles character consistency and style reference.
-              </p>
+              </LabubuText>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-8 h-8 text-primary" />
+              <div className="w-16 h-16 bg-gradient-to-br from-labubu-200 to-warm-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-8 h-8 text-labubu-700" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">3. Generate with AI Models</h3>
-              <p className="text-muted-foreground">
+              <LabubuHeading level={3} className="mb-3">3. Generate with AI Models</LabubuHeading>
+              <LabubuText>
                 Choose Pro model (16 credits) or Max model (32 credits) for generation.
-              </p>
+              </LabubuText>
             </div>
           </div>
         </div>
       </section>
 
       {/* 🔧 关键AI功能部分 */}
-      <section className="mt-8 py-6">
+      <section className="mt-8 py-8">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-8">
+          <LabubuHeading level={2} className="text-center mb-8">
             Key AI Features
-          </h2>
+          </LabubuHeading>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="text-center p-6">
-              <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Layers className="w-6 h-6 text-blue-500" />
+            <LabubuCard className="text-center p-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-labubu-100 to-labubu-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Layers className="w-6 h-6 text-labubu-600" />
               </div>
-              <h3 className="font-semibold mb-2">Character Consistency</h3>
-              <p className="text-sm text-muted-foreground">
+              <LabubuHeading level={3} className="mb-2">Character Consistency</LabubuHeading>
+              <LabubuText variant="small">
                 Maintain character identity across different scenes and poses
-              </p>
-            </Card>
-            <Card className="text-center p-6">
-              <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Settings className="w-6 h-6 text-green-500" />
+              </LabubuText>
+            </LabubuCard>
+            <LabubuCard className="text-center p-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-warm-100 to-warm-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Settings className="w-6 h-6 text-warm-600" />
               </div>
-              <h3 className="font-semibold mb-2">Smart Editing</h3>
-              <p className="text-sm text-muted-foreground">
+              <LabubuHeading level={3} className="mb-2">Smart Editing</LabubuHeading>
+              <LabubuText variant="small">
                 Intelligent image modifications with AI-powered precision
-              </p>
-            </Card>
-            <Card className="text-center p-6">
-              <div className="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <ImageIcon className="w-6 h-6 text-purple-500" />
+              </LabubuText>
+            </LabubuCard>
+            <LabubuCard className="text-center p-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-labubu-200 to-labubu-300 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <ImageIcon className="w-6 h-6 text-labubu-700" />
               </div>
-              <h3 className="font-semibold mb-2">Style Reference</h3>
-              <p className="text-sm text-muted-foreground">
+              <LabubuHeading level={3} className="mb-2">Style Reference</LabubuHeading>
+              <LabubuText variant="small">
                 Generate new scenes in existing styles with consistency
-              </p>
-            </Card>
-            <Card className="text-center p-6">
-              <div className="w-12 h-12 bg-orange-500/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-6 h-6 text-orange-500" />
+              </LabubuText>
+            </LabubuCard>
+            <LabubuCard className="text-center p-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-warm-200 to-warm-300 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-6 h-6 text-warm-700" />
               </div>
-              <h3 className="font-semibold mb-2">Interactive Speed</h3>
-              <p className="text-sm text-muted-foreground">
+              <LabubuHeading level={3} className="mb-2">Interactive Speed</LabubuHeading>
+              <LabubuText variant="small">
                 Fast processing with minimal latency for quick iterations
-              </p>
-            </Card>
+              </LabubuText>
+            </LabubuCard>
           </div>
         </div>
       </section>
