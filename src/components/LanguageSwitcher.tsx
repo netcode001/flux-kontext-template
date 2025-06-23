@@ -96,11 +96,11 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
                 key={locale}
                 onClick={() => switchLanguage(locale)}
                 className={`w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors hover:bg-purple-50 hover:text-purple-600 ${
-                  locale === currentLocale ? 'bg-purple-50 text-purple-600 font-medium' : ''
+                  locale === currentLocale ? 'bg-purple-50 text-purple-600 font-medium' : 'text-gray-800'
                 }`}
               >
                 <span>{LOCALE_FLAGS[locale]}</span>
-                <span>{LOCALE_NAMES[locale]}</span>
+                <span className={locale === currentLocale ? "" : "text-gray-800"}>{LOCALE_NAMES[locale]}</span>
               </button>
             ))}
           </div>
@@ -129,11 +129,11 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
                 key={locale}
                 onClick={() => switchLanguage(locale)}
                 className={`w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors hover:bg-purple-50 hover:text-purple-600 ${
-                  locale === currentLocale ? 'bg-purple-50 text-purple-600 font-medium' : ''
+                  locale === currentLocale ? 'bg-purple-50 text-purple-600 font-medium' : 'text-gray-800'
                 }`}
               >
                 <span>{LOCALE_FLAGS[locale]}</span>
-                <span>{LOCALE_NAMES[locale]}</span>
+                <span className={locale === currentLocale ? "" : "text-gray-800"}>{LOCALE_NAMES[locale]}</span>
               </button>
             ))}
           </div>
