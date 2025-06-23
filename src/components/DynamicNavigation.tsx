@@ -194,40 +194,37 @@ export function DynamicNavigation() {
         <div key={item.id} className="relative resources-dropdown">
           <button
             onClick={() => setIsResourcesMenuOpen(!isResourcesMenuOpen)}
-            className={`flex items-center space-x-2 relative transition-all duration-200 hover:font-semibold active:scale-95 px-3 py-2 rounded-lg hover:bg-accent/50 ${
+            className={`px-4 py-2 rounded-full font-medium transition-all duration-200 hover:scale-105 active:scale-95 flex items-center space-x-2 ${
               pathname.startsWith(item.href) 
-                ? 'text-primary font-semibold bg-accent/30' 
-                : 'text-foreground hover:text-primary'
+                ? 'bg-purple-500 text-white' 
+                : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
             }`}
           >
             {item.emoji && (
-              <span className="text-base leading-none flex items-center justify-center w-5 h-5">
+              <span className="text-base leading-none">
                 {item.emoji}
               </span>
             )}
             <span className="leading-none">{item.label}</span>
             <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isResourcesMenuOpen ? 'rotate-180' : ''}`} />
-            {pathname.startsWith(item.href) && (
-              <div className="absolute -bottom-1 left-3 right-3 h-0.5 bg-primary rounded-full" />
-            )}
           </button>
           
           {/* 下拉菜单内容 */}
           {isResourcesMenuOpen && (
-            <div className="absolute top-full left-0 mt-2 w-56 bg-background border border-border rounded-lg shadow-lg py-2 z-[9999]">
+            <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-purple-100 rounded-xl shadow-lg py-2 z-[9999]">
               {item.children.map((subItem) => (
                 hasPermission(subItem) && (
                   <Link
                     key={subItem.id}
                     href={subItem.href}
                     target={subItem.target || '_self'}
-                    className="flex items-center space-x-3 px-4 py-2 text-sm transition-colors hover:bg-accent"
+                    className="flex items-center space-x-3 px-4 py-3 text-sm transition-colors hover:bg-purple-50 hover:text-purple-600"
                     onClick={() => setIsResourcesMenuOpen(false)}
                   >
                     {subItem.emoji ? (
                       <span className="text-sm">{subItem.emoji}</span>
                     ) : (
-                      <BookOpen className="w-4 h-4 text-primary" />
+                      <BookOpen className="w-4 h-4 text-purple-600" />
                     )}
                     <span>{subItem.label}</span>
                   </Link>
@@ -245,154 +242,154 @@ export function DynamicNavigation() {
         key={item.id}
         href={item.href} 
         target={item.target || '_self'}
-        className={`relative transition-all duration-200 hover:font-semibold active:scale-95 flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-accent/50 ${
+        className={`px-4 py-2 rounded-full font-medium transition-all duration-200 hover:scale-105 active:scale-95 flex items-center space-x-2 ${
           pathname === item.href 
-            ? 'text-primary font-semibold bg-accent/30' 
-            : 'text-foreground hover:text-primary'
+            ? 'bg-purple-500 text-white' 
+            : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
         } ${item.css_class || ''}`}
       >
         {item.emoji && (
-          <span className="text-base leading-none flex items-center justify-center w-5 h-5">
+          <span className="text-base leading-none">
             {item.emoji}
           </span>
         )}
         <span className="leading-none">{item.label}</span>
-        {pathname === item.href && (
-          <div className="absolute -bottom-1 left-3 right-3 h-0.5 bg-primary rounded-full" />
-        )}
       </Link>
     )
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
-      <div className="container mx-auto px-4 h-16 flex items-center">
-        {/* 左侧：Logo */}
-        <div className="flex-shrink-0">
-          <LogoVariants.Navigation />
-        </div>
-        
-        {/* 移动端：顶部语言选择器（国旗图标） */}
-        <div className="md:hidden ml-auto mr-2">
-          <LanguageSwitcher variant="mobile-icon" />
-        </div>
-        
-        {/* 中间：桌面端导航菜单 - 居中显示 */}
-        <nav className="hidden md:flex items-center justify-center flex-1 space-x-8">
-          {menuLoading ? (
-            <div className="text-sm text-gray-500">菜单加载中...</div>
-          ) : (
-            dynamicMenuItems.map(renderDynamicMenuItem)
-          )}
-        </nav>
-
-        {/* 右侧：桌面端语言选择器和用户状态 */}
-        <div className="hidden md:flex items-center space-x-4 flex-shrink-0">
-          {/* 语言选择器 */}
-          <LanguageSwitcher variant="dropdown" />
+    <nav className="bg-white/90 backdrop-blur-md border-b border-purple-100 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* 左侧：Logo */}
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-lg font-bold">L</span>
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Flux Kontext</span>
+          </div>
           
-          {status === "loading" ? (
-            <div className="w-8 h-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          ) : session ? (
-            // 已登录状态
-            <div className="relative user-dropdown">
-              <button
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center space-x-2 p-2 rounded-lg hover:bg-accent transition-colors"
-              >
-                {session.user?.image ? (
-                  <img 
-                    src={session.user.image} 
-                    alt={session.user.name || "User"} 
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="w-4 h-4 text-primary" />
+          {/* 中间：桌面端导航菜单 */}
+          <div className="hidden md:flex items-center space-x-2">
+            {menuLoading ? (
+              <div className="text-sm text-gray-500">菜单加载中...</div>
+            ) : (
+              dynamicMenuItems.map(renderDynamicMenuItem)
+            )}
+          </div>
+
+          {/* 右侧：桌面端语言选择器和用户状态 */}
+          <div className="flex items-center space-x-4">
+            {/* Credits显示 */}
+            <div className="px-3 py-1 bg-gradient-to-r from-orange-200 to-yellow-200 rounded-full text-orange-800 text-sm font-medium">
+              💎 16 Credits
+            </div>
+            
+            {/* 语言选择器 - 只显示图标 */}
+            <div className="hidden md:block">
+              <LanguageSwitcher variant="icon-only" />
+            </div>
+            
+            {status === "loading" ? (
+              <div className="w-8 h-8 animate-spin rounded-full border-2 border-purple-500 border-t-transparent" />
+            ) : session ? (
+              // 已登录状态
+              <div className="relative user-dropdown">
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold hover:scale-105 transition-transform"
+                >
+                  {session.user?.image ? (
+                    <img 
+                      src={session.user.image} 
+                      alt={session.user.name || "User"} 
+                      className="w-8 h-8 rounded-full"
+                    />
+                  ) : (
+                    <span>{session.user?.name?.[0] || session.user?.email?.[0] || 'U'}</span>
+                  )}
+                </button>
+                
+                {/* 用户下拉菜单 */}
+                {isUserMenuOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-purple-100 rounded-xl shadow-lg py-2 z-[9999]">
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-3 text-sm transition-colors hover:bg-purple-50 hover:text-purple-600"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      {common.navigation.dashboard}
+                    </Link>
+                    {/* 管理员菜单 */}
+                    {session.user?.email && process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',').includes(session.user.email) && (
+                      <>
+                        <hr className="my-2 border-purple-100" />
+                        <Link
+                          href="/admin/menu-management"
+                          className="block px-4 py-3 text-sm transition-colors hover:bg-purple-50 hover:text-purple-600"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          🎛️ 菜单管理
+                        </Link>
+                      </>
+                    )}
+                    <hr className="my-2 border-purple-100" />
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full text-left px-4 py-3 text-sm transition-colors hover:bg-purple-50 hover:text-purple-600 flex items-center space-x-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>{common.buttons.signOut}</span>
+                    </button>
                   </div>
                 )}
-                <span className="text-sm font-medium">{session.user?.name || session.user?.email}</span>
-                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
-              
-              {/* 用户下拉菜单 */}
-              {isUserMenuOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg py-2 z-[9999]">
-                  <Link
-                    href="/dashboard"
-                    className="block px-4 py-2 text-sm transition-colors hover:bg-accent"
-                    onClick={() => setIsUserMenuOpen(false)}
+              </div>
+            ) : (
+              // 未登录状态
+              <>
+                <Link href="/auth/signin">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
                   >
-                    {common.navigation.dashboard}
-                  </Link>
-                  {/* 管理员菜单 */}
-                  {session.user?.email && process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',').includes(session.user.email) && (
-                    <>
-                      <hr className="my-2 border-border" />
-                      <Link
-                        href="/admin/menu-management"
-                        className="block px-4 py-2 text-sm transition-colors hover:bg-accent"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        🎛️ 菜单管理
-                      </Link>
-                    </>
-                  )}
-                  <hr className="my-2 border-border" />
-                  <button
-                    onClick={handleSignOut}
-                    className="w-full text-left px-4 py-2 text-sm transition-colors hover:bg-accent flex items-center space-x-2"
+                    {common.navigation.login}
+                  </Button>
+                </Link>
+                <Link href="/auth/signup">
+                  <Button 
+                    size="sm" 
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all hover:scale-105"
                   >
-                    <LogOut className="w-4 h-4" />
-                    <span>{common.buttons.signOut}</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            // 未登录状态
-            <>
-              <Link href="/auth/signin">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="hover:font-semibold active:scale-95 transition-all duration-200"
-                >
-                  {common.navigation.login}
-                </Button>
-              </Link>
-              <Link href="/auth/signup">
-                <Button 
-                  size="sm" 
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200"
-                >
-                  {common.buttons.signUp}
-                </Button>
-              </Link>
-            </>
-          )}
-        </div>
+                    {common.buttons.signUp}
+                  </Button>
+                </Link>
+              </>
+            )}
 
-        {/* 移动端汉堡菜单按钮 */}
-        <div className="md:hidden flex-shrink-0">
-          <button
-            className="p-2 hover:bg-accent rounded-md active:scale-95 transition-all duration-200"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle mobile menu"
-          >
-            <div className="w-6 h-6 flex flex-col justify-center items-center">
-              <span className={`block w-5 h-0.5 bg-foreground transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1' : ''}`} />
-              <span className={`block w-5 h-0.5 bg-foreground transition-all duration-300 mt-1 ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
-              <span className={`block w-5 h-0.5 bg-foreground transition-all duration-300 mt-1 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1' : ''}`} />
+            {/* 移动端汉堡菜单按钮 */}
+            <div className="md:hidden">
+              <button
+                className="p-2 hover:bg-purple-50 rounded-md transition-colors"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label="Toggle mobile menu"
+              >
+                <div className="w-6 h-6 flex flex-col justify-center items-center">
+                  <span className={`block w-5 h-0.5 bg-gray-700 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1' : ''}`} />
+                  <span className={`block w-5 h-0.5 bg-gray-700 transition-all duration-300 mt-1 ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
+                  <span className={`block w-5 h-0.5 bg-gray-700 transition-all duration-300 mt-1 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1' : ''}`} />
+                </div>
+              </button>
             </div>
-          </button>
+          </div>
         </div>
       </div>
 
       {/* 移动端菜单 */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-background/95 backdrop-blur-sm border-b border-border">
-          <div className="container mx-auto px-4 py-4 space-y-4">
+        <div className="md:hidden bg-white/95 backdrop-blur-sm border-b border-purple-100">
+          <div className="px-4 sm:px-6 lg:px-8 py-4 space-y-4">
             {/* 移动端导航链接 */}
             {menuLoading ? (
               <div className="text-center text-sm text-gray-500">菜单加载中...</div>
@@ -401,15 +398,15 @@ export function DynamicNavigation() {
                 <Link
                   key={item.id}
                   href={item.href}
-                  className={`flex items-center space-x-3 py-3 px-4 rounded-lg transition-all duration-200 hover:bg-accent hover:font-semibold active:scale-95 ${
+                  className={`flex items-center space-x-3 py-3 px-4 rounded-xl transition-all duration-200 ${
                     pathname === item.href 
-                      ? 'text-primary font-semibold bg-accent' 
-                      : 'text-foreground'
+                      ? 'bg-purple-500 text-white font-medium' 
+                      : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.emoji && (
-                    <span className="text-lg leading-none flex items-center justify-center w-6 h-6">
+                    <span className="text-lg leading-none">
                       {item.emoji}
                     </span>
                   )}
@@ -418,16 +415,21 @@ export function DynamicNavigation() {
               ))
             )}
             
+            {/* 移动端语言选择器 */}
+            <div className="pt-4 border-t border-purple-100">
+              <LanguageSwitcher variant="mobile-icon" />
+            </div>
+            
             {/* 移动端用户状态和按钮 */}
-            <div className="flex flex-col space-y-2 pt-4 border-t border-border">
+            <div className="flex flex-col space-y-2 pt-4 border-t border-purple-100">
               {status === "loading" ? (
                 <div className="flex justify-center">
-                  <div className="w-6 h-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                  <div className="w-6 h-6 animate-spin rounded-full border-2 border-purple-500 border-t-transparent" />
                 </div>
               ) : session ? (
                 // 移动端已登录状态
                 <>
-                  <div className="flex items-center space-x-3 p-3 bg-accent rounded-lg">
+                  <div className="flex items-center space-x-3 p-3 bg-purple-50 rounded-xl">
                     {session.user?.image ? (
                       <img 
                         src={session.user.image} 
@@ -435,20 +437,20 @@ export function DynamicNavigation() {
                         className="w-10 h-10 rounded-full"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <User className="w-5 h-5 text-primary" />
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                        {session.user?.name?.[0] || session.user?.email?.[0] || 'U'}
                       </div>
                     )}
                     <div>
-                      <p className="font-medium">{session.user?.name}</p>
-                      <p className="text-sm text-muted-foreground">{session.user?.email}</p>
+                      <p className="font-medium text-gray-800">{session.user?.name}</p>
+                      <p className="text-sm text-gray-600">{session.user?.email}</p>
                     </div>
                   </div>
                   <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="w-full justify-start hover:font-semibold active:scale-95 transition-all duration-200"
+                      className="w-full justify-start text-gray-700 hover:bg-purple-50 hover:text-purple-600"
                     >
                       {common.navigation.dashboard}
                     </Button>
@@ -459,7 +461,7 @@ export function DynamicNavigation() {
                       <Button 
                         variant="ghost" 
                         size="sm" 
-                        className="w-full justify-start hover:font-semibold active:scale-95 transition-all duration-200"
+                        className="w-full justify-start text-gray-700 hover:bg-purple-50 hover:text-purple-600"
                       >
                         🎛️ 菜单管理
                       </Button>
@@ -469,7 +471,7 @@ export function DynamicNavigation() {
                     variant="ghost" 
                     size="sm" 
                     onClick={handleSignOut}
-                    className="w-full justify-start hover:font-semibold active:scale-95 transition-all duration-200 text-red-600 hover:text-red-700"
+                    className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
                   >
                     <LogOut className="w-4 h-4 mr-2" />
                     {common.buttons.signOut}
@@ -482,7 +484,7 @@ export function DynamicNavigation() {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="w-full justify-start hover:font-semibold active:scale-95 transition-all duration-200"
+                      className="w-full justify-start text-gray-700 hover:bg-purple-50 hover:text-purple-600"
                     >
                       {common.navigation.login}
                     </Button>
@@ -490,7 +492,7 @@ export function DynamicNavigation() {
                   <Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button 
                       size="sm" 
-                      className="w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200"
+                      className="w-full justify-start bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600"
                     >
                       {common.buttons.signUp}
                     </Button>
@@ -501,6 +503,6 @@ export function DynamicNavigation() {
           </div>
         </div>
       )}
-    </header>
+    </nav>
   )
 } 

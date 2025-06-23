@@ -15,7 +15,7 @@ import {
 } from "@/lib/content/locale"
 
 interface LanguageSwitcherProps {
-  variant?: "dropdown" | "grid" | "mobile-icon"
+  variant?: "dropdown" | "grid" | "mobile-icon" | "icon-only"
   className?: string
 }
 
@@ -75,13 +75,47 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
     setIsOpen(false)
   }
 
+  // 只显示图标版本（地球图标和国旗）
+  if (variant === "icon-only") {
+    return (
+      <div className={`relative ${className}`}>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center space-x-2 p-2 hover:bg-purple-50 rounded-md transition-colors"
+          aria-label="Select language"
+        >
+          <Globe className="w-4 h-4 text-gray-700" />
+          <span className="text-base">{LOCALE_FLAGS[currentLocale]}</span>
+        </button>
+        
+        {/* 下拉菜单 */}
+        {isOpen && (
+          <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-purple-100 rounded-xl shadow-lg py-2 z-[9999] max-h-60 overflow-y-auto">
+            {SUPPORTED_LOCALES.map((locale) => (
+              <button
+                key={locale}
+                onClick={() => switchLanguage(locale)}
+                className={`w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors hover:bg-purple-50 hover:text-purple-600 ${
+                  locale === currentLocale ? 'bg-purple-50 text-purple-600 font-medium' : ''
+                }`}
+              >
+                <span>{LOCALE_FLAGS[locale]}</span>
+                <span>{LOCALE_NAMES[locale]}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
   // 移动端图标版本
   if (variant === "mobile-icon") {
     return (
       <div className={`relative ${className}`}>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-2 hover:bg-accent rounded-md active:scale-95 transition-all duration-200"
+          className="p-2 hover:bg-purple-50 rounded-md transition-colors"
           aria-label="Select language"
         >
           <span className="text-lg">{LOCALE_FLAGS[currentLocale]}</span>
@@ -89,13 +123,13 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
         
         {/* 移动端下拉菜单 */}
         {isOpen && (
-          <div className="absolute top-full right-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg py-2 z-[9999] max-h-60 overflow-y-auto">
+          <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-purple-100 rounded-xl shadow-lg py-2 z-[9999] max-h-60 overflow-y-auto">
             {SUPPORTED_LOCALES.map((locale) => (
               <button
                 key={locale}
                 onClick={() => switchLanguage(locale)}
-                className={`w-full flex items-center space-x-3 px-4 py-2 text-sm transition-colors hover:bg-accent ${
-                  locale === currentLocale ? 'bg-accent text-primary font-medium' : ''
+                className={`w-full flex items-center space-x-3 px-4 py-3 text-sm transition-colors hover:bg-purple-50 hover:text-purple-600 ${
+                  locale === currentLocale ? 'bg-purple-50 text-purple-600 font-medium' : ''
                 }`}
               >
                 <span>{LOCALE_FLAGS[locale]}</span>
