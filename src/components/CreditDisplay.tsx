@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Coins, RefreshCw, ShoppingCart, Loader2 } from 'lucide-react'
+import { RefreshCw, ShoppingCart, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
 interface CreditDisplayProps {
@@ -163,7 +163,6 @@ export function CreditDisplay({
     return (
       <div className={`flex items-center gap-2 ${className}`}>
         <Badge variant="outline" className="text-muted-foreground">
-          <Coins className="w-3 h-3 mr-1" />
           <div className="text-center">
             <div className="text-muted-foreground mb-2">
               Please sign in
@@ -191,7 +190,6 @@ export function CreditDisplay({
     return (
       <div className={`flex items-center gap-2 ${className}`}>
         <Badge variant="destructive" className="text-red-600">
-          <Coins className="w-3 h-3 mr-1" />
           {error}
         </Badge>
         <Button
@@ -222,7 +220,6 @@ export function CreditDisplay({
             : "bg-green-100 text-green-700 border-green-200 dark:bg-green-900 dark:text-green-300"
         }`}
       >
-        <Coins className="w-3 h-3 mr-1" />
         {creditCount} Credits
       </Badge>
 

@@ -1919,7 +1919,7 @@ export function FluxKontextGenerator() {
                 {/* 🔧 生成图像标题 */}
                 <div className="text-center mb-6">
                   <LabubuHeading level={1} className="mb-3">
-                    Labubu AI Generator
+                    LabubuHub AI Generator
                   </LabubuHeading>
                   <LabubuText variant="large" className="mb-4">
                     Create and edit Labubu images with advanced AI technology
@@ -2803,7 +2803,7 @@ export function FluxKontextGenerator() {
           </LabubuHeading>
           <div className="space-y-6">
             <LabubuCard className="p-6 bg-gradient-to-br from-white to-labubu-50/20">
-              <LabubuHeading level={3} className="mb-3">What is Flux Kontext?</LabubuHeading>
+              <LabubuHeading level={3} className="mb-3">What is LabubuHub?</LabubuHeading>
               <LabubuText variant="default" className="text-gray-700">
                 Our platform is a suite of generative flow matching models for image generation and editing. 
                 Unlike traditional text-to-image models, it understands both text and images as input for true in-context generation.

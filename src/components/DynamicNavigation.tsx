@@ -267,7 +267,7 @@ export function DynamicNavigation() {
             <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
               <span className="text-white text-lg font-bold">L</span>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Flux Kontext</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">LabubuHub</span>
           </div>
           
           {/* 中间：桌面端导航菜单 */}
