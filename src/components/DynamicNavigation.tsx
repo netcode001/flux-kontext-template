@@ -281,11 +281,6 @@ export function DynamicNavigation() {
 
           {/* 右侧：桌面端语言选择器和用户状态 */}
           <div className="flex items-center space-x-4">
-            {/* Credits显示 */}
-            <div className="px-3 py-1 bg-gradient-to-r from-orange-200 to-yellow-200 rounded-full text-orange-800 text-sm font-medium">
-              💎 16 Credits
-            </div>
-            
             {/* 语言选择器 - 只显示图标 */}
             <div className="hidden md:block">
               <LanguageSwitcher variant="icon-only" />
@@ -304,10 +299,18 @@ export function DynamicNavigation() {
                     <img 
                       src={session.user.image} 
                       alt={session.user.name || "User"} 
-                      className="w-8 h-8 rounded-full"
+                      className="w-8 h-8 rounded-full object-cover"
+                      onError={(e) => {
+                        // 头像加载失败时隐藏图片，显示文字
+                        e.currentTarget.style.display = 'none'
+                        const parent = e.currentTarget.parentElement
+                        if (parent) {
+                          parent.innerHTML = `<span class="text-white text-sm font-bold">${session.user?.name?.[0] || session.user?.email?.[0] || 'U'}</span>`
+                        }
+                      }}
                     />
                   ) : (
-                    <span>{session.user?.name?.[0] || session.user?.email?.[0] || 'U'}</span>
+                    <span className="text-white text-sm font-bold">{session.user?.name?.[0] || session.user?.email?.[0] || 'U'}</span>
                   )}
                 </button>
                 
@@ -434,7 +437,14 @@ export function DynamicNavigation() {
                       <img 
                         src={session.user.image} 
                         alt={session.user.name || "User"} 
-                        className="w-10 h-10 rounded-full"
+                        className="w-10 h-10 rounded-full object-cover"
+                        onError={(e) => {
+                          // 头像加载失败时显示默认头像
+                          const fallbackDiv = document.createElement('div')
+                          fallbackDiv.className = 'w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold'
+                          fallbackDiv.innerHTML = session.user?.name?.[0] || session.user?.email?.[0] || 'U'
+                          e.currentTarget.parentElement?.replaceChild(fallbackDiv, e.currentTarget)
+                        }}
                       />
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
