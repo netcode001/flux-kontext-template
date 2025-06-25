@@ -947,10 +947,10 @@ export async function POST(request: NextRequest) {
         }
 
         // 💾 将生成记录保存到数据库
-        if (user && result.images && result.images.length > 0) {
+        if (user && processedResult.images && processedResult.images.length > 0) {
           try {
-            const imageUrls = result.images.map((image: any) => image.url);
-            const creditsUsed = result.images.length * 1; // 简单计算，每张图1积分
+            const imageUrls = processedResult.images.map((image: any) => image.url);
+            const creditsUsed = requiredCredits;
 
             await prisma.generations.create({
               data: {
@@ -968,4 +968,152 @@ export async function POST(request: NextRequest) {
               },
             });
             
-            console.log(`
+            console.log(`💾 Successfully saved generation record with ${imageUrls.length} image(s) to the database.`);
+          } catch (dbError) {
+            console.error("❌ Failed to save generation record to database:", dbError);
+            // 这里只记录错误，不影响给用户的成功返回
+          }
+        }
+
+        // 最终成功响应
+        console.log(`✅ Generation successful, total time: ${Date.now() - startTime}ms`);
+
+        return NextResponse.json(responseData);
+
+      } catch (error) {
+        console.error('🔥 Image generation failed:', error);
+        
+        // 生成失败时退还积分
+        try {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { credits: { increment: requiredCredits } }
+          });
+          console.log(`💰 Refunded ${requiredCredits} credits`);
+        } catch (refundError) {
+          console.error('❌ Refund error:', refundError);
+        }
+
+        // 改进错误处理，提供更详细的错误信息
+        let errorMessage = 'Image generation failed';
+        let errorDetails = 'Unknown error';
+        
+        if (error instanceof Error) {
+          errorMessage = error.message;
+          errorDetails = error.stack || error.message;
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+          errorDetails = error;
+        } else if (error && typeof error === 'object') {
+          errorMessage = (error as any).message || 'Service error';
+          errorDetails = JSON.stringify(error);
+        }
+
+        console.error('🔥 Detailed error:', {
+          message: errorMessage,
+          details: errorDetails,
+          duration: Date.now() - startTime,
+          timestamp: new Date().toISOString()
+        });
+
+        // 🔧 修复：使用NextResponse.json()包装错误响应
+        return NextResponse.json({
+          error: 'Image generation failed',
+          message: errorMessage,
+          details: process.env.NODE_ENV === 'development' ? errorDetails : undefined,
+          credits_refunded: requiredCredits,
+          duration: Date.now() - startTime,
+          timestamp: new Date().toISOString()
+        }, { status: 500 });
+      }
+    };
+
+    // 🔧 直接执行主逻辑，不使用Promise.race避免响应被破坏
+    return await mainLogic();
+
+  } catch (error) {
+    console.error('🔥 API request processing failed:', error);
+    
+    // 改进顶层错误处理
+    let errorMessage = 'Internal server error';
+    let errorDetails = 'Unknown error';
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      errorDetails = error.stack || error.message;
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+      errorDetails = error;
+    } else if (error && typeof error === 'object') {
+      errorMessage = (error as any).message || 'Server error';
+      errorDetails = JSON.stringify(error);
+    }
+
+    console.error('🔥 Top-level error details:', {
+      message: errorMessage,
+      details: errorDetails,
+      timestamp: new Date().toISOString()
+    });
+
+    return NextResponse.json(
+      { 
+        error: 'Internal server error',
+        message: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? errorDetails : undefined,
+        timestamp: new Date().toISOString()
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// 处理文件上传
+export async function PUT(request: NextRequest) {
+  try {
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
+
+    if (!file) {
+      return NextResponse.json(
+        { error: 'No file provided' },
+        { status: 400 }
+      );
+    }
+
+    // 验证文件类型
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json(
+        { error: 'Invalid file type. Only JPEG, PNG, and WebP are allowed.' },
+        { status: 400 }
+      );
+    }
+
+    // 验证文件大小 (最大10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      return NextResponse.json(
+        { error: 'File too large. Maximum size is 10MB.' },
+        { status: 400 }
+      );
+    }
+
+    const url = await FluxKontextService.uploadFile(file);
+
+    return NextResponse.json({
+      success: true,
+      url
+    });
+
+  } catch (error: unknown) {
+    console.error('File upload error:', error);
+    
+    return NextResponse.json(
+      { 
+        error: 'File upload failed',
+        message: error instanceof Error ? error.message : 'Unknown error occurred'
+      },
+      { status: 500 }
+    );
+  }
+}
