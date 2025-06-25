@@ -498,7 +498,7 @@ export function FluxKontextGenerator() {
         
         {/* 顶部：只保留标题 */}
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
             LabubuHub AI Generator
           </h1>
         </div>
@@ -571,13 +571,13 @@ export function FluxKontextGenerator() {
           {/* Generation Settings */}
           <div className="lg:col-span-2">
             <Label className="block text-sm font-medium text-gray-700 mb-2">Generation Settings</Label>
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="block text-xs text-gray-600 mb-1">Images Count</Label>
                 <select
                   value={numImages}
                   onChange={(e) => setNumImages(Number(e.target.value))}
-                  className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
+                  className="w-full py-1.5 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
                 >
                   {getImageCountOptions(userType).map(option => (
                     <option key={option.value} value={option.value} disabled={option.premium && userType !== UserType.PREMIUM} className="text-gray-800">
@@ -591,7 +591,7 @@ export function FluxKontextGenerator() {
                 <select
                   value={aspectRatio}
                   onChange={(e) => setAspectRatio(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
+                  className="w-full py-1.5 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
                 >
                   {getAvailableAspectRatios(userType).map(ratio => (
                     <option key={ratio.value} value={ratio.value} disabled={ratio.premium && userType !== UserType.PREMIUM} className="text-gray-800">
