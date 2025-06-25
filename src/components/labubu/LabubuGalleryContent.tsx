@@ -207,7 +207,7 @@ export function LabubuGalleryContent() {
       <div className="container mx-auto px-4 py-6 pt-24">
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
           {/* 搜索框 */}
-          <div className="relative flex-1 w-full max-w-md">
+          <div className="relative flex-1 w-full">
             <Search 
               className="absolute left-3 top-1/2 transform -translate-y-1/2 text-soft-400 w-4 h-4 cursor-pointer hover:text-labubu-600 transition-colors" 
               onClick={executeSearch}
