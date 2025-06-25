@@ -205,26 +205,12 @@ export function LabubuGalleryContent() {
       {/* 统一的导航栏 */}
       <DynamicNavigation />
       
-      {/* 页面头部 */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-labubu-200 pt-16">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center space-y-4">
-            <LabubuHeading level={1} className="text-4xl font-bold">
-              🎨 创意秀场
-            </LabubuHeading>
-            <LabubuText variant="large" className="text-soft-600 max-w-2xl mx-auto">
-              展示Labubu收藏爱好者的原创作品，发现无限创意可能
-            </LabubuText>
-          </div>
-        </div>
-      </div>
-
       {/* 搜索和筛选栏 */}
-      <div className="bg-white/60 backdrop-blur-sm border-b border-labubu-200">
-        <div className="container mx-auto px-4 py-6">
+      <div>
+        <div className="container mx-auto px-4 py-6 pt-24">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             {/* 搜索框 */}
-            <div className="relative flex-1 max-w-md">
+            <div className="relative flex-1 w-full max-w-md">
               <Search 
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-soft-400 w-4 h-4 cursor-pointer hover:text-labubu-600 transition-colors" 
                 onClick={executeSearch}
@@ -235,7 +221,7 @@ export function LabubuGalleryContent() {
                 value={searchInput}
                 onChange={(e) => handleSearchInputChange(e.target.value)}
                 onKeyPress={handleSearchKeyPress}
-                className="pl-10 pr-10"
+                className="pl-10 pr-10 w-full"
               />
               {searchInput && (
                 <button
