@@ -512,14 +512,14 @@ export function FluxKontextGenerator() {
                 placeholder="Describe the image you want to create..."
                 value={textPrompt}
                 onChange={(e) => setTextPrompt(e.target.value)}
-                className="w-full h-16 p-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-sm bg-white text-gray-900 placeholder:text-gray-500"
+                className="w-full h-16 p-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-sm bg-white text-gray-900 placeholder:text-gray-500"
               />
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={handleEnhancePrompt}
                 disabled={!textPrompt.trim()}
-                className="absolute top-2 right-2 text-xs bg-pink-100 text-pink-700 hover:bg-pink-200 transition-colors pointer-events-auto z-10"
+                className="absolute top-2 right-2 text-xs bg-labubu-100 text-labubu-700 hover:bg-labubu-200 transition-colors pointer-events-auto z-10"
               >
                 ✨ AI Enhance
               </Button>
@@ -531,7 +531,7 @@ export function FluxKontextGenerator() {
             <Button 
               onClick={handleGenerate}
               disabled={isGenerating || !textPrompt.trim()}
-              className="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white px-6 py-4 rounded-xl font-medium hover:from-pink-600 hover:to-pink-700 transition-all hover:scale-105 shadow-lg text-lg mt-6"
+              className="w-full bg-gradient-to-r from-labubu-500 to-labubu-600 text-white px-6 py-4 rounded-xl font-medium hover:from-labubu-600 hover:to-labubu-700 transition-all hover:scale-105 shadow-lg text-lg mt-6"
             >
               {isGenerating ? (
                 <>
@@ -554,11 +554,11 @@ export function FluxKontextGenerator() {
             <Label className="block text-sm font-medium text-gray-700 mb-2">Reference Image</Label>
             <div 
               onClick={() => multiFileInputRef.current?.click()}
-              className="w-full border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-pink-400 transition-colors bg-gray-50 hover:bg-pink-50 flex flex-col items-center justify-center min-h-32"
+              className="w-full border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-labubu-400 transition-colors bg-gray-50 hover:bg-labubu-50 flex flex-col items-center justify-center min-h-32"
             >
               {uploadedImages.length > 0 ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center">📸</div>
+                  <div className="w-8 h-8 bg-labubu-100 rounded-lg flex items-center justify-center">📸</div>
                   <span className="text-sm text-gray-700">{uploadedImages.length} image(s) uploaded</span>
                   <Button
                     size="sm"
@@ -599,7 +599,7 @@ export function FluxKontextGenerator() {
                 <select 
                   value={numImages}
                   onChange={(e) => setNumImages(Number(e.target.value))}
-                  className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-gray-800"
+                  className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
                 >
                   {getImageCountOptions(userType).map(option => (
                     <option key={option.value} value={option.value} disabled={option.premium && userType !== UserType.PREMIUM} className="text-gray-800">
@@ -613,7 +613,7 @@ export function FluxKontextGenerator() {
                 <select 
                   value={aspectRatio}
                   onChange={(e) => setAspectRatio(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-gray-800"
+                  className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
                 >
                   {getAvailableAspectRatios(userType).map(ratio => (
                     <option key={ratio.value} value={ratio.value} disabled={ratio.premium && userType !== UserType.PREMIUM} className="text-gray-800">
@@ -695,8 +695,8 @@ export function FluxKontextGenerator() {
                     key={model.value}
                     className={`border rounded-xl p-4 cursor-pointer transition-all ${
                       selectedModel === model.value || (model.value === 'max-multi' && selectedModel === 'max')
-                        ? 'border-pink-200 bg-pink-50' 
-                        : 'border-gray-200 hover:border-pink-300'
+                        ? 'border-labubu-200 bg-labubu-50' 
+                        : 'border-gray-200 hover:border-labubu-300'
                     } ${!model.available ? 'opacity-50 cursor-not-allowed' : ''}`}
                     onClick={() => {
                       if (model.available) {
@@ -708,7 +708,12 @@ export function FluxKontextGenerator() {
                       }
                     }}
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    {model.recommended && (
+                      <div className="mb-2">
+                        <Badge className="bg-green-100 text-green-700 text-xs">Recommended</Badge>
+                      </div>
+                    )}
+                    <div className="mb-2">
                       <label className="flex items-center cursor-pointer">
                         <input 
                           type="radio" 
@@ -721,9 +726,6 @@ export function FluxKontextGenerator() {
                         />
                         <span className="font-medium text-gray-800">{model.label}</span>
                       </label>
-                      {model.recommended && (
-                        <Badge className="bg-green-100 text-green-700 text-xs">Recommended</Badge>
-                      )}
                     </div>
                     <p className="text-sm text-gray-600 mb-2">{model.description}</p>
                     <div className="flex items-center gap-4 text-xs text-gray-500">
@@ -767,7 +769,7 @@ export function FluxKontextGenerator() {
                   {/* 强度设置 */}
                   <div>
                     <Label className="block text-sm font-medium text-gray-700 mb-2">
-                      Strength: <span className="text-pink-600">{guidanceScale}</span>
+                      Strength: <span className="text-labubu-600">{guidanceScale}</span>
                     </Label>
                     <input 
                       type="range" 
@@ -787,7 +789,7 @@ export function FluxKontextGenerator() {
                   {/* 安全等级 */}
                   <div>
                     <Label className="block text-sm font-medium text-gray-700 mb-2">
-                      Safety: <span className="text-pink-600">{safetyTolerance}</span>
+                      Safety: <span className="text-labubu-600">{safetyTolerance}</span>
                     </Label>
                     <input 
                       type="range" 
@@ -834,7 +836,7 @@ export function FluxKontextGenerator() {
                     <select 
                       value={outputFormat}
                       onChange={(e) => setOutputFormat(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-gray-800"
+                      className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
                     >
                                               <option value="jpeg" className="text-gray-800">JPEG</option>
                         <option value="png" className="text-gray-800">PNG</option>
