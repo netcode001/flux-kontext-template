@@ -454,7 +454,7 @@ export function FluxKontextGenerator() {
   const currentModelInfo = getCurrentModelInfo()
 
   return (
-    <div className="max-w-6xl mx-auto p-4 relative">
+    <div className="max-w-6xl mx-auto p-4">
       {/* 错误提示 */}
       {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-2">
@@ -494,7 +494,7 @@ export function FluxKontextGenerator() {
       )}
 
       {/* 主要生成界面卡片 */}
-      <div className="bg-white rounded-3xl shadow-lg border border-purple-100 p-6 mb-6">
+      <div className="relative bg-white rounded-3xl shadow-lg border border-purple-100 p-6 mb-6">
         
         {/* 顶部：只保留标题 */}
                 <div className="text-center mb-6">
@@ -525,14 +525,14 @@ export function FluxKontextGenerator() {
                     </div>
                   </div>
 
-        {/* 第二行: 设置和操作 */}
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-6 items-start">
+        {/* 第二行: 设置和操作 - 位置提前 */}
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-6 items-start mb-6">
           {/* Reference Image */}
           <div className="lg:col-span-1">
             <Label className="block text-sm font-medium text-gray-700 mb-2 text-center">Reference Image</Label>
             <div 
               onClick={() => multiFileInputRef.current?.click()}
-              className="w-1/2 mx-auto aspect-square border-2 border-dashed border-gray-300 rounded-xl p-2 cursor-pointer hover:border-labubu-400 transition-colors bg-gray-50 hover:bg-labubu-50 flex flex-col items-center justify-center"
+              className="w-24 h-24 mx-auto aspect-square border-2 border-dashed border-gray-300 rounded-xl p-2 cursor-pointer hover:border-labubu-400 transition-colors bg-gray-50 hover:bg-labubu-50 flex flex-col items-center justify-center"
             >
                       {uploadedImages.length > 0 ? (
                 <div className="flex flex-col items-center gap-1 text-center">
@@ -569,10 +569,10 @@ export function FluxKontextGenerator() {
                 </div>
 
           {/* Generation Settings */}
-          <div className="lg:col-span-2 pt-8">
+          <div className="lg:col-span-2">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                <Label className="block text-xs text-gray-600 mb-1">Images</Label>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">Images</Label>
                     <select
                   value={numImages}
                   onChange={(e) => setNumImages(Number(e.target.value))}
@@ -586,7 +586,7 @@ export function FluxKontextGenerator() {
                     </select>
                         </div>
                   <div>
-                <Label className="block text-xs text-gray-600 mb-1">Ratio</Label>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">Ratio</Label>
                     <select
                       value={aspectRatio}
                       onChange={(e) => setAspectRatio(e.target.value)}
@@ -620,11 +620,10 @@ export function FluxKontextGenerator() {
 
           {/* 生成按钮 */}
           <div className="lg:col-span-2">
-            <Label className="block text-sm font-medium text-gray-700 mb-2 invisible">Generate</Label>
             <Button 
               onClick={handleGenerate}
               disabled={isGenerating || !textPrompt.trim()}
-              className="w-full bg-gradient-to-r from-labubu-500 to-labubu-600 text-white px-4 py-3 rounded-xl font-medium hover:from-labubu-600 hover:to-labubu-700 transition-all hover:scale-105 shadow-lg text-base"
+              className="w-full bg-gradient-to-r from-labubu-500 to-labubu-600 text-white px-4 py-7 rounded-xl font-medium hover:from-labubu-600 hover:to-labubu-700 transition-all hover:scale-105 shadow-lg text-base"
             >
               {isGenerating ? (
                 <>
@@ -639,45 +638,33 @@ export function FluxKontextGenerator() {
             </Button>
                         </div>
                       </div>
-                          </div>
 
-      {/* 左下角固定位置：用户状态信息 */}
-      <div className="absolute bottom-4 left-4 z-10">
-        <div className="flex items-center gap-3 text-xs text-gray-500 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-lg">
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span>{session ? 'Registered User' : 'Guest User'}</span>
-                        </div>
-          {session && (
+      {/* 右下角固定位置：用户状态和积分 */}
+      <div className="absolute bottom-4 right-6 z-10">
+        <div className="flex items-center gap-2">
+          {/* 用户状态信息 */}
+          <div className="flex items-center gap-3 text-xs text-gray-500 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-lg">
             <div className="flex items-center gap-1">
-              <div className="w-5 h-5 bg-green-100 rounded-md flex items-center justify-center text-xs">
-                🛡️
-                      </div>
-              <span>Verified</span>
-                  </div>
-                              )}
-                            </div>
-                            </div>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>{session ? 'Registered User' : 'Guest User'}</span>
+            </div>
+            {session && (
+              <div className="flex items-center gap-1">
+                <div className="w-5 h-5 bg-green-100 rounded-md flex items-center justify-center text-xs">
+                  🛡️
+                </div>
+                <span>Verified</span>
+              </div>
+            )}
+          </div>
 
-      {/* 右下角固定位置：积分显示和刷新按钮 */}
-      <div className="absolute bottom-4 right-4 z-10 group">
-        <div className="flex items-center gap-3">
-          {/* 刷新按钮 - 默认隐藏，hover显示 */}
-                            <Button 
-                              size="sm"
-            variant="ghost"
-            onClick={() => window.location.reload()}
-            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg hover:bg-gray-50"
-                            >
-            <RefreshCw className="w-4 h-4" />
-                            </Button>
-          
           {/* 积分显示和购买按钮 */}
           <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-lg">
             <CreditDisplay showBuyButton={true} />
-                          </div>
-                      </div>
-                    </div>
+          </div>
+        </div>
+      </div>
+      </div>
 
       {/* 高级设置面板（可展开/收缩） */}
       {showAdvancedPanel && (
@@ -869,8 +856,8 @@ export function FluxKontextGenerator() {
       )}
 
       {/* 生成结果展示区域 */}
-      {generatedImages.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-lg border border-purple-100 p-6">
+      {(isGenerating || generatedImages.length > 0) && (
+        <div className="bg-white rounded-2xl shadow-lg border border-purple-100 p-6 mt-6">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
               🖼️ Generated Images
@@ -878,8 +865,17 @@ export function FluxKontextGenerator() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {isGenerating &&
+              Array.from({ length: numImages }).map((_, index) => (
+                <div key={`loader-${index}`} className="bg-gray-50 rounded-xl overflow-hidden shadow-sm relative group aspect-square">
+                  <div className="w-full h-full flex items-center justify-center bg-gray-100 animate-pulse">
+                    <ImageIcon className="w-10 h-10 text-gray-300" />
+                  </div>
+                </div>
+              ))}
+
             {generatedImages.map((image, index) => (
-              <div key={index} className="bg-gray-50 rounded-xl overflow-hidden shadow-sm relative group">
+              <div key={image.url || index} className="bg-gray-50 rounded-xl overflow-hidden shadow-sm relative group">
                 <div className="aspect-square">
                   <SmartImagePreview
                     url={image.url}
@@ -887,7 +883,7 @@ export function FluxKontextGenerator() {
                     index={index}
                     onRemove={() => setGeneratedImages(prev => prev.filter((_, i) => i !== index))}
                   />
-          </div>
+                </div>
                 <div className="p-4">
                   <p className="text-sm text-gray-600 mb-2 line-clamp-2">{image.prompt}</p>
                   <div className="flex items-center justify-between">
@@ -897,8 +893,8 @@ export function FluxKontextGenerator() {
                     <Button size="sm" variant="outline">
                       <Download className="w-4 h-4" />
                     </Button>
-        </div>
-              </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
