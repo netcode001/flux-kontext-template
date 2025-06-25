@@ -335,12 +335,12 @@ export function FluxKontextGenerator() {
         return
       } else {
         setError("This model requires an upgrade. Please upgrade your plan.")
-        return
-      }
+            return
+          }
     }
 
-    setIsGenerating(true)
-    setError("")
+      setIsGenerating(true)
+      setError("")
     
     try {
       let action: FluxKontextAction
@@ -377,9 +377,9 @@ export function FluxKontextGenerator() {
 
       setLastRequest(requestData)
       
-      const response = await fetch('/api/flux-kontext', {
-        method: 'POST',
-        headers: {
+        const response = await fetch('/api/flux-kontext', {
+          method: 'POST',
+          headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestData),
@@ -387,7 +387,7 @@ export function FluxKontextGenerator() {
 
       const data = await response.json()
 
-      if (!response.ok) {
+        if (!response.ok) {
         throw new Error(data.error || 'Generation failed')
       }
 
@@ -398,7 +398,7 @@ export function FluxKontextGenerator() {
           height: imageData.height,
           prompt: textPrompt,
           action,
-          timestamp: Date.now()
+            timestamp: Date.now()
         }))
         
         setGeneratedImages(prev => [...newImages, ...prev])
@@ -407,11 +407,11 @@ export function FluxKontextGenerator() {
     } catch (error: any) {
       console.error('Generation error:', error)
       setError(error.message || 'Failed to generate image')
-      setRetryCount(prev => prev + 1)
+        setRetryCount(prev => prev + 1)
     } finally {
       setIsGenerating(false)
+      }
     }
-  }
 
   // 重试生成
   const handleRetry = () => {
@@ -438,9 +438,9 @@ export function FluxKontextGenerator() {
           content: textPrompt,
           action: 'enhance_prompt'
         })
-      })
-      
-      if (response.ok) {
+        })
+        
+        if (response.ok) {
         const data = await response.json()
         if (data.enhanced_prompt) {
           setTextPrompt(data.enhanced_prompt)
@@ -497,11 +497,11 @@ export function FluxKontextGenerator() {
       <div className="bg-white rounded-3xl shadow-lg border border-purple-100 p-6 mb-6">
         
         {/* 顶部：只保留标题 */}
-        <div className="text-center mb-6">
+                <div className="text-center mb-6">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
-            LabubuHub AI Generator
+                    LabubuHub AI Generator
           </h1>
-        </div>
+                </div>
 
         {/* Image Description 输入框 + 生成按钮 */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-end mb-6">
@@ -513,22 +513,22 @@ export function FluxKontextGenerator() {
                 value={textPrompt}
                 onChange={(e) => setTextPrompt(e.target.value)}
                 className="w-full h-16 p-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-sm bg-white text-gray-900 placeholder:text-gray-500"
-              />
-              <Button
-                size="sm"
+                        />
+                        <Button 
+                          size="sm"
                 variant="ghost"
                 onClick={handleEnhancePrompt}
                 disabled={!textPrompt.trim()}
                 className="absolute top-2 right-2 text-xs bg-labubu-100 text-labubu-700 hover:bg-labubu-200 transition-colors pointer-events-auto z-10"
               >
                 ✨ AI Enhance
-              </Button>
-            </div>
-          </div>
-          
+                        </Button>
+                      </div>
+                    </div>
+
           {/* 生成按钮 */}
           <div className="lg:col-span-1">
-            <Button 
+                      <Button 
               onClick={handleGenerate}
               disabled={isGenerating || !textPrompt.trim()}
               className="w-full bg-gradient-to-r from-labubu-500 to-labubu-600 text-white px-6 py-4 rounded-xl font-medium hover:from-labubu-600 hover:to-labubu-700 transition-all hover:scale-105 shadow-lg text-lg mt-6"
@@ -543,40 +543,40 @@ export function FluxKontextGenerator() {
                   ⚡ Generate Images
                 </>
               )}
-            </Button>
-          </div>
-        </div>
+                      </Button>
+                    </div>
+                  </div>
 
         {/* Reference Image、Generation Settings、Advanced Settings */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
           {/* Reference Image */}
-          <div>
+          <div className="lg:col-span-1">
             <Label className="block text-sm font-medium text-gray-700 mb-2">Reference Image</Label>
             <div 
               onClick={() => multiFileInputRef.current?.click()}
-              className="w-full border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-labubu-400 transition-colors bg-gray-50 hover:bg-labubu-50 flex flex-col items-center justify-center min-h-32"
+              className="aspect-square w-full border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-labubu-400 transition-colors bg-gray-50 hover:bg-labubu-50 flex flex-col items-center justify-center"
             >
               {uploadedImages.length > 0 ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-labubu-100 rounded-lg flex items-center justify-center">📸</div>
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <div className="w-12 h-12 bg-labubu-100 rounded-lg flex items-center justify-center">📸</div>
                   <span className="text-sm text-gray-700">{uploadedImages.length} image(s) uploaded</span>
-                  <Button
+                  <Button 
                     size="sm"
                     variant="ghost"
                     onClick={(e) => {
                       e.stopPropagation()
                       clearUpload()
                     }}
-                    className="text-red-500 hover:text-red-700 text-xs p-1"
+                    className="text-red-500 hover:text-red-700 text-xs p-1 h-auto"
                   >
-                    ✕
+                    Remove
                   </Button>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-2 text-gray-500">
+                <div className="flex flex-col items-center gap-2 text-gray-500 text-center">
                   <Upload className="w-8 h-8" />
-                  <span className="text-sm font-medium text-center">Upload Labubu</span>
-                  <span className="text-xs text-center text-gray-400">Click or drag & drop images here</span>
+                  <span className="text-sm font-medium">Upload Labubu</span>
+                  <span className="text-xs text-gray-400">Click or drag & drop</span>
                 </div>
               )}
             </div>
@@ -591,12 +591,12 @@ export function FluxKontextGenerator() {
           </div>
 
           {/* Generation Settings */}
-          <div>
+          <div className="lg:col-span-2">
             <Label className="block text-sm font-medium text-gray-700 mb-2">Generation Settings</Label>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="block text-xs text-gray-600 mb-1">Images Count</Label>
-                <select 
+                <select
                   value={numImages}
                   onChange={(e) => setNumImages(Number(e.target.value))}
                   className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
@@ -610,7 +610,7 @@ export function FluxKontextGenerator() {
               </div>
               <div>
                 <Label className="block text-xs text-gray-600 mb-1">Aspect Ratio</Label>
-                <select 
+                <select
                   value={aspectRatio}
                   onChange={(e) => setAspectRatio(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
@@ -626,15 +626,17 @@ export function FluxKontextGenerator() {
           </div>
 
           {/* Advanced Settings 按钮 */}
-          <div>
+          <div className="lg:col-span-2">
             <Label className="block text-sm font-medium text-gray-700 mb-2">Advanced Settings</Label>
             <Button 
               onClick={() => setShowAdvancedPanel(!showAdvancedPanel)}
               variant="outline"
-              className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700 border border-gray-300"
+              className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700 border border-gray-300"
             >
-              <Settings className="w-4 h-4" />
-              {showAdvancedPanel ? 'Hide' : 'Advanced'}
+              <div className="flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                <span>{showAdvancedPanel ? 'Hide Advanced' : 'Advanced Settings'}</span>
+              </div>
               {showAdvancedPanel ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </Button>
           </div>
@@ -647,37 +649,37 @@ export function FluxKontextGenerator() {
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
             <span>{session ? 'Registered User' : 'Guest User'}</span>
-          </div>
+                                    </div>
           {session && (
             <div className="flex items-center gap-1">
               <div className="w-5 h-5 bg-green-100 rounded-md flex items-center justify-center text-xs">
                 🛡️
-              </div>
+                            </div>
               <span>Verified</span>
-            </div>
-          )}
-        </div>
-      </div>
+                      </div>
+                    )}
+                  </div>
+                            </div>
 
       {/* 右下角固定位置：积分显示和刷新按钮 */}
       <div className="fixed bottom-4 right-4 z-50 group">
         <div className="flex items-center gap-3">
           {/* 刷新按钮 - 默认隐藏，hover显示 */}
-          <Button
-            size="sm"
+                            <Button 
+                              size="sm"
             variant="ghost"
             onClick={() => window.location.reload()}
             className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg hover:bg-gray-50"
-          >
+                            >
             <RefreshCw className="w-4 h-4" />
-          </Button>
+                            </Button>
           
           {/* 积分显示和购买按钮 */}
           <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-lg">
             <CreditDisplay showBuyButton={true} />
-          </div>
-        </div>
-      </div>
+                          </div>
+                      </div>
+                    </div>
 
       {/* 高级设置面板（可展开/收缩） */}
       {showAdvancedPanel && (
@@ -698,11 +700,11 @@ export function FluxKontextGenerator() {
                         ? 'border-labubu-200 bg-labubu-50' 
                         : 'border-gray-200 hover:border-labubu-300'
                     } ${!model.available ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    onClick={() => {
+                            onClick={() => {
                       if (model.available) {
                         if (model.value === 'max-multi') {
                           setSelectedModel('max')
-                        } else {
+                              } else {
                           setSelectedModel(model.value as any)
                         }
                       }
@@ -722,17 +724,17 @@ export function FluxKontextGenerator() {
                         />
                         <span className="font-medium text-gray-800">{model.label}</span>
                       </label>
-                    </div>
+                          </div>
                     <p className="text-sm text-gray-600 mb-2">{model.description}</p>
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <span>💎 {model.credits} Credits</span>
                       <span>⚡ {model.speed}</span>
                       <span>⭐ {model.quality}</span>
-                    </div>
+                        </div>
                   </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
 
             {/* 模型介绍 */}
             <div className="lg:col-span-1">
@@ -749,7 +751,7 @@ export function FluxKontextGenerator() {
                       <li>✓ High-quality image generation</li>
                     )}
                   </ul>
-                </div>
+              </div>
               )}
             </div>
 
@@ -779,8 +781,8 @@ export function FluxKontextGenerator() {
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
                       <span>Creative</span>
                       <span>Strict</span>
-                    </div>
-                  </div>
+              </div>
+            </div>
 
                   {/* 安全等级 */}
                   <div>
@@ -799,9 +801,9 @@ export function FluxKontextGenerator() {
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
                       <span>Strict</span>
                       <span>Permissive</span>
-                    </div>
-                  </div>
-                </div>
+              </div>
+            </div>
+          </div>
 
                 {/* 右列 */}
                 <div className="space-y-4">
@@ -823,7 +825,7 @@ export function FluxKontextGenerator() {
                       >
                         🎲
                       </Button>
-                    </div>
+        </div>
                   </div>
 
                   {/* 输出格式 */}
@@ -837,10 +839,10 @@ export function FluxKontextGenerator() {
                                               <option value="jpeg" className="text-gray-800">JPEG</option>
                         <option value="png" className="text-gray-800">PNG</option>
                     </select>
-                  </div>
-                </div>
               </div>
-            </div>
+              </div>
+              </div>
+              </div>
           </div>
         </div>
       )}
@@ -867,14 +869,14 @@ export function FluxKontextGenerator() {
       )}
 
       {/* 生成结果展示区域 */}
-      <div className="bg-white rounded-2xl shadow-lg border border-purple-100 p-6">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-            🖼️ Generated Images
-          </h2>
-        </div>
-        
-        {generatedImages.length > 0 ? (
+      {generatedImages.length > 0 && (
+        <div className="bg-white rounded-2xl shadow-lg border border-purple-100 p-6">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+              🖼️ Generated Images
+            </h2>
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {generatedImages.map((image, index) => (
               <div key={index} className="bg-gray-50 rounded-xl overflow-hidden shadow-sm">
@@ -884,7 +886,7 @@ export function FluxKontextGenerator() {
                     alt={`Generated: ${image.prompt}`}
                     className="w-full h-full object-cover"
                   />
-                </div>
+          </div>
                 <div className="p-4">
                   <p className="text-sm text-gray-600 mb-2 line-clamp-2">{image.prompt}</p>
                   <div className="flex items-center justify-between">
@@ -894,23 +896,13 @@ export function FluxKontextGenerator() {
                     <Button size="sm" variant="outline">
                       <Download className="w-4 h-4" />
                     </Button>
-                  </div>
-                </div>
+        </div>
+              </div>
               </div>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="w-24 h-24 bg-gray-100 rounded-2xl mx-auto mb-6 flex items-center justify-center">
-              <ImageIcon className="w-12 h-12 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">Generated images will appear here</h3>
-            <p className="text-gray-500 max-w-md mx-auto">
-              Enter a description and click generate to create new Labubu images with AI technology.
-            </p>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

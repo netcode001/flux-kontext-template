@@ -30,7 +30,7 @@ export default function GeneratePage() {
     <div className="min-h-screen bg-hero-gradient">
       <DynamicNavigation />
       
-      <main className="container mx-auto px-4 pt-24 pb-16">
+      <main className="container mx-auto px-4 pt-8 pb-16">
         <FluxKontextGenerator />
       </main>
 
