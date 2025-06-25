@@ -291,7 +291,7 @@ export function LabubuGalleryContent() {
       )}
 
       {/* 作品画廊 */}
-      <main className="px-4 sm:px-6 lg:px-8 pb-12">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         {/* 🔍 搜索结果状态提示 */}
         {searchQuery && (
           <LabubuCard variant="interactive" className="mb-6 p-4">
