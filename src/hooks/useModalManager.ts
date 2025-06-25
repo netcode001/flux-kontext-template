@@ -1,38 +1,37 @@
 import { useState, useEffect, useCallback } from 'react'
 
-// 全局模态框状态管理
-let globalModalId: string | null = null
-let setGlobalModalId: ((id: string | null) => void) | null = null
+// 简化的全局模态框状态管理
+let currentOpenModalId: string | null = null
+const modalCallbacks = new Map<string, () => void>()
 
 export function useModalManager(modalId: string) {
   const [isOpen, setIsOpen] = useState(false)
-  const [globalState, setGlobalState] = useState<string | null>(null)
 
-  // 初始化全局状态管理
+  // 注册关闭回调
   useEffect(() => {
-    if (!setGlobalModalId) {
-      setGlobalModalId = setGlobalState
+    modalCallbacks.set(modalId, () => setIsOpen(false))
+    return () => {
+      modalCallbacks.delete(modalId)
     }
-  }, [])
-
-  // 监听全局模态框状态变化
-  useEffect(() => {
-    if (globalState !== globalModalId) {
-      globalModalId = globalState
-      // 如果全局模态框ID不是当前模态框，则关闭当前模态框
-      if (globalModalId !== modalId && isOpen) {
-        setIsOpen(false)
-      }
-    }
-  }, [globalState, modalId, isOpen])
+  }, [modalId])
 
   // 打开模态框
   const openModal = useCallback(() => {
-    // 关闭其他所有模态框
-    if (setGlobalModalId) {
-      setGlobalModalId(modalId)
+    console.log('🎪 尝试打开模态框:', modalId, '当前打开的:', currentOpenModalId)
+    
+    // 如果有其他模态框打开，先关闭它
+    if (currentOpenModalId && currentOpenModalId !== modalId) {
+      console.log('🔄 关闭其他模态框:', currentOpenModalId)
+      const closeCallback = modalCallbacks.get(currentOpenModalId)
+      if (closeCallback) {
+        closeCallback()
+      }
+      // 恢复页面滚动
+      document.documentElement.style.overflow = ''
     }
-    globalModalId = modalId
+    
+    // 打开当前模态框
+    currentOpenModalId = modalId
     setIsOpen(true)
     
     // 锁定页面滚动
@@ -42,30 +41,33 @@ export function useModalManager(modalId: string) {
 
   // 关闭模态框
   const closeModal = useCallback(() => {
-    if (setGlobalModalId && globalModalId === modalId) {
-      setGlobalModalId(null)
-    }
-    globalModalId = null
-    setIsOpen(false)
+    console.log('🎪 尝试关闭模态框:', modalId, '当前打开的:', currentOpenModalId)
     
-    // 恢复页面滚动
-    document.documentElement.style.overflow = ''
-    console.log('🔓 全局模态框管理 - 关闭:', modalId)
+    if (currentOpenModalId === modalId) {
+      currentOpenModalId = null
+      setIsOpen(false)
+      
+      // 恢复页面滚动
+      document.documentElement.style.overflow = ''
+      console.log('🔓 全局模态框管理 - 关闭:', modalId)
+    }
   }, [modalId])
 
   // 组件卸载时清理
   useEffect(() => {
     return () => {
-      if (globalModalId === modalId) {
-        closeModal()
+      if (currentOpenModalId === modalId) {
+        currentOpenModalId = null
+        document.documentElement.style.overflow = ''
+        console.log('🧹 组件卸载清理模态框:', modalId)
       }
     }
-  }, [modalId, closeModal])
+  }, [modalId])
 
   return {
     isOpen,
     openModal,
     closeModal,
-    isActive: globalModalId === modalId
+    isActive: currentOpenModalId === modalId
   }
 } 
