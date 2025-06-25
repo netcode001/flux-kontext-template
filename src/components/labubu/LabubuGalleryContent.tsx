@@ -10,8 +10,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 // Labubu风格组件
-import { LabubuCard, LabubuButton, LabubuInput, LabubuBadge, LabubuHeading, LabubuText, LabubuContainer } from '@/components/ui/labubu-ui'
-import { Plus, Search, Filter, Sparkles, Star, Grid, List } from 'lucide-react'
+import { LabubuCard, LabubuButton, LabubuInput, LabubuBadge, LabubuHeading, LabubuText, LabubuContainer, LabubuLoader } from '@/components/ui/labubu-ui'
+import { Plus, Search, Filter, Sparkles, Star, Grid, List, Loader2 } from 'lucide-react'
 
 type ViewMode = 'grid' | 'list'
 type FilterType = 'all' | 'featured' | 'recent' | 'popular'
@@ -207,7 +207,7 @@ export function LabubuGalleryContent() {
       
       {/* 搜索和筛选栏 */}
       <div>
-        <div className="container mx-auto px-4 py-6 pt-24">
+        <div className="container mx-auto px-4 py-6 pt-20">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             {/* 搜索框 */}
             <div className="relative flex-1 w-full max-w-md">
@@ -234,36 +234,33 @@ export function LabubuGalleryContent() {
             </div>
 
             {/* 筛选器 */}
-            <div className="flex items-center gap-2">
-              {filters.map((filter) => {
-                const Icon = filter.icon
-                return (
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                {filters.map(filter => (
                   <LabubuButton
                     key={filter.key}
-                    variant={currentFilter === filter.key ? "primary" : "secondary"}
+                    variant={currentFilter === filter.key ? 'primary' : 'ghost'}
                     size="sm"
                     onClick={() => handleFilter(filter.key as FilterType)}
                     className="flex items-center gap-2"
                   >
-                    <Icon className="w-4 h-4" />
-                    {filter.label}
+                    <filter.icon className="w-4 h-4" />
+                    <span>{filter.label}</span>
                   </LabubuButton>
-                )
-              })}
-            </div>
+                ))}
+              </div>
 
-            {/* 视图切换和发布按钮 */}
-            <div className="flex items-center gap-2">
-              <div className="flex border border-labubu-200 rounded-2xl overflow-hidden">
+              {/* 视图切换 */}
+              <div className="flex items-center bg-soft-100 rounded-full p-1">
                 <LabubuButton
-                  variant={viewMode === 'grid' ? "primary" : "ghost"}
+                  variant={viewMode === 'grid' ? 'primary' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
                 >
                   <Grid className="w-4 h-4" />
                 </LabubuButton>
                 <LabubuButton
-                  variant={viewMode === 'list' ? "primary" : "ghost"}
+                  variant={viewMode === 'list' ? 'primary' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('list')}
                 >
@@ -271,13 +268,15 @@ export function LabubuGalleryContent() {
                 </LabubuButton>
               </div>
 
+              {/* 发布按钮 */}
               {session && (
                 <LabubuButton
                   variant="warm"
+                  size="lg"
                   onClick={() => setShowPublisher(true)}
+                  className="flex items-center gap-2"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  发布作品
+                  发布Labubu
                 </LabubuButton>
               )}
             </div>
@@ -285,16 +284,16 @@ export function LabubuGalleryContent() {
         </div>
       </div>
 
-      {/* 发布作品弹窗 */}
+      {/* 作品发布器 */}
       {showPublisher && (
         <PostPublisher
-          onPublish={handlePostPublish}
           onCancel={() => setShowPublisher(false)}
+          onPublish={handlePostPublish}
         />
       )}
 
-      {/* 主要内容区域 */}
-      <div className="container mx-auto px-4 py-8">
+      {/* 作品画廊 */}
+      <div className="container mx-auto px-4 pb-12">
         {/* 🔍 搜索结果状态提示 */}
         {searchQuery && (
           <LabubuCard variant="interactive" className="mb-6 p-4">
@@ -323,11 +322,9 @@ export function LabubuGalleryContent() {
         )}
 
         {isLoading && posts.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="animate-spin w-8 h-8 border-4 border-labubu-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <LabubuText className="text-soft-600">
-              {searchQuery ? `搜索 "${searchQuery}" 中...` : '加载中...'}
-            </LabubuText>
+          <div className="text-center py-20">
+            <LabubuLoader />
+            <p className="mt-4 text-soft-500">正在加载Labubu的奇思妙想...</p>
           </div>
         ) : posts.length === 0 ? (
           <div className="text-center py-16">
@@ -387,13 +384,21 @@ export function LabubuGalleryContent() {
 
             {/* 加载更多按钮 */}
             {hasMore && (
-              <div className="text-center">
+              <div className="text-center py-10">
                 <LabubuButton
                   variant="secondary"
                   onClick={loadMore}
                   disabled={isLoading}
+                  className="flex items-center gap-2 mx-auto"
                 >
-                  {isLoading ? '加载中...' : '加载更多'}
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>加载中...</span>
+                    </>
+                  ) : (
+                    '发现更多作品'
+                  )}
                 </LabubuButton>
               </div>
             )}
