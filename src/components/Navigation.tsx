@@ -88,7 +88,7 @@ export function Navigation() {
                     className={`flex items-center space-x-2 relative transition-all duration-300 hover:font-semibold active:scale-95 px-4 py-2 rounded-2xl hover:shadow-labubu hover:-translate-y-0.5 ${
                       pathname.startsWith('/resources') 
                         ? 'text-labubu-600 font-semibold bg-gradient-to-r from-labubu-50 to-labubu-100 shadow-labubu' 
-                        : 'text-soft-700 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50'
+                        : 'text-gray-800 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50'
                     }`}
                   >
                     {link.emoji && (
@@ -114,7 +114,7 @@ export function Navigation() {
                           onClick={() => setIsResourcesMenuOpen(false)}
                         >
                           <subItem.icon className="w-4 h-4 text-labubu-500" />
-                          <span className="text-soft-700 hover:text-labubu-600">{subItem.label}</span>
+                          <span className="text-gray-800 hover:text-labubu-600">{subItem.label}</span>
                         </Link>
                       ))}
                     </div>
@@ -127,7 +127,7 @@ export function Navigation() {
                   className={`relative transition-all duration-300 hover:font-semibold active:scale-95 flex items-center space-x-2 px-4 py-2 rounded-2xl hover:shadow-labubu hover:-translate-y-0.5 ${
                     pathname === link.href 
                       ? 'text-labubu-600 font-semibold bg-gradient-to-r from-labubu-50 to-labubu-100 shadow-labubu' 
-                      : 'text-soft-700 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50'
+                      : 'text-gray-800 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50'
                   }`}
                 >
                   {link.emoji && (
@@ -170,7 +170,7 @@ export function Navigation() {
                     <User className="w-4 h-4 text-labubu-600" />
                   </div>
                 )}
-                <span className="text-sm font-medium text-soft-700">{session.user?.name || session.user?.email}</span>
+                <span className="text-sm font-medium text-gray-800">{session.user?.name || session.user?.email}</span>
                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
               </button>
               
@@ -179,7 +179,7 @@ export function Navigation() {
                 <div className="absolute top-full right-0 mt-2 w-48 bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl shadow-card py-3 z-[9999]">
                   <Link
                     href="/dashboard"
-                    className="block px-4 py-3 text-sm transition-all duration-300 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 rounded-xl mx-2 hover:scale-105 active:scale-95 text-soft-700 hover:text-labubu-600"
+                    className="block px-4 py-3 text-sm transition-all duration-300 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 rounded-xl mx-2 hover:scale-105 active:scale-95 text-gray-800 hover:text-labubu-600"
                     onClick={() => setIsUserMenuOpen(false)}
                   >
                     {common.navigation.dashboard}
@@ -190,7 +190,7 @@ export function Navigation() {
                     className="w-full text-left px-4 py-3 text-sm transition-all duration-300 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 rounded-xl mx-2 hover:scale-105 active:scale-95 flex items-center space-x-2"
                   >
                     <LogOut className="w-4 h-4 text-labubu-500" />
-                    <span className="text-soft-700 hover:text-labubu-600">{common.buttons.signOut}</span>
+                    <span className="text-gray-800 hover:text-labubu-600">{common.buttons.signOut}</span>
                   </button>
                 </div>
               )}
@@ -202,7 +202,7 @@ export function Navigation() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="hover:font-semibold active:scale-95 transition-all duration-300 text-soft-700 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 rounded-2xl px-6"
+                  className="hover:font-semibold active:scale-95 transition-all duration-300 text-gray-800 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 rounded-2xl px-6"
                 >
                   {common.navigation.login}
                 </Button>
