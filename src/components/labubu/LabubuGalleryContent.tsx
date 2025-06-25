@@ -201,85 +201,83 @@ export function LabubuGalleryContent() {
   ] as const
 
   return (
-    <LabubuContainer className="min-h-screen">
+    <div className="min-h-screen">
       {/* 统一的导航栏 */}
       <DynamicNavigation />
       
       {/* 搜索和筛选栏 */}
-      <div>
-        <div className="container mx-auto px-4 py-6 pt-20">
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            {/* 搜索框 */}
-            <div className="relative flex-1 w-full max-w-md">
-              <Search 
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-soft-400 w-4 h-4 cursor-pointer hover:text-labubu-600 transition-colors" 
-                onClick={executeSearch}
-              />
-              <LabubuInput
-                variant="search"
-                placeholder="搜索标题或内容..."
-                value={searchInput}
-                onChange={(e) => handleSearchInputChange(e.target.value)}
-                onKeyPress={handleSearchKeyPress}
-                className="pl-10 pr-10 w-full"
-              />
-              {searchInput && (
-                <button
-                  onClick={clearSearch}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-soft-400 hover:text-soft-600"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
+      <div className="container mx-auto px-4 py-6 pt-24">
+        <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+          {/* 搜索框 */}
+          <div className="relative flex-1 w-full max-w-md">
+            <Search 
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-soft-400 w-4 h-4 cursor-pointer hover:text-labubu-600 transition-colors" 
+              onClick={executeSearch}
+            />
+            <LabubuInput
+              variant="search"
+              placeholder="搜索标题或内容..."
+              value={searchInput}
+              onChange={(e) => handleSearchInputChange(e.target.value)}
+              onKeyPress={handleSearchKeyPress}
+              className="pl-10 pr-10 w-full"
+            />
+            {searchInput && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-soft-400 hover:text-soft-600"
+              >
+                ✕
+              </button>
+            )}
+          </div>
 
-            {/* 筛选器 */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                {filters.map(filter => (
-                  <LabubuButton
-                    key={filter.key}
-                    variant={currentFilter === filter.key ? 'primary' : 'ghost'}
-                    size="sm"
-                    onClick={() => handleFilter(filter.key as FilterType)}
-                    className="flex items-center gap-2"
-                  >
-                    <filter.icon className="w-4 h-4" />
-                    <span>{filter.label}</span>
-                  </LabubuButton>
-                ))}
-              </div>
-
-              {/* 视图切换 */}
-              <div className="flex items-center bg-soft-100 rounded-full p-1">
+          {/* 筛选器 */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {filters.map(filter => (
                 <LabubuButton
-                  variant={viewMode === 'grid' ? 'primary' : 'ghost'}
+                  key={filter.key}
+                  variant={currentFilter === filter.key ? 'primary' : 'ghost'}
                   size="sm"
-                  onClick={() => setViewMode('grid')}
-                >
-                  <Grid className="w-4 h-4" />
-                </LabubuButton>
-                <LabubuButton
-                  variant={viewMode === 'list' ? 'primary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('list')}
-                >
-                  <List className="w-4 h-4" />
-                </LabubuButton>
-              </div>
-
-              {/* 发布按钮 */}
-              {session && (
-                <LabubuButton
-                  variant="warm"
-                  size="lg"
-                  onClick={() => setShowPublisher(true)}
+                  onClick={() => handleFilter(filter.key as FilterType)}
                   className="flex items-center gap-2"
                 >
-                  发布Labubu
+                  <filter.icon className="w-4 h-4" />
+                  <span>{filter.label}</span>
                 </LabubuButton>
-              )}
+              ))}
             </div>
+
+            {/* 视图切换 */}
+            <div className="flex items-center bg-soft-100 rounded-full p-1">
+              <LabubuButton
+                variant={viewMode === 'grid' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+              >
+                <Grid className="w-4 h-4" />
+              </LabubuButton>
+              <LabubuButton
+                variant={viewMode === 'list' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+              >
+                <List className="w-4 h-4" />
+              </LabubuButton>
+            </div>
+
+            {/* 发布按钮 */}
+            {session && (
+              <LabubuButton
+                variant="warm"
+                size="lg"
+                onClick={() => setShowPublisher(true)}
+                className="flex items-center gap-2"
+              >
+                发布Labubu
+              </LabubuButton>
+            )}
           </div>
         </div>
       </div>
@@ -293,7 +291,7 @@ export function LabubuGalleryContent() {
       )}
 
       {/* 作品画廊 */}
-      <div className="container mx-auto px-4 pb-12">
+      <main className="px-4 sm:px-6 lg:px-8 pb-12">
         {/* 🔍 搜索结果状态提示 */}
         {searchQuery && (
           <LabubuCard variant="interactive" className="mb-6 p-4">
@@ -357,10 +355,9 @@ export function LabubuGalleryContent() {
           </div>
         ) : (
           <div className="relative">
-            {/* 瀑布流布局 - 为所有大尺寸屏幕指定5列 */}
+            {/* 瀑布流布局 - 恢复最终的响应式布局 */}
             <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-5 xl:columns-5 2xl:columns-5 gap-4 space-y-4 transform-gpu">
               {posts.map(post => (
-                // 添加 break-inside-avoid-column 防止卡片在列中被分割，解决闪动问题
                 <div key={post.id} className="break-inside-avoid">
                   <PostCard
                     post={post}
@@ -394,7 +391,7 @@ export function LabubuGalleryContent() {
             </LabubuButton>
           </div>
         )}
-      </div>
-    </LabubuContainer>
+      </main>
+    </div>
   )
 } 
