@@ -6,12 +6,13 @@ import { prisma } from '@/lib/database';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { Heart, Search } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'My Creations | Flux Kontext',
-  description: 'View your gallery of AI-generated images.',
+  title: '我的创作 | Flux Kontext',
+  description: '查看您使用 AI 生成的图像画廊。',
   robots: {
-    index: false, // 用户个人页面不希望被索引
+    index: false,
     follow: false,
   },
 };
@@ -43,54 +44,66 @@ export default async function DashboardPage() {
   });
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
-            My Creations
-          </h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Here are the images you have generated.
-          </p>
-        </div>
-        <Link href="/generate">
-          <Button>Create More</Button>
-        </Link>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* 页面标题区域 - 采用Labubu设计风格 */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mb-4">
+          我的创作
+        </h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          这里是您所有 AI 生成的杰作。随时回顾、分享或继续您的创作之旅。
+        </p>
       </div>
 
       {userGenerations.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center dark:border-gray-700">
-          <div className="mb-4 text-2xl">🖼️</div>
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-50">
-            No creations yet
-          </h3>
-          <p className="mt-2 text-sm text-gray-500">
-            You haven't generated any images. Start creating now!
+        // 空状态 - 采用Labubu设计风格的卡片
+        <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 text-center max-w-lg mx-auto">
+          <div className="h-32 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mb-6">
+            <span className="text-5xl">🖼️</span>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-800 mb-2">尚未开始创作</h3>
+          <p className="text-gray-600 text-sm mb-6">
+            您的画廊还是空的。立即开始，将您的想法变为现实！
           </p>
-          <Link href="/generate" className="mt-6">
-            <Button>Go to Generator</Button>
+          <Link href="/generate">
+            <Button className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-full hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105">
+              前往生成器
+            </Button>
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+        // 画廊网格 - 采用Labubu设计风格
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {userGenerations.map((generation: Generation) =>
             generation.image_urls.map(url => (
-              <div key={url} className="group relative">
-                <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
+              <div key={url} className="relative group cursor-pointer">
+                <div className="aspect-square bg-gradient-to-br from-purple-200 to-pink-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
                   <Image
                     src={url}
                     alt={generation.prompt}
                     fill
-                    className="object-cover object-center transition-opacity duration-300 group-hover:opacity-75"
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-cover object-center transition-all duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-20" />
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 rounded-2xl transition-all duration-300 flex items-center justify-center">
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
+                      <Button size="icon" className="w-10 h-10 bg-white/80 rounded-full text-pink-600 hover:bg-white backdrop-blur-sm">
+                        <Heart className="w-5 h-5" />
+                      </Button>
+                      <Button size="icon" className="w-10 h-10 bg-white/80 rounded-full text-purple-600 hover:bg-white backdrop-blur-sm">
+                        <Search className="w-5 h-5" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-                <p className="mt-2 block truncate text-sm font-medium text-gray-700 dark:text-gray-200">
-                  {generation.prompt}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {new Date(generation.created_at).toLocaleString()}
-                </p>
+                <div className="mt-3">
+                  <p className="text-sm font-medium text-gray-800 truncate" title={generation.prompt}>
+                    {generation.prompt}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(generation.created_at).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
             ))
           )}

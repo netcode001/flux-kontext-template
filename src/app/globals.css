@@ -4,26 +4,50 @@
 
 @layer base {
   :root {
-    --background: 11 16 19; /* #0b1013 */
-    --foreground: 250 250 250; /* #fafafa */
+    /* Labubu 明亮主题 HSL 颜色变量 */
+    --background: 0 0% 100%; /* #ffffff */
+    --foreground: 240 10% 3.9%; /* #0a0a0a */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 282 83% 51%; /* labubu-500: #d946ef */
+    --primary-foreground: 0 0% 98%; /* #fafafa */
+    --secondary: 240 4.8% 95.9%; /* #f4f4f5 */
+    --secondary-foreground: 240 5.9% 10%; /* #1a1a1a */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 282 83% 51%;
+    --radius: 0.8rem; /* 增加圆角以匹配Labubu风格 */
+  }
+
+  .dark {
+    /* 保留暗色模式，以防将来需要 */
+    --background: 11 16 19;
+    --foreground: 250 250 250;
     --card: 11 16 19;
     --card-foreground: 250 250 250;
     --popover: 11 16 19;
     --popover-foreground: 250 250 250;
-    --primary: 204 175 133; /* #ccaf85 - orange accent */
+    --primary: 282 83% 51%;
     --primary-foreground: 11 16 19;
-    --secondary: 53 61 81; /* #353d51 */
+    --secondary: 53 61 81;
     --secondary-foreground: 250 250 250;
-    --muted: 52 48 46; /* #34302e */
+    --muted: 52 48 46;
     --muted-foreground: 161 161 170;
-    --accent: 78 154 203; /* #4e9acb - blue accent */
+    --accent: 78 154 203;
     --accent-foreground: 11 16 19;
-    --destructive: 193 43 51; /* #c12b33 */
+    --destructive: 193 43 51;
     --destructive-foreground: 250 250 250;
     --border: 39 39 42;
     --input: 39 39 42;
-    --ring: 204 175 133;
-    --radius: 0.5rem;
+    --ring: 282 83% 51%;
   }
 }
 
@@ -33,7 +57,7 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
-    background: linear-gradient(180deg, #0b1013 0%, #000 100%);
+    /* 移除旧的渐变背景，新的渐变将在 layout.tsx 中应用 */
     min-height: 100vh;
   }
 
