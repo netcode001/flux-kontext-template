@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function LabubuGalleryPage() {
   return (
-    <div className="min-h-screen bg-hero-gradient">
+    <div className="min-h-screen">
       <LabubuGalleryContent />
     </div>
   )

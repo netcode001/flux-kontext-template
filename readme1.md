@@ -36,4 +36,14 @@
   - **问题定位**: 经过您的指正，确认了圆形阴影背景是 `hero-gradient` 全局类导致，之前的修改方案是错误的。
   - **修复方案**: 采用条件渲染的方式，在 `ClientBody.tsx` 组件中通过 `usePathname` 钩子判断当前页面路径。
   - **结果**: 只有 `/labubu-gallery` 页面会移除 `hero-gradient` 背景，其他页面保持不变。此方案精准、安全，且遵循了在引用处修改的正确原则。
-- **文件**: `src/app/ClientBody.tsx`, `src/app/layout.tsx` 
+- **文件**: `src/app/ClientBody.tsx`, `src/app/layout.tsx`
+
+---
+
+### 2024-07-28 (最终修复)
+
+- **功能**: 彻底移除作品画廊页面的圆形阴影背景
+- **详情**:
+  - **根本原因定位**: 经过彻底排查，最终在 `src/app/labubu-gallery/page.tsx` 文件中发现，页面级容器被硬编码添加了 `bg-hero-gradient` 类，导致之前所有在高层布局中的修复均被覆盖而失效。
+  - **最终修复**: 直接移除了 `page.tsx` 文件中多余的 `bg-hero-gradient` 类。
+- **文件**: `src/app/labubu-gallery/page.tsx` 
