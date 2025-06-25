@@ -73,6 +73,12 @@ const nextConfig = {
         hostname: "ugc.same-assets.com",
         pathname: "/**",
       },
+      // FAL.ai 图片服务
+      {
+        protocol: "https",
+        hostname: "fal.media",
+        pathname: "/**",
+      },
       // R2存储域名模式 - 支持所有R2存储子域名
       {
         protocol: "https",

@@ -949,21 +949,20 @@ export async function POST(request: NextRequest) {
         // 💾 将生成记录保存到数据库
         if (user && result.images && result.images.length > 0) {
           try {
-            const creationPromises = result.images.map((image: any) => 
-              prisma.generations.create({
-                data: {
-                  userId: user.id,
-                  prompt: body.prompt,
-                  imageUrl: image.url,
-                  width: image.width,
-                  height: image.height,
-                  model: body.action, // 使用action作为model
-                  isPublic: !body.isPrivate, // 默认公开
-                },
-              })
-            );
-            await Promise.all(creationPromises);
-            console.log(`💾 Successfully saved ${result.images.length} generation record(s) to the database.`);
+            const imageUrls = result.images.map((image: any) => image.url);
+            const creditsUsed = result.images.length * 1; // 简单计算，每张图1积分
+
+            await prisma.generations.create({
+              data: {
+                user_id: user.id, // 匹配数据库的 snake_case
+                prompt: body.prompt,
+                model: body.action,
+                image_urls: imageUrls,
+                credits_used: creditsUsed,
+              },
+            });
+            
+            console.log(`💾 Successfully saved generation record with ${imageUrls.length} image(s) to the database.`);
           } catch (dbError) {
             console.error("❌ Failed to save generation record to database:", dbError);
             // 这里只记录错误，不影响给用户的成功返回
