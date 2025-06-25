@@ -23,12 +23,19 @@ export const metadata: Metadata = {
 // 定义generation的类型，以便在组件中使用
 interface Generation {
   id: string;
+  user_id: string;
   prompt: string;
   model: string;
   image_urls: string[];
   created_at: Date;
+  credits_used: number;
   settings: {
     aspect_ratio?: string;
+    guidance_scale?: number;
+    num_images?: number;
+    seed?: number;
+    output_format?: string;
+    safety_tolerance?: string;
   } | null;
 }
 

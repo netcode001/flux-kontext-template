@@ -6,15 +6,22 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTrigger, DialogClose } from '@/components/ui/dialog'
 import { Download, Info, Zap, Ratio, X } from 'lucide-react'
 
-// 定义从页面传入的图片类型
+// 定义从页面传入的图片类型 - 确保与页面接口一致
 interface Generation {
   id: string;
+  user_id: string; // 添加缺失的user_id字段
   prompt: string;
   model: string;
   image_urls: string[];
   created_at: Date;
+  credits_used: number; // 添加缺失的credits_used字段
   settings: {
     aspect_ratio?: string;
+    guidance_scale?: number;
+    num_images?: number;
+    seed?: number;
+    output_format?: string;
+    safety_tolerance?: string;
   } | null;
 }
 
