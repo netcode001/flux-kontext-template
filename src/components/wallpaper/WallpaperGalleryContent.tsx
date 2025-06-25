@@ -17,6 +17,7 @@ import type {
   WallpaperListResponse,
   WallpaperListParams 
 } from '@/types/wallpaper'
+import { Footer } from '@/components/Footer'
 
 export function WallpaperGalleryContent() {
   // 🔐 用户状态
@@ -380,6 +381,7 @@ export function WallpaperGalleryContent() {
           </>
         )}
       </div>
+      <Footer />
     </LabubuContainer>
   )
 } 
