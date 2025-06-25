@@ -13,7 +13,6 @@ import { Badge } from '@/components/ui/badge'
 import { LabubuCard, LabubuButton, LabubuInput, LabubuBadge, LabubuHeading, LabubuText, LabubuContainer, LabubuLoader } from '@/components/ui/labubu-ui'
 import { Plus, Search, Filter, Sparkles, Star, Grid, List, Loader2 } from 'lucide-react'
 
-type ViewMode = 'grid' | 'list'
 type FilterType = 'all' | 'featured' | 'recent' | 'popular'
 
 export function LabubuGalleryContent() {
@@ -24,7 +23,6 @@ export function LabubuGalleryContent() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchInput, setSearchInput] = useState('') // 🔍 新增：搜索输入框的值
   const [currentFilter, setCurrentFilter] = useState<FilterType>('all')
-  const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
 
@@ -249,24 +247,6 @@ export function LabubuGalleryContent() {
               ))}
             </div>
 
-            {/* 视图切换 */}
-            <div className="flex items-center bg-soft-100 rounded-full p-1">
-              <LabubuButton
-                variant={viewMode === 'grid' ? 'primary' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-              >
-                <Grid className="w-4 h-4" />
-              </LabubuButton>
-              <LabubuButton
-                variant={viewMode === 'list' ? 'primary' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-              >
-                <List className="w-4 h-4" />
-              </LabubuButton>
-            </div>
-
             {/* 发布按钮 */}
             {session && (
               <LabubuButton
@@ -356,7 +336,7 @@ export function LabubuGalleryContent() {
         ) : (
           <div className="relative">
             {/* 瀑布流布局 - 恢复最终的响应式布局 */}
-            <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-5 xl:columns-5 2xl:columns-5 gap-4 space-y-4 transform-gpu">
+            <div className="columns-1 sm:columns-2 md:columns-5 gap-4 space-y-4 transform-gpu">
               {posts.map(post => (
                 <div key={post.id} className="break-inside-avoid">
                   <PostCard
