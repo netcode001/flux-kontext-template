@@ -338,10 +338,30 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async jwt({ token, user, account }: { token: any; user?: any; account?: any }) {
-      if (user) {
-        // user对象在登录成功时可用
-        // 确保token.sub是我们数据库中的UUID
-        token.sub = user.id;
+      // 首次登录时，user对象可用
+      if (user && user.email) {
+        try {
+          // 关键修复：从我们的数据库中获取用户，以确保我们使用的是内部UUID
+          const { createAdminClient } = await import('@/lib/supabase/server');
+          const supabase = createAdminClient();
+          
+          const { data: dbUser, error } = await supabase
+            .from('users')
+            .select('id') // 我们只需要UUID
+            .eq('email', user.email)
+            .single();
+
+          if (dbUser) {
+            // 用我们数据库的UUID覆盖token的subject
+            token.sub = dbUser.id;
+          } else {
+            // 这个情况不应该发生，因为signIn回调会创建用户
+            console.error(`JWT回调错误: 在数据库中找不到邮箱为 ${user.email} 的用户。`);
+            token.sub = user.id; // 作为后备，但这会导致错误
+          }
+        } catch (e) {
+          console.error('JWT回调错误: 从数据库获取用户时出错', e);
+        }
       }
       return token;
     },
