@@ -196,26 +196,53 @@ export function FluxKontextGenerator() {
     }
   }, [session, detectUserType])
 
-  // 获取可用模型
+  // 获取可用模型 - 提供完整的模型信息
   const getAvailableModelsForContext = useCallback(() => {
     const hasUploadedImages = uploadedImages.length > 0
-    const baseModels = getAvailableModels(userType, hasUploadedImages)
+    const allowedModels = getAvailableModels(userType)
     
-    return baseModels.map(model => {
-      const isMultiImage = uploadedImages.length > 1
-      let actualModel = model
-      
-      if (hasUploadedImages && isMultiImage && model.value === 'max') {
-        actualModel = {
-          ...model,
-          value: 'max-multi' as any,
-          label: model.label.replace('Edit', 'Multi-Edit'),
-          credits: model.credits + 8
-        }
+    // 定义所有可用模型的详细信息
+    const allModels = [
+      {
+        value: 'pro',
+        label: '⚡ Kontext [pro]',
+        description: 'Fast generation with good quality',
+        credits: 16,
+        speed: 'Fast (6-10s)',
+        quality: 'Good Quality',
+        available: allowedModels.includes('pro'),
+        recommended: true,
+        features: ['Fast generation speed', 'Character consistency', 'Style reference support', 'Cost effective']
+      },
+      {
+        value: 'max',
+        label: '🚀 Kontext [max]',
+        description: 'Best quality with enhanced features',
+        credits: 32,
+        speed: 'Slower (10-15s)',
+        quality: 'Excellent Quality',
+        available: allowedModels.includes('max'),
+        recommended: false,
+        features: ['Best quality output', 'Advanced AI processing', 'Enhanced detail generation', 'Premium features']
       }
-      
-      return actualModel
-    })
+    ]
+    
+    // 如果有上传图片且是多图片，为max模型创建multi-edit版本
+    const isMultiImage = uploadedImages.length > 1
+    if (hasUploadedImages && isMultiImage) {
+      const maxModel = allModels.find(m => m.value === 'max')
+      if (maxModel && maxModel.available) {
+        allModels.push({
+          ...maxModel,
+          value: 'max-multi' as any,
+          label: '🚀 Kontext [max-multi]',
+          description: 'Multi-image editing with best quality',
+          credits: maxModel.credits + 8
+        })
+      }
+    }
+    
+    return allModels.filter(model => model.available)
   }, [userType, uploadedImages.length])
 
   // 获取当前模型信息
@@ -427,7 +454,7 @@ export function FluxKontextGenerator() {
   const currentModelInfo = getCurrentModelInfo()
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
+    <div className="max-w-6xl mx-auto p-4 relative">
       {/* 错误提示 */}
       {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-2">
@@ -469,35 +496,11 @@ export function FluxKontextGenerator() {
       {/* 主要生成界面卡片 */}
       <div className="bg-white rounded-3xl shadow-lg border border-purple-100 p-6 mb-6">
         
-        {/* 顶部：用户状态、标题、积分 */}
-        <div className="flex justify-between items-start mb-6">
-          {/* 左上角：用户状态信息 */}
-          <div className="flex items-center gap-3 text-xs text-gray-500">
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>{session ? 'Registered User' : 'Guest User'}</span>
-            </div>
-            {session && (
-              <div className="flex items-center gap-1">
-                <div className="w-5 h-5 bg-green-100 rounded-md flex items-center justify-center text-xs">
-                  🛡️
-                </div>
-                <span>Verified</span>
-              </div>
-            )}
-          </div>
-          
-          {/* 中央：标题 */}
-          <div className="flex-1 text-center">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
-              LabubuHub AI Generator
-            </h1>
-          </div>
-          
-          {/* 右上角：积分显示 */}
-          <div className="flex items-center gap-3 text-xs">
-            <CreditDisplay showBuyButton={true} />
-          </div>
+        {/* 顶部：只保留标题 */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
+            LabubuHub AI Generator
+          </h1>
         </div>
 
         {/* Image Description 输入框 + 生成按钮 */}
@@ -509,14 +512,14 @@ export function FluxKontextGenerator() {
                 placeholder="Describe the image you want to create..."
                 value={textPrompt}
                 onChange={(e) => setTextPrompt(e.target.value)}
-                className="w-full h-16 p-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-sm"
+                className="w-full h-16 p-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-sm bg-white text-gray-900 placeholder:text-gray-500"
               />
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={handleEnhancePrompt}
                 disabled={!textPrompt.trim()}
-                className="absolute top-2 right-2 text-xs bg-pink-100 text-pink-700 hover:bg-pink-200"
+                className="absolute top-2 right-2 text-xs bg-pink-100 text-pink-700 hover:bg-pink-200 transition-colors pointer-events-auto z-10"
               >
                 ✨ AI Enhance
               </Button>
@@ -599,7 +602,7 @@ export function FluxKontextGenerator() {
                   className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-gray-800"
                 >
                   {getImageCountOptions(userType).map(option => (
-                    <option key={option.value} value={option.value} disabled={!option.available} className="text-gray-800">
+                    <option key={option.value} value={option.value} disabled={option.premium && userType !== UserType.PREMIUM} className="text-gray-800">
                       {option.label}
                     </option>
                   ))}
@@ -613,7 +616,7 @@ export function FluxKontextGenerator() {
                   className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-gray-800"
                 >
                   {getAvailableAspectRatios(userType).map(ratio => (
-                    <option key={ratio.value} value={ratio.value} disabled={!ratio.available} className="text-gray-800">
+                    <option key={ratio.value} value={ratio.value} disabled={ratio.premium && userType !== UserType.PREMIUM} className="text-gray-800">
                       {ratio.label}
                     </option>
                   ))}
@@ -634,6 +637,44 @@ export function FluxKontextGenerator() {
               {showAdvancedPanel ? 'Hide' : 'Advanced'}
               {showAdvancedPanel ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* 左下角固定位置：用户状态信息 */}
+      <div className="fixed bottom-4 left-4 z-50">
+        <div className="flex items-center gap-3 text-xs text-gray-500 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-lg">
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span>{session ? 'Registered User' : 'Guest User'}</span>
+          </div>
+          {session && (
+            <div className="flex items-center gap-1">
+              <div className="w-5 h-5 bg-green-100 rounded-md flex items-center justify-center text-xs">
+                🛡️
+              </div>
+              <span>Verified</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 右下角固定位置：积分显示和刷新按钮 */}
+      <div className="fixed bottom-4 right-4 z-50 group">
+        <div className="flex items-center gap-3">
+          {/* 刷新按钮 - 默认隐藏，hover显示 */}
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => window.location.reload()}
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg hover:bg-gray-50"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </Button>
+          
+          {/* 积分显示和购买按钮 */}
+          <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-lg">
+            <CreditDisplay showBuyButton={true} />
           </div>
         </div>
       </div>
