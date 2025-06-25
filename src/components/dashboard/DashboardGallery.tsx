@@ -76,8 +76,8 @@ export function DashboardGallery({ generations }: DashboardGalleryProps) {
       </div>
 
       {selectedItem && (
-        <DialogContent className="max-w-none w-auto h-[90vh] bg-transparent border-none shadow-none p-0 flex items-center justify-center">
-          <div className="flex h-full rounded-2xl overflow-hidden shadow-2xl">
+        <DialogContent className="max-w-[95vw] w-auto h-auto max-h-[90vh] bg-transparent border-none shadow-none p-0 flex items-center justify-center">
+          <div className="flex h-full max-h-[90vh] bg-black rounded-2xl overflow-hidden shadow-2xl">
             {/* 左侧：图片 */}
             <div className="relative h-full flex-shrink-0 flex items-center justify-center">
               <Image
@@ -91,22 +91,22 @@ export function DashboardGallery({ generations }: DashboardGalleryProps) {
             </div>
 
             {/* 右侧：信息面板 */}
-            <div className="relative w-[380px] flex-shrink-0 bg-black text-white p-8 flex flex-col overflow-y-auto">
+            <div className="relative w-[380px] flex-shrink-0 text-white p-8 flex flex-col">
                <DialogClose asChild>
-                 <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-gray-400 hover:text-white hover:bg-gray-800 rounded-full">
+                 <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-gray-400 hover:text-white hover:bg-gray-800 rounded-full z-10">
                    <X className="h-5 w-5" />
                  </Button>
               </DialogClose>
               
-              <div className="flex-grow">
-                <h3 className="text-xl font-semibold mb-4">图片提示词</h3>
+              <div className="flex-1 overflow-y-auto pr-4 -mr-4"> {/* 滚动内容容器 */}
+                <h3 className="text-xl font-semibold mb-4 mt-8">图片提示词</h3>
                 <div className="bg-gray-800 p-4 rounded-lg mb-6">
                   <p className="text-sm text-gray-200 leading-relaxed">
                     {selectedItem.generation.prompt}
                   </p>
                 </div>
                 
-                <div className="space-y-4 text-sm">
+                <div className="space-y-4 text-sm mb-6">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400 flex items-center gap-2"><Info size={16} /> 生成日期</span>
                     <span className="font-mono text-gray-200">{new Date(selectedItem.generation.created_at).toLocaleDateString()}</span>
@@ -124,7 +124,7 @@ export function DashboardGallery({ generations }: DashboardGalleryProps) {
                 </div>
               </div>
 
-              <div className="mt-8">
+              <div className="pt-4 border-t border-gray-800">
                  <Button 
                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 text-base" 
                    onClick={() => handleDownload(selectedItem.url)}>
