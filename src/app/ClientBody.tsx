@@ -35,7 +35,7 @@ export default function ClientBody({
     geistSans.variable,
     geistMono.variable,
     'antialiased',
-    shouldApplyHeroGradient ? 'hero-gradient' : '',
+    shouldApplyHeroGradient ? 'hero-gradient' : 'bg-white',
   ].filter(Boolean).join(' ');
 
   return (
