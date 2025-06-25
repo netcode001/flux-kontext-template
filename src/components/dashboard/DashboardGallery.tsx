@@ -92,16 +92,16 @@ export function DashboardGallery({ generations }: DashboardGalleryProps) {
         )}
       </div>
 
-      <DialogContent className="max-w-4xl h-auto bg-transparent border-none shadow-none p-0">
-        <div className="relative">
+      <DialogContent className="w-auto max-w-[90vw] h-auto max-h-[90vh] bg-transparent border-none shadow-none p-0 flex items-center justify-center">
+        {selectedImage && (
           <Image
-            src={selectedImage || ''}
+            src={selectedImage}
             alt="Selected creation"
-            width={1024}
-            height={1024}
-            className="rounded-lg object-contain w-full h-auto"
+            width={1920}
+            height={1080}
+            className="rounded-lg object-contain w-auto h-auto max-w-full max-h-[90vh]"
           />
-        </div>
+        )}
       </DialogContent>
     </Dialog>
   )

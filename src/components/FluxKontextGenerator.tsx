@@ -453,6 +453,30 @@ export function FluxKontextGenerator() {
     }
   }
 
+  // 新增：安全下载函数
+  const handleSecureDownload = async (imageUrl: string) => {
+    try {
+      const response = await fetch(`/api/download?url=${encodeURIComponent(imageUrl)}`);
+      if (!response.ok) {
+        throw new Error('Download failed');
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const fileName = imageUrl.split('/').pop() || `labubuhub-${Date.now()}.png`;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download error:', error);
+      // 这里可以添加用户提示
+      setError('Download failed. Please try again.');
+    }
+  };
+
   const currentModelInfo = getCurrentModelInfo()
 
   return (
@@ -893,11 +917,9 @@ export function FluxKontextGenerator() {
                     <Badge variant="outline" className="text-xs">
                       {image.action.replace('text-to-image-', '').replace('edit-image-', 'edit-').toUpperCase()}
                     </Badge>
-                    <a href={image.url} download={`labubuhub-${Date.now()}.png`} target="_blank" rel="noopener noreferrer">
-                      <Button size="sm" variant="outline">
-                        <Download className="w-4 h-4" />
-                      </Button>
-                    </a>
+                    <Button size="sm" variant="outline" onClick={() => handleSecureDownload(image.url)}>
+                      <Download className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
               </div>
