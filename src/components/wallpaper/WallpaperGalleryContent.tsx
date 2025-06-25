@@ -227,14 +227,15 @@ export function WallpaperGalleryContent() {
   return (
     <LabubuContainer className="min-h-screen">
       {/* 导航栏 */}
-      <DynamicNavigation />
+      <DynamicNavigation fullWidth={true} />
 
-      {/* 页面头部 */}
+      {/* 页面头部 - 这个div被用户要求删除 */}
+      {/* 
       <div className="bg-white/80 backdrop-blur-sm border-b border-labubu-200 pt-16">
-        {/* ... */}
       </div>
+      */}
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pt-24">
 
         {/* 搜索和筛选工具栏 */}
         <div className="flex flex-col lg:flex-row gap-4 mb-6">
