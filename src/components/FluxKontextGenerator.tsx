@@ -494,16 +494,9 @@ export function FluxKontextGenerator() {
             </h1>
           </div>
           
-          {/* 右上角：积分显示和购买 */}
+          {/* 右上角：积分显示 */}
           <div className="flex items-center gap-3 text-xs">
-            <CreditDisplay />
-            <Button 
-              size="sm"
-              onClick={() => router.push('/pricing')}
-              className="bg-gray-800 text-white hover:bg-gray-700"
-            >
-              🛒 Buy Credits
-            </Button>
+            <CreditDisplay showBuyButton={true} />
           </div>
         </div>
 
@@ -603,10 +596,10 @@ export function FluxKontextGenerator() {
                 <select 
                   value={numImages}
                   onChange={(e) => setNumImages(Number(e.target.value))}
-                  className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                  className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-gray-800"
                 >
                   {getImageCountOptions(userType).map(option => (
-                    <option key={option.value} value={option.value} disabled={!option.available}>
+                    <option key={option.value} value={option.value} disabled={!option.available} className="text-gray-800">
                       {option.label}
                     </option>
                   ))}
@@ -617,10 +610,10 @@ export function FluxKontextGenerator() {
                 <select 
                   value={aspectRatio}
                   onChange={(e) => setAspectRatio(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                  className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-gray-800"
                 >
                   {getAvailableAspectRatios(userType).map(ratio => (
-                    <option key={ratio.value} value={ratio.value} disabled={!ratio.available}>
+                    <option key={ratio.value} value={ratio.value} disabled={!ratio.available} className="text-gray-800">
                       {ratio.label}
                     </option>
                   ))}
@@ -656,7 +649,7 @@ export function FluxKontextGenerator() {
                 🤖 AI Model Selection
               </h3>
               <div className="space-y-3">
-                {getAvailableModelsForContext().map((model) => (
+                {getAvailableModelsForContext()?.map((model) => (
                   <div 
                     key={model.value}
                     className={`border rounded-xl p-4 cursor-pointer transition-all ${
@@ -711,9 +704,11 @@ export function FluxKontextGenerator() {
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                   <h4 className="font-medium text-blue-800 mb-3">{currentModelInfo.label} Features:</h4>
                   <ul className="text-sm text-blue-700 space-y-2">
-                    {currentModelInfo.features.map((feature, index) => (
+                    {currentModelInfo.features?.map((feature, index) => (
                       <li key={index}>✓ {feature}</li>
-                    ))}
+                    )) || (
+                      <li>✓ High-quality image generation</li>
+                    )}
                   </ul>
                 </div>
               )}

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabubuHub AI Generator - 简洁版设计</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'labubu': {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                        },
+                        'warm': {
+                            50: '#fefce8',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+
+        // 切换高级设置显示/隐藏
+        function toggleAdvancedSettings() {
+            const advancedPanel = document.getElementById('advancedPanel');
+            const toggleButton = document.getElementById('toggleButton');
+            const isHidden = advancedPanel.classList.contains('hidden');
+            
+            if (isHidden) {
+                advancedPanel.classList.remove('hidden');
+                toggleButton.innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Hide
+                `;
+                toggleButton.classList.add('bg-labubu-100', 'text-labubu-700');
+            } else {
+                advancedPanel.classList.add('hidden');
+                toggleButton.innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Advanced
+                `;
+                toggleButton.classList.remove('bg-labubu-100', 'text-labubu-700');
+            }
+        }
+
+        // 模拟点击上传
+        function triggerUpload() {
+            document.getElementById('fileInput').click();
+        }
+
+        // 模拟文件上传
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            const uploadArea = document.getElementById('uploadArea');
+            if (files.length > 0) {
+                uploadArea.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-labubu-100 rounded-lg flex items-center justify-center">📸</div>
+                        <span class="text-sm text-gray-700">${files.length} image(s) uploaded</span>
+                        <button onclick="clearUpload()" class="text-red-500 hover:text-red-700 text-xs">✕</button>
+                    </div>
+                `;
+            }
+        }
+
+        // 清除上传
+        function clearUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.innerHTML = `
+                <div class="flex flex-col items-center gap-1 text-gray-500">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    <span class="text-xs text-center">Upload Labubu</span>
+                </div>
+            `;
+            document.getElementById('fileInput').value = '';
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- 标题区域 -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+                LabubuHub AI Generator
+            </h1>
+            <p class="text-gray-600">Create and edit Labubu images with advanced AI technology</p>
+        </div>
+
+        <!-- 主要生成界面 -->
+        <!-- 图片生成主卡片 -->
+        <div class="bg-white rounded-3xl shadow-lg border border-purple-100 p-6 mb-6 relative max-w-6xl mx-auto">
+            
+            <!-- 顶部：标题和用户状态 -->
+            <div class="flex justify-between items-start mb-6">
+              <!-- 左上角：用户状态信息（小字体） -->
+              <div class="flex items-center gap-3 text-xs text-gray-500">
+                <div class="flex items-center gap-1">
+                  <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Registered User</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <div class="w-5 h-5 bg-green-100 rounded-md flex items-center justify-center text-xs">
+                    🛡️
+                  </div>
+                  <span>Verified</span>
+                </div>
+              </div>
+              
+              <!-- 中央：标题 -->
+              <div class="flex-1 text-center">
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-labubu-500 to-warm-500 bg-clip-text text-transparent">
+                  LabubuHub AI Generator
+                </h1>
+              </div>
+              
+              <!-- 右上角：积分显示和购买 -->
+              <div class="flex items-center gap-3 text-xs text-gray-500">
+                <div class="bg-green-100 text-green-800 px-3 py-1.5 rounded-lg">
+                    💎 10 Credits
+                </div>
+                <button class="bg-gray-800 text-white px-3 py-1.5 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-1">
+                    🛒 Buy Credits
+                </button>
+              </div>
+            </div>
+
+            <!-- Image Description 长条输入框 + 生成按钮 -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 items-end mb-6">
+                <div class="lg:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Image Description</label>
+                    <div class="relative">
+                        <textarea 
+                            placeholder="Describe the image you want to create..."
+                            class="w-full h-16 p-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-sm"
+                        ></textarea>
+                        <button class="absolute top-2 right-2 text-xs bg-labubu-100 text-labubu-700 px-2 py-1 rounded-lg hover:bg-labubu-200 transition-colors">
+                            ✨ AI Enhance
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 生成按钮 -->
+                <div class="lg:col-span-1">
+                    <button class="w-full bg-gradient-to-r from-labubu-500 to-labubu-600 text-white px-6 py-4 rounded-xl font-medium hover:from-labubu-600 hover:to-labubu-700 transition-all hover:scale-105 shadow-lg text-lg mt-6">
+                        ⚡ Generate Images
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reference Image、Generation Settings、Advanced Settings -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Reference Image -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Reference Image</label>
+                    <!-- Upload Labubu 控件直接在标题下方 -->
+                    <div id="uploadArea" 
+                         onclick="triggerUpload()" 
+                         class="w-full border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-labubu-400 transition-colors bg-gray-50 hover:bg-labubu-50 flex flex-col items-center justify-center min-h-32">
+                        <div class="flex flex-col items-center gap-2 text-gray-500">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                            <span class="text-sm font-medium text-center">Upload Labubu</span>
+                            <span class="text-xs text-center text-gray-400">Click or drag & drop images here</span>
+                        </div>
+                    </div>
+                    <input type="file" id="fileInput" class="hidden" accept="image/*" multiple onchange="handleFileUpload(event)">
+                </div>
+
+                <!-- Generation Settings -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Generation Settings</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Images Count</label>
+                            <select class="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500">
+                                <option>1 image</option>
+                                <option>2 images</option>
+                                <option>4 images</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Aspect Ratio</label>
+                            <select class="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500">
+                                <option>🟨 1:1</option>
+                                <option>📱 9:16</option>
+                                <option>🖥️ 16:9</option>
+                                <option>📄 3:4</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Settings 按钮 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Advanced Settings</label>
+                    <button 
+                        id="toggleButton"
+                        onclick="toggleAdvancedSettings()" 
+                        class="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700 transition-colors border border-gray-300">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        Advanced
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        </div>
+
+        <!-- 模型选择和高级设置独立卡片（默认隐藏） -->
+        <div id="advancedPanel" class="hidden bg-white rounded-3xl shadow-lg border border-purple-100 p-6 mb-6 max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- 模型选择 -->
+                <div class="lg:col-span-1">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        🤖 AI Model Selection
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="border border-labubu-200 rounded-xl p-4 bg-labubu-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="flex items-center">
+                                    <input type="radio" name="model" value="pro" checked class="mr-2">
+                                    <span class="font-medium">⚡ Kontext [pro]</span>
+                                </label>
+                                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">Recommended</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2">Fast generation with good quality</p>
+                            <div class="flex items-center gap-4 text-xs text-gray-500">
+                                <span>💎 16 Credits</span>
+                                <span>⚡ Fast (6-10s)</span>
+                                <span>⭐ Good Quality</span>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-gray-200 rounded-xl p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="flex items-center">
+                                    <input type="radio" name="model" value="max" class="mr-2">
+                                    <span class="font-medium">🚀 Kontext [max]</span>
+                                </label>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2">Best quality with enhanced features</p>
+                            <div class="flex items-center gap-4 text-xs text-gray-500">
+                                <span>💎 32 Credits</span>
+                                <span>🐌 Slower (10-15s)</span>
+                                <span>⭐ Excellent Quality</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模型介绍 -->
+                <div class="lg:col-span-1">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        📋 Model Features
+                    </h3>
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 h-fit">
+                        <h4 class="font-medium text-blue-800 mb-3">Pro Model Features:</h4>
+                        <ul class="text-sm text-blue-700 space-y-2">
+                            <li>✓ Fast generation speed</li>
+                            <li>✓ Character consistency</li>
+                            <li>✓ Style reference support</li>
+                            <li>✓ Cost effective</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 高级参数设置 -->
+                <div class="lg:col-span-2">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        ⚙️ Advanced Parameters
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- 左列 -->
+                        <div class="space-y-4">
+                            <!-- 强度设置 -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Strength: <span class="text-labubu-600">3.5</span>
+                                </label>
+                                <input type="range" min="1" max="10" step="0.5" value="3.5" 
+                                       class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>Creative</span>
+                                    <span>Strict</span>
+                                </div>
+                            </div>
+
+                            <!-- 安全等级 -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Safety: <span class="text-labubu-600">2</span>
+                                </label>
+                                <input type="range" min="1" max="5" step="1" value="2" 
+                                       class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>Strict</span>
+                                    <span>Permissive</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 右列 -->
+                        <div class="space-y-4">
+                            <!-- 随机种子 -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Seed</label>
+                                <div class="flex gap-2">
+                                    <input type="number" placeholder="Random" 
+                                           class="flex-1 p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500">
+                                    <button class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition-colors">
+                                        🎲
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 输出格式 -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Format</label>
+                                <select class="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500">
+                                    <option>JPEG</option>
+                                    <option>PNG</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- 生成结果展示区域 -->
+        <div class="bg-white rounded-2xl shadow-lg border border-purple-100 p-6 max-w-6xl mx-auto">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                    🖼️ Generated Images
+                </h2>
+            </div>
+            
+            <!-- 空状态 -->
+            <div class="text-center py-12">
+                <div class="w-24 h-24 bg-gray-100 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Generated images will appear here</h3>
+                <p class="text-gray-500 max-w-md mx-auto">
+                    Enter a description and click generate to create new Labubu images with AI technology.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* 自定义滑块样式 */
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #ec4899;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .slider::-moz-range-thumb {
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #ec4899;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        /* 滑块轨道样式 */
+        .slider::-webkit-slider-track {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+        }
+        
+        .slider::-moz-range-track {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            border: none;
+        }
+        
+        /* 自定义滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</body>
+</html> 
