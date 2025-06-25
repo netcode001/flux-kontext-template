@@ -11,6 +11,8 @@ declare module "next-auth" {
       nickname: string
       avatar_url: string
       created_at: string
+      credits?: number | null
+      tier?: string | null
     }
   }
 
@@ -23,6 +25,8 @@ declare module "next-auth" {
     nickname?: string
     avatar_url?: string
     created_at?: string
+    credits?: number | null
+    tier?: string | null
   }
 }
 

@@ -306,77 +306,37 @@ export const authOptions: NextAuthOptions = {
       return true
     },
     async redirect({ url, baseUrl }) {
-      // 🎯 修改重定向逻辑 - 优先跳转到generate页面
-      
-      // 如果URL包含callbackUrl参数，使用该参数
-      if (url.includes('callbackUrl=')) {
-        const urlParams = new URLSearchParams(url.split('?')[1])
-        const callbackUrl = urlParams.get('callbackUrl')
-        if (callbackUrl) {
-          // 解码callbackUrl
-          const decodedCallback = decodeURIComponent(callbackUrl)
-          if (decodedCallback.startsWith("/")) return `${baseUrl}${decodedCallback}`
-          else if (new URL(decodedCallback).origin === baseUrl) return decodedCallback
-        }
-      }
-      
-      // 如果是相对路径，添加baseUrl
-      if (url.startsWith("/")) return `${baseUrl}${url}`
-      
-      // 如果是同域名的完整URL，直接返回
-      if (new URL(url).origin === baseUrl) return url
-      
-      // 🎯 默认跳转到generate页面（主功能页面）而非dashboard
-      return `${baseUrl}/generate`
+      return url.startsWith(baseUrl) ? url : baseUrl
     },
     async session({ session, token }) {
-      // 🔧 修复session用户ID问题 - 确保session包含完整的用户信息
-      if (session?.user && token?.user) {
-        // 确保包含id字段
-        session.user = {
-          ...session.user,
-          ...token.user,
-          id: token.user.id || session.user.id
-        }
-      }
-      
-      // 🔍 如果session中没有用户ID，尝试从数据库获取
-      if (session?.user?.email && !session.user.id) {
+      if (token && session.user) {
+        // 从token中获取用户ID
+        session.user.id = token.sub as string;
+
+        // 异步操作：从数据库获取最新的用户信息
         try {
-          console.log('🔍 Session缺少用户ID，从数据库查询:', session.user.email)
+          const { createAdminClient } = await import('@/lib/supabase/server');
+          const supabase = createAdminClient();
           
-          const { createAdminClient } = await import('@/lib/supabase/server')
-          const supabase = createAdminClient()
-          
-          const { data: user, error } = await supabase
+          const { data: userData, error } = await supabase
             .from('users')
-            .select('id, name, image')
-            .eq('email', session.user.email)
-            .limit(1)
-            .single()
-          
-          if (!error && user) {
-            console.log('✅ 从数据库获取用户ID成功:', user.id)
-            session.user.id = user.id
-            // 更新其他用户信息
-            if (user.name) session.user.name = user.name
-            if (user.image) session.user.image = user.image
-          } else {
-            console.error('❌ 从数据库获取用户ID失败:', error)
+            .select('credits, tier, image')
+            .eq('id', token.sub)
+            .single();
+
+          if (error) {
+            console.error('Error fetching user data for session:', error.message);
+          } else if (userData) {
+            // 将数据库中的信息挂载到session.user上
+            session.user.credits = userData.credits;
+            session.user.tier = userData.tier;
+            session.user.image = userData.image; // 确保头像是最新的
           }
-        } catch (error) {
-          console.error('❌ Session用户ID查询失败:', error)
+        } catch (e) {
+          console.error('Failed to fetch user data for session:', e);
         }
       }
-      
-      console.log('🔍 Session callback完成:', { 
-        hasUser: !!session?.user, 
-        hasId: !!session?.user?.id,
-        userId: session?.user?.id,
-        email: session?.user?.email 
-      })
-      
-      return session
+      return session;
     },
     async jwt({ token, user, account }: { token: any; user?: any; account?: any }) {
       // 🔧 JWT token处理 - 确保token包含用户ID
