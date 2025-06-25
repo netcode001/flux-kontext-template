@@ -62,13 +62,13 @@ export function DashboardGallery({ generations }: DashboardGalleryProps) {
           generation.image_urls.map(url => (
             <div key={url} className="relative group">
               <DialogTrigger asChild onClick={() => setSelectedItem({ generation, url })}>
-                <div className="relative aspect-square bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer">
+                <div className="relative w-full h-0 pb-[100%] bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer">
                   <Image
                     src={url}
                     alt={generation.prompt}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    className="object-cover object-center transition-all duration-500 group-hover:scale-105"
+                    className="absolute inset-0 object-cover object-center transition-all duration-500 group-hover:scale-105"
                   />
                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                      <Button size="icon" variant="ghost" className="text-white bg-black/20 hover:bg-black/40 hover:text-white h-8 w-8 backdrop-blur-sm rounded-full" onClick={(e) => {e.stopPropagation(); handleDownload(url)}}>
