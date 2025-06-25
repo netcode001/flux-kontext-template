@@ -25,4 +25,15 @@
 - **详情**:
   - **问题修复**: 重构了作品详情弹窗的实现方式，使用 `createPortal` 和更健壮的背景锁定逻辑，彻底解决了因修改 `body` 样式而导致的灰色圆形阴影渲染问题。
   - **UI/UX优化**: 重新设计了弹窗的布局和样式，使其更具现代感和易用性。
-- **文件**: `src/components/labubu/PostCard.tsx` 
+- **文件**: `src/components/labubu/PostCard.tsx`
+
+---
+
+### 2024-07-28 (代码重构与修复)
+
+- **功能**: 精准控制页面背景效果，修复画廊页面的背景问题
+- **详情**:
+  - **问题定位**: 经过您的指正，确认了圆形阴影背景是 `hero-gradient` 全局类导致，之前的修改方案是错误的。
+  - **修复方案**: 采用条件渲染的方式，在 `ClientBody.tsx` 组件中通过 `usePathname` 钩子判断当前页面路径。
+  - **结果**: 只有 `/labubu-gallery` 页面会移除 `hero-gradient` 背景，其他页面保持不变。此方案精准、安全，且遵循了在引用处修改的正确原则。
+- **文件**: `src/app/ClientBody.tsx`, `src/app/layout.tsx` 

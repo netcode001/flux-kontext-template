@@ -73,9 +73,7 @@ export default function RootLayout({
       <head>
         <StructuredData />
       </head>
-      <body 
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50`}
-      >
+      <body className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
         <SessionProvider>
           <ClientBody>
             {children}
