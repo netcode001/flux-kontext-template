@@ -210,25 +210,21 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
           {/* 🖼️ 只显示第一张图片 */}
           {post.imageUrls.length > 0 && (
             <div className="relative">
-              <div className="relative w-full">
+              <div className="relative w-full aspect-w-1 aspect-h-1">
                 {!imageLoadError ? (
                   <Image
                     src={post.imageUrls[0]}
                     alt={post.title}
                     width={300}
-                    height={400}
-                    className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105 rounded-t-xl"
-                    style={{ 
-                      maxHeight: '400px',
-                      minHeight: '200px'
-                    }}
+                    height={300}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-t-xl"
                     onError={() => {
                       console.error('图片加载失败:', post.imageUrls[0])
                       setImageLoadError(true)
                     }}
                   />
                 ) : (
-                  <div className="w-full h-48 bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center rounded-t-xl">
+                  <div className="w-full h-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center rounded-t-xl">
                     <div className="text-center">
                       <div className="w-12 h-12 mx-auto mb-2 bg-pink-200 rounded-full flex items-center justify-center">
                         <Images className="w-6 h-6 text-pink-400" />
