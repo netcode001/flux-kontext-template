@@ -497,69 +497,47 @@ export function FluxKontextGenerator() {
       <div className="bg-white rounded-3xl shadow-lg border border-purple-100 p-6 mb-6">
         
         {/* 顶部：只保留标题 */}
-                <div className="text-center mb-6">
+        <div className="text-center mb-6">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
-                    LabubuHub AI Generator
+            LabubuHub AI Generator
           </h1>
-                </div>
+        </div>
 
-        {/* Image Description 输入框 + 生成按钮 */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-end mb-6">
-          <div className="lg:col-span-3">
-            <Label className="block text-sm font-medium text-gray-700 mb-2">Image Description</Label>
-            <div className="relative">
-              <Textarea 
-                placeholder="Describe the image you want to create..."
-                value={textPrompt}
-                onChange={(e) => setTextPrompt(e.target.value)}
-                className="w-full h-16 p-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-sm bg-white text-gray-900 placeholder:text-gray-500"
-                        />
-                        <Button 
-                          size="sm"
-                variant="ghost"
-                onClick={handleEnhancePrompt}
-                disabled={!textPrompt.trim()}
-                className="absolute top-2 right-2 text-xs bg-labubu-100 text-labubu-700 hover:bg-labubu-200 transition-colors pointer-events-auto z-10"
-              >
-                ✨ AI Enhance
-                        </Button>
-                      </div>
-                    </div>
-
-          {/* 生成按钮 */}
-          <div className="lg:col-span-1">
-                      <Button 
-              onClick={handleGenerate}
-              disabled={isGenerating || !textPrompt.trim()}
-              className="w-full bg-gradient-to-r from-labubu-500 to-labubu-600 text-white px-6 py-4 rounded-xl font-medium hover:from-labubu-600 hover:to-labubu-700 transition-all hover:scale-105 shadow-lg text-lg mt-6"
+        {/* 第一行: Image Description 输入框 */}
+        <div className="mb-6">
+          <Label className="block text-sm font-medium text-gray-700 mb-2">Image Description</Label>
+          <div className="relative">
+            <Textarea 
+              placeholder="A pink fluffy Labubu dancing on a rainbow..."
+              value={textPrompt}
+              onChange={(e) => setTextPrompt(e.target.value)}
+              className="w-full h-20 p-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-sm bg-white text-gray-900 placeholder:text-gray-500"
+            />
+            <Button 
+              size="sm"
+              variant="ghost"
+              onClick={handleEnhancePrompt}
+              disabled={!textPrompt.trim()}
+              className="absolute top-2 right-2 text-xs bg-labubu-100 text-labubu-700 hover:bg-labubu-200 transition-colors pointer-events-auto z-10"
             >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  ⚡ Generate Images
-                </>
-              )}
-                      </Button>
-                    </div>
-                  </div>
+              ✨ AI Enhance
+            </Button>
+          </div>
+        </div>
 
-        {/* Reference Image、Generation Settings、Advanced Settings */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+        {/* 第二行: 设置和操作 */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-end">
           {/* Reference Image */}
           <div className="lg:col-span-1">
-            <Label className="block text-sm font-medium text-gray-700 mb-2">Reference Image</Label>
+            <Label className="block text-sm font-medium text-gray-700 mb-2 text-center">Reference Image</Label>
             <div 
               onClick={() => multiFileInputRef.current?.click()}
-              className="aspect-square w-full border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-labubu-400 transition-colors bg-gray-50 hover:bg-labubu-50 flex flex-col items-center justify-center"
+              className="w-2/3 mx-auto aspect-square border-2 border-dashed border-gray-300 rounded-xl p-2 cursor-pointer hover:border-labubu-400 transition-colors bg-gray-50 hover:bg-labubu-50 flex flex-col items-center justify-center"
             >
               {uploadedImages.length > 0 ? (
-                <div className="flex flex-col items-center gap-2 text-center">
-                  <div className="w-12 h-12 bg-labubu-100 rounded-lg flex items-center justify-center">📸</div>
-                  <span className="text-sm text-gray-700">{uploadedImages.length} image(s) uploaded</span>
+                <div className="flex flex-col items-center gap-1 text-center">
+                  <div className="w-10 h-10 bg-labubu-100 rounded-lg flex items-center justify-center">📸</div>
+                  <span className="text-xs text-gray-700">{uploadedImages.length} image(s)</span>
                   <Button 
                     size="sm"
                     variant="ghost"
@@ -573,10 +551,10 @@ export function FluxKontextGenerator() {
                   </Button>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-2 text-gray-500 text-center">
-                  <Upload className="w-8 h-8" />
-                  <span className="text-sm font-medium">Upload Labubu</span>
-                  <span className="text-xs text-gray-400">Click or drag & drop</span>
+                <div className="flex flex-col items-center gap-1 text-gray-500 text-center">
+                  <Upload className="w-6 h-6" />
+                  <span className="text-xs font-medium">Upload</span>
+                  <span className="text-xs text-gray-400">Click to add</span>
                 </div>
               )}
             </div>
@@ -593,7 +571,7 @@ export function FluxKontextGenerator() {
           {/* Generation Settings */}
           <div className="lg:col-span-2">
             <Label className="block text-sm font-medium text-gray-700 mb-2">Generation Settings</Label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3">
               <div>
                 <Label className="block text-xs text-gray-600 mb-1">Images Count</Label>
                 <select
@@ -626,8 +604,8 @@ export function FluxKontextGenerator() {
           </div>
 
           {/* Advanced Settings 按钮 */}
-          <div className="lg:col-span-2">
-            <Label className="block text-sm font-medium text-gray-700 mb-2">Advanced Settings</Label>
+          <div className="lg:col-span-1">
+            <Label className="block text-sm font-medium text-gray-700 mb-2">Advanced</Label>
             <Button 
               onClick={() => setShowAdvancedPanel(!showAdvancedPanel)}
               variant="outline"
@@ -635,9 +613,29 @@ export function FluxKontextGenerator() {
             >
               <div className="flex items-center gap-2">
                 <Settings className="w-4 h-4" />
-                <span>{showAdvancedPanel ? 'Hide Advanced' : 'Advanced Settings'}</span>
+                <span>{showAdvancedPanel ? 'Hide' : 'Show'}</span>
               </div>
               {showAdvancedPanel ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </Button>
+          </div>
+
+          {/* 生成按钮 */}
+          <div className="lg:col-span-1">
+            <Button 
+              onClick={handleGenerate}
+              disabled={isGenerating || !textPrompt.trim()}
+              className="w-full bg-gradient-to-r from-labubu-500 to-labubu-600 text-white px-4 py-3 rounded-xl font-medium hover:from-labubu-600 hover:to-labubu-700 transition-all hover:scale-105 shadow-lg text-base"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  ⚡ Generate
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -854,9 +852,11 @@ export function FluxKontextGenerator() {
             🛡️ Security Verification
           </h3>
           <StandardTurnstile
-            onVerify={setTurnstileToken}
+            onVerify={(token) => {
+              setTurnstileToken(token)
+              setIsTurnstileVerified(true)
+            }}
             onError={setTurnstileError}
-            onSuccess={() => setIsTurnstileVerified(true)}
             onExpire={() => {
               setIsTurnstileVerified(false)
               setTurnstileToken("")
@@ -879,14 +879,15 @@ export function FluxKontextGenerator() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {generatedImages.map((image, index) => (
-              <div key={index} className="bg-gray-50 rounded-xl overflow-hidden shadow-sm">
-                <div className="aspect-square relative">
+              <div key={index} className="bg-gray-50 rounded-xl overflow-hidden shadow-sm relative group">
+                <div className="aspect-square">
                   <SmartImagePreview
-                    src={image.url}
+                    url={image.url}
                     alt={`Generated: ${image.prompt}`}
-                    className="w-full h-full object-cover"
+                    index={index}
+                    onRemove={() => setGeneratedImages(prev => prev.filter((_, i) => i !== index))}
                   />
-          </div>
+                </div>
                 <div className="p-4">
                   <p className="text-sm text-gray-600 mb-2 line-clamp-2">{image.prompt}</p>
                   <div className="flex items-center justify-between">
