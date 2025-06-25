@@ -708,11 +708,7 @@ export function FluxKontextGenerator() {
                       }
                     }}
                   >
-                    {model.recommended && (
-                      <div className="mb-2">
-                        <Badge className="bg-green-100 text-green-700 text-xs">Recommended</Badge>
-                      </div>
-                    )}
+
                     <div className="mb-2">
                       <label className="flex items-center cursor-pointer">
                         <input 
@@ -818,12 +814,12 @@ export function FluxKontextGenerator() {
                         placeholder="Random" 
                         value={seed || ''}
                         onChange={(e) => setSeed(e.target.value ? Number(e.target.value) : undefined)}
-                        className="flex-1 text-sm"
+                        className="flex-1 text-sm border-gray-300 focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
                       />
                       <Button 
                         size="sm"
                         onClick={generateRandomSeed}
-                        className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-sm"
+                        className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 border-gray-300"
                       >
                         🎲
                       </Button>

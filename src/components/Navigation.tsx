@@ -171,7 +171,7 @@ export function Navigation() {
                   </div>
                 )}
                 <span className="text-sm font-medium text-gray-800">{session.user?.name || session.user?.email}</span>
-                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-4 h-4 text-gray-800 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
               </button>
               
               {/* 用户下拉菜单 */}
