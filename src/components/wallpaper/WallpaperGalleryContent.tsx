@@ -227,7 +227,7 @@ export function WallpaperGalleryContent() {
   return (
     <LabubuContainer className="min-h-screen">
       {/* 导航栏 */}
-      <DynamicNavigation fullWidth={true} />
+      <DynamicNavigation />
 
       {/* 页面头部 - 这个div被用户要求删除 */}
       {/* 
