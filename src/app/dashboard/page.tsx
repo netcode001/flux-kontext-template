@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Heart, Search } from 'lucide-react';
 import { DynamicNavigation } from '@/components/DynamicNavigation';
 import { Footer } from '@/components/Footer';
+import { DashboardGallery } from '@/components/dashboard/DashboardGallery';
 
 export const metadata: Metadata = {
   title: '我的创作 | Flux Kontext',
@@ -76,42 +77,8 @@ export default async function DashboardPage() {
             </Link>
           </div>
         ) : (
-          // 画廊网格 - 采用Labubu设计风格
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {userGenerations.map((generation: Generation) =>
-              generation.image_urls.map(url => (
-                <div key={url} className="relative group cursor-pointer">
-                  <div className="aspect-square bg-gradient-to-br from-purple-200 to-pink-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
-                    <Image
-                      src={url}
-                      alt={generation.prompt}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      className="object-cover object-center transition-all duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 rounded-2xl transition-all duration-300 flex items-center justify-center">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
-                        <Button size="icon" className="w-10 h-10 bg-white/80 rounded-full text-pink-600 hover:bg-white backdrop-blur-sm">
-                          <Heart className="w-5 h-5" />
-                        </Button>
-                        <Button size="icon" className="w-10 h-10 bg-white/80 rounded-full text-purple-600 hover:bg-white backdrop-blur-sm">
-                          <Search className="w-5 h-5" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-3">
-                    <p className="text-sm font-medium text-gray-800 truncate" title={generation.prompt}>
-                      {generation.prompt}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(generation.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+          // 画廊网格 - 使用新的客户端组件
+          <DashboardGallery generations={userGenerations as Generation[]} />
         )}
       </main>
       <Footer />
