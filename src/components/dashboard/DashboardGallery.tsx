@@ -91,40 +91,41 @@ export function DashboardGallery({ generations }: DashboardGalleryProps) {
             </div>
 
             {/* 右侧：信息面板 */}
-            <div className="relative w-[380px] flex-shrink-0 text-white p-8 flex flex-col">
+            <div className="relative w-[320px] flex-shrink-0 text-white p-6 flex flex-col">
                <DialogClose asChild>
-                 <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-gray-400 hover:text-white hover:bg-gray-800 rounded-full z-10">
+                 <Button variant="ghost" size="icon" className="absolute top-3 right-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-full z-10">
                    <X className="h-5 w-5" />
                  </Button>
               </DialogClose>
               
-              <div className="flex-1 overflow-y-auto pr-4 -mr-4"> {/* 滚动内容容器 */}
-                <h3 className="text-xl font-semibold mb-4 mt-8">图片提示词</h3>
-                <div className="bg-gray-800 p-4 rounded-lg mb-6">
-                  <p className="text-sm text-gray-200 leading-relaxed">
+              <h3 className="text-lg font-semibold mb-3">图片提示词</h3>
+
+              <div className="flex-1 overflow-y-auto pr-3 -mr-3 space-y-4"> {/* Scrollable content */}
+                <div className="bg-gray-800 p-3 rounded-lg">
+                  <p className="text-sm text-gray-300 leading-relaxed">
                     {selectedItem.generation.prompt}
                   </p>
                 </div>
                 
-                <div className="space-y-4 text-sm mb-6">
+                <div className="space-y-3 text-sm">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400 flex items-center gap-2"><Info size={16} /> 生成日期</span>
-                    <span className="font-mono text-gray-200">{new Date(selectedItem.generation.created_at).toLocaleDateString()}</span>
+                    <span className="text-gray-400 flex items-center gap-2"><Info size={14} /> 生成日期</span>
+                    <span className="text-sm text-gray-200">{new Date(selectedItem.generation.created_at).toLocaleDateString()}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400 flex items-center gap-2"><Zap size={16} /> 模型</span>
+                    <span className="text-gray-400 flex items-center gap-2"><Zap size={14} /> 模型</span>
                     <span className="font-mono text-xs bg-gray-700 text-gray-200 px-2 py-1 rounded">{selectedItem.generation.model.replace('text-to-image-', '')}</span>
                   </div>
                   {selectedItem.generation.settings?.aspect_ratio && (
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-400 flex items-center gap-2"><Ratio size={16} /> 比例</span>
+                      <span className="text-gray-400 flex items-center gap-2"><Ratio size={14} /> 比例</span>
                       <span className="font-mono text-xs bg-gray-700 text-gray-200 px-2 py-1 rounded">{selectedItem.generation.settings.aspect_ratio}</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-800">
+              <div className="pt-4 mt-4 border-t border-gray-800">
                  <Button 
                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 text-base" 
                    onClick={() => handleDownload(selectedItem.url)}>
