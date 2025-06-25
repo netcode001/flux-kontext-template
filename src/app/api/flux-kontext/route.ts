@@ -946,6 +946,44 @@ export async function POST(request: NextRequest) {
           responseData.warning = safetyWarning;
         }
 
+        // 🔧 新增：保存生成记录到数据库
+        if (user?.id && processedResult?.images?.length > 0) {
+          try {
+            console.log(`💾 Saving generation record for user: ${user.id}`);
+            const imageUrls = processedResult.images.map((img: any) => img.url);
+
+            await prisma.generations.create({
+              data: {
+                user_id: user.id,
+                prompt: body.prompt,
+                model: body.action,
+                credits_used: requiredCredits,
+                image_urls: imageUrls,
+                settings: {
+                  aspect_ratio: body.aspect_ratio,
+                  guidance_scale: body.guidance_scale,
+                  num_images: body.num_images,
+                  seed: body.seed,
+                  safety_tolerance: body.safety_tolerance,
+                  output_format: body.output_format,
+                  // 保存原始图片URL（如果存在）
+                  reference_image_url: body.image_url,
+                  reference_image_urls: body.image_urls
+                }
+              }
+            });
+
+            console.log(`✅ Generation record saved successfully.`);
+
+          } catch (dbError) {
+            console.error('❌ Failed to save generation record to database:', {
+              userId: user.id,
+              error: dbError instanceof Error ? dbError.message : dbError,
+            });
+            // 不中断流程，只记录错误
+          }
+        }
+
         // 🔧 修复：确保返回正确的JSON响应结构
         console.log('✅ Returning successful response with data:', {
           success: responseData.success,

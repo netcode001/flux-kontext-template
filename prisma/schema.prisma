@@ -1,0 +1,109 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model users {
+  id                         String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                      String                @unique @db.VarChar
+  name                       String?               @db.VarChar
+  image                      String?               @db.VarChar
+  credits                    Int?                  @default(100)
+  location                   String?               @db.VarChar
+  last_signin_at             DateTime?             @db.Timestamptz
+  signin_count               Int?                  @default(0)
+  signin_type                String?               @db.VarChar
+  signin_provider            String?               @db.VarChar
+  signin_openid              String?               @db.VarChar
+  signin_ip                  String?               @db.VarChar
+  preferred_currency         String?               @default("USD") @db.VarChar
+  preferred_payment_provider String?               @db.VarChar
+  created_at                 DateTime?             @default(now()) @db.Timestamptz
+  updated_at                 DateTime?             @default(now()) @db.Timestamptz
+  payment_orders             payment_orders[]
+  credit_transactions        credit_transactions[]
+  subscriptions              subscriptions[]
+  generations                generations[]
+}
+
+model payment_orders {
+  id                       String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id                  String?               @db.Uuid
+  order_number             String                @unique @db.VarChar
+  amount                   Decimal               @db.Decimal(10, 2)
+  currency                 String?               @default("USD") @db.VarChar(3)
+  status                   String                @default("pending") @db.VarChar
+  payment_provider         String                @db.VarChar
+  product_type             String                @db.VarChar
+  product_id               String                @db.VarChar
+  product_name             String                @db.VarChar
+  customer_email           String                @db.VarChar
+  stripe_session_id        String?               @db.VarChar
+  stripe_payment_intent_id String?               @db.VarChar
+  creem_checkout_id        String?               @db.VarChar
+  creem_payment_id         String?               @db.VarChar
+  paid_at                  DateTime?             @db.Timestamptz
+  metadata                 Json?                 @db.JsonB
+  created_at               DateTime?             @default(now()) @db.Timestamptz
+  updated_at               DateTime?             @default(now()) @db.Timestamptz
+  users                    users?                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  credit_transactions      credit_transactions[]
+}
+
+model credit_transactions {
+  id                 String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id            String?         @db.Uuid
+  amount             Int
+  type               String          @db.VarChar
+  description        String?         @db.Text
+  payment_order_id   String?         @db.Uuid
+  reference_id       String?         @db.VarChar
+  created_at         DateTime?       @default(now()) @db.Timestamptz
+  updated_at         DateTime?       @default(now()) @db.Timestamptz
+  users              users?          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  payment_orders     payment_orders? @relation(fields: [payment_order_id], references: [id])
+}
+
+model subscriptions {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id                String?   @db.Uuid
+  plan_id                String    @db.VarChar
+  status                 String    @default("active") @db.VarChar
+  billing_cycle          String    @db.VarChar
+  current_period_start   DateTime  @db.Timestamptz
+  current_period_end     DateTime  @db.Timestamptz
+  payment_provider       String    @db.VarChar
+  stripe_subscription_id String?   @db.VarChar
+  creem_subscription_id  String?   @db.VarChar
+  created_at             DateTime? @default(now()) @db.Timestamptz
+  updated_at             DateTime? @default(now()) @db.Timestamptz
+  users                  users?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model payment_configs {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  stripe_enabled     Boolean?  @default(false)
+  creem_enabled      Boolean?  @default(false)
+  default_provider   String?   @default("stripe") @db.VarChar
+  maintenance_mode   Boolean?  @default(false)
+  last_updated_by    String    @db.VarChar
+  notes              String?   @db.Text
+  created_at         DateTime? @default(now()) @db.Timestamptz
+  updated_at         DateTime? @default(now()) @db.Timestamptz
+}
+
+model generations {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String?   @db.Uuid
+  prompt       String    @db.Text
+  model        String    @db.VarChar
+  credits_used Int       @default(1)
+  image_urls   String[]  @db.Text
+  settings     Json?     @db.JsonB
+  created_at   DateTime? @default(now()) @db.Timestamptz
+  users        users?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+} 
