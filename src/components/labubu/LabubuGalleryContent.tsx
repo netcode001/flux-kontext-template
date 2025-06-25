@@ -208,6 +208,8 @@ export function LabubuGalleryContent() {
         <div className="fixed top-20 right-4 bg-red-100 border border-red-300 rounded p-2 text-xs z-40">
           <div>Posts: {posts.length}</div>
           <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
+          <div>Publisher: {showPublisher ? 'Open' : 'Closed'}</div>
+          <div>Path: {typeof window !== 'undefined' ? window.location.pathname : 'SSR'}</div>
         </div>
       )}
       
@@ -343,10 +345,10 @@ export function LabubuGalleryContent() {
           </div>
         ) : (
           <div className="relative">
-            {/* 瀑布流布局 - 恢复最终的响应式布局 */}
-            <div className="columns-1 sm:columns-2 md:columns-5 gap-4 space-y-4 transform-gpu">
+            {/* 瀑布流布局 - 简化样式，移除可能导致阴影的属性 */}
+            <div className="columns-1 sm:columns-2 md:columns-5 gap-4 space-y-4">
               {posts.map(post => (
-                <div key={post.id} className="break-inside-avoid">
+                <div key={post.id} className="break-inside-avoid mb-4">
                   <PostCard
                     post={post}
                     onLike={handleLike}
