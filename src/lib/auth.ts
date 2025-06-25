@@ -310,7 +310,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token && session.user) {
-        // 从token中获取用户ID
+        // 从token中获取用户ID (现在应该是正确的UUID了)
         session.user.id = token.sub as string;
 
         // 异步操作：从数据库获取最新的用户信息
@@ -320,7 +320,7 @@ export const authOptions: NextAuthOptions = {
           
           const { data: userData, error } = await supabase
             .from('users')
-            .select('credits, tier, image')
+            .select('credits, image') // 移除了不存在的 'tier' 字段
             .eq('id', token.sub)
             .single();
 
@@ -329,7 +329,6 @@ export const authOptions: NextAuthOptions = {
           } else if (userData) {
             // 将数据库中的信息挂载到session.user上
             session.user.credits = userData.credits;
-            session.user.tier = userData.tier;
             session.user.image = userData.image; // 确保头像是最新的
           }
         } catch (e) {
@@ -339,46 +338,12 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async jwt({ token, user, account }: { token: any; user?: any; account?: any }) {
-      // 🔧 JWT token处理 - 确保token包含用户ID
       if (user) {
-        console.log('🔍 JWT callback - 用户登录:', user.email)
-        
-        // 🔍 如果OAuth登录的user没有id，需要从数据库获取
-        if (user.email && !user.id) {
-          try {
-            console.log('🔍 OAuth用户缺少ID，从数据库查询:', user.email)
-            
-            const { createAdminClient } = await import('@/lib/supabase/server')
-            const supabase = createAdminClient()
-            
-            const { data: dbUser, error } = await supabase
-              .from('users')
-              .select('id')
-              .eq('email', user.email)
-              .limit(1)
-              .single()
-            
-            if (!error && dbUser) {
-              console.log('✅ 为OAuth用户设置数据库ID:', dbUser.id)
-              user.id = dbUser.id
-            } else {
-              console.error('❌ 无法获取OAuth用户的数据库ID:', error)
-            }
-          } catch (error) {
-            console.error('❌ JWT用户ID查询失败:', error)
-          }
-        }
-        
-        token.user = user
+        // user对象在登录成功时可用
+        // 确保token.sub是我们数据库中的UUID
+        token.sub = user.id;
       }
-      
-      console.log('🔍 JWT callback完成:', { 
-        hasUser: !!token.user, 
-        hasId: !!token.user?.id,
-        email: token.user?.email 
-      })
-      
-      return token
+      return token;
     },
   },
 }
