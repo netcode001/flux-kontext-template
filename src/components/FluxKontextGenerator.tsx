@@ -719,7 +719,7 @@ export function FluxKontextGenerator() {
                           className="mr-2"
                           disabled={!model.available}
                         />
-                        <span className="font-medium">{model.label}</span>
+                        <span className="font-medium text-gray-800">{model.label}</span>
                       </label>
                       {model.recommended && (
                         <Badge className="bg-green-100 text-green-700 text-xs">Recommended</Badge>
@@ -834,10 +834,10 @@ export function FluxKontextGenerator() {
                     <select 
                       value={outputFormat}
                       onChange={(e) => setOutputFormat(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                      className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-gray-800"
                     >
-                      <option value="jpeg">JPEG</option>
-                      <option value="png">PNG</option>
+                                              <option value="jpeg" className="text-gray-800">JPEG</option>
+                        <option value="png" className="text-gray-800">PNG</option>
                     </select>
                   </div>
                 </div>
