@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3'
 
 // R2存储配置接口
 interface R2Config {
@@ -242,7 +242,7 @@ class R2StorageService {
             ContentType: file.type || 'image/jpeg',
             CacheControl: 'public, max-age=31536000', // 1年缓存
             Metadata: {
-              'original-name': file.name,
+              'original-name': encodeURIComponent(file.name),
               'upload-timestamp': timestamp.toString(),
               'source': 'user-upload',
               'file-size': file.size.toString()
@@ -287,6 +287,54 @@ class R2StorageService {
       } else {
         throw new Error(`Upload failed: ${error.message || 'Unknown error'}`);
       }
+    }
+  }
+
+  async deleteFile(fileKey: string): Promise<void> {
+    if (!this.isConfigured()) {
+      throw new Error('R2 storage not configured')
+    }
+    
+    console.log(`🗑️ Deleting file from R2: ${fileKey}`);
+
+    try {
+      await this.client!.send(
+        new DeleteObjectCommand({
+          Bucket: this.config!.bucketName,
+          Key: fileKey,
+        })
+      )
+      console.log(`✅ File deleted successfully from R2: ${fileKey}`);
+    } catch (error: any) {
+      console.error(`❌ Failed to delete file from R2: ${fileKey}`, error);
+      // 在生产环境中，可以选择不向上抛出错误，只记录日志，避免删除失败导致整个操作中断
+      // throw new Error(`Failed to delete file from R2: ${error.message}`);
+    }
+  }
+
+  async deleteMultipleFiles(fileKeys: string[]): Promise<void> {
+    if (!this.isConfigured() || fileKeys.length === 0) {
+      return
+    }
+    
+    console.log(`🗑️ Deleting ${fileKeys.length} files from R2`);
+
+    try {
+      const objectsToDelete = fileKeys.map(key => ({ Key: key }))
+      
+      await this.client!.send(
+        new DeleteObjectsCommand({
+          Bucket: this.config!.bucketName,
+          Delete: {
+            Objects: objectsToDelete,
+            Quiet: false, // 设置为false可以在响应中看到每个对象的删除结果
+          },
+        })
+      )
+      console.log(`✅ ${fileKeys.length} files successfully requested for deletion from R2.`);
+
+    } catch (error: any) {
+      console.error(`❌ Failed to delete multiple files from R2`, error);
     }
   }
 

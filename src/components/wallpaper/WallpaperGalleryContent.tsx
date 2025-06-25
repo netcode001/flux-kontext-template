@@ -231,21 +231,7 @@ export function WallpaperGalleryContent() {
 
       {/* 页面头部 */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-labubu-200 pt-16">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center space-y-4">
-            <LabubuHeading level={1} className="text-4xl font-bold">
-              🖼️ 壁纸画廊
-            </LabubuHeading>
-            <LabubuText variant="large" className="text-soft-600 max-w-2xl mx-auto">
-              精美的AI生成壁纸集合，支持多种分类和高清下载
-              {!session && (
-                <span className="block mt-2 text-sm text-warm-600">
-                  💡 登录后可以下载高清壁纸和点赞收藏
-                </span>
-              )}
-            </LabubuText>
-          </div>
-        </div>
+        {/* ... */}
       </div>
 
       <div className="container mx-auto px-4 py-8">
@@ -337,7 +323,7 @@ export function WallpaperGalleryContent() {
           </LabubuCard>
         )}
 
-        {/* 壁纸网格 */}
+        {/* 壁纸展示区域 - 应用网格布局 */}
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-labubu-600" />
@@ -355,18 +341,19 @@ export function WallpaperGalleryContent() {
           </div>
         ) : (
           <>
-            {/* 壁纸展示区域 */}
-            <div className={`grid ${getGridCols()} gap-6`}>
+            {/* 壁纸展示区域 - 应用网格布局 */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {wallpapers.map((wallpaper) => (
-                <WallpaperCard
-                  key={wallpaper.id}
-                  wallpaper={wallpaper}
-                  onLike={handleLike}
-                  onDownload={handleDownload}
-                  onView={handleView}
-                  showActions={true}
-                  size={viewMode === 'list' ? 'large' : 'medium'}
-                />
+                <div key={wallpaper.id}>
+                  <WallpaperCard
+                    wallpaper={wallpaper}
+                    onLike={handleLike}
+                    onDownload={handleDownload}
+                    onView={handleView}
+                    showActions={true}
+                    size={'medium'}
+                  />
+                </div>
               ))}
             </div>
 

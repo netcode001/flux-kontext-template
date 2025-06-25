@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { createClient } from '@supabase/supabase-js'
 import { z } from 'zod'
 import type { Wallpaper, WallpaperUploadData } from '@/types/wallpaper'
+import { r2Storage } from '@/lib/services/r2-storage'
 
 // 🔐 初始化Supabase客户端
 const supabase = createClient(
@@ -382,7 +383,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// 🗑️ DELETE /api/admin/wallpapers - 删除壁纸
+// 🗑️ DELETE /api/admin/wallpapers - 删除壁纸（支持批量）
 export async function DELETE(request: NextRequest) {
   try {
     // 🔐 验证管理员权限
@@ -396,43 +397,74 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    // 📝 解析请求体
-    const body = await request.json()
-    const { id } = body
-    
-    if (!id) {
+    const { ids } = await request.json()
+
+    if (!Array.isArray(ids) || ids.length === 0) {
       return NextResponse.json(
-        { success: false, error: '缺少壁纸ID' },
+        { success: false, error: '请提供要删除的壁纸ID' },
         { status: 400 }
       )
     }
+    
+    console.log(`🗑️ 管理员请求删除壁纸:`, ids);
 
-    console.log('🗑️ 删除壁纸:', id)
-
-    // 🖼️ 删除壁纸记录（软删除 - 设置为不活跃）
-    const { error } = await supabase
+    // 1. 从数据库中查询要删除的壁纸，获取文件URL
+    const { data: wallpapersToDelete, error: fetchError } = await supabase
       .from('wallpapers')
-      .update({ is_active: false })
-      .eq('id', id)
+      .select('image_url, video_url')
+      .in('id', ids)
 
-    if (error) {
-      console.error('❌ 删除壁纸失败:', error)
+    if (fetchError) {
+      console.error('❌ 查询待删除壁纸失败:', fetchError)
       return NextResponse.json(
-        { success: false, error: '删除壁纸失败' },
+        { success: false, error: '查询待删除壁纸失败' },
         { status: 500 }
       )
     }
 
-    console.log('✅ 壁纸删除成功:', id)
+    // 2. 从URL中提取R2文件Key
+    const fileKeysToDelete = wallpapersToDelete.map(wp => {
+      const url = wp.image_url || wp.video_url
+      if (!url) return null
+      try {
+        const urlObject = new URL(url)
+        return urlObject.pathname.substring(1) // 移除开头的'/'
+      } catch {
+        return null // 无效的URL
+      }
+    }).filter((key): key is string => key !== null)
+    
+    // 3. 从R2中删除文件
+    if (fileKeysToDelete.length > 0) {
+      console.log(`🗑️ 从R2删除文件:`, fileKeysToDelete)
+      // 注意：这里我们不等待r2Storage的完成，让它在后台运行
+      // 即使文件删除失败，数据库记录也应该被删除
+      r2Storage.deleteMultipleFiles(fileKeysToDelete)
+    }
+
+    // 4. 从数据库中删除记录
+    const { error: deleteError } = await supabase
+      .from('wallpapers')
+      .delete()
+      .in('id', ids)
+
+    if (deleteError) {
+      console.error('❌ 删除数据库记录失败:', deleteError)
+      return NextResponse.json(
+        { success: false, error: '删除数据库记录失败' },
+        { status: 500 }
+      )
+    }
+
+    console.log(`✅ 成功删除 ${ids.length} 个壁纸`);
 
     return NextResponse.json({
       success: true,
-      message: '壁纸已删除'
+      message: `成功删除了 ${ids.length} 个壁纸`
     })
 
   } catch (error) {
     console.error('❌ 删除壁纸API错误:', error)
-
     return NextResponse.json(
       { success: false, error: '服务器内部错误' },
       { status: 500 }
