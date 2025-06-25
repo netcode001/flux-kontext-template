@@ -526,7 +526,7 @@ export function FluxKontextGenerator() {
         </div>
 
         {/* 第二行: 设置和操作 */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-end">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
           {/* Reference Image */}
           <div className="lg:col-span-1">
             <Label className="block text-sm font-medium text-gray-700 mb-2 text-center">Reference Image</Label>
@@ -642,42 +642,42 @@ export function FluxKontextGenerator() {
       </div>
 
       {/* 左下角固定位置：用户状态信息 */}
-      <div className="fixed bottom-4 left-4 z-50">
+      <div className="absolute bottom-4 left-4 z-10">
         <div className="flex items-center gap-3 text-xs text-gray-500 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-lg">
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
             <span>{session ? 'Registered User' : 'Guest User'}</span>
-                                    </div>
+          </div>
           {session && (
             <div className="flex items-center gap-1">
               <div className="w-5 h-5 bg-green-100 rounded-md flex items-center justify-center text-xs">
                 🛡️
-                            </div>
+              </div>
               <span>Verified</span>
-                      </div>
-                    )}
-                  </div>
-                            </div>
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* 右下角固定位置：积分显示和刷新按钮 */}
-      <div className="fixed bottom-4 right-4 z-50 group">
+      <div className="absolute bottom-4 right-4 z-10 group">
         <div className="flex items-center gap-3">
           {/* 刷新按钮 - 默认隐藏，hover显示 */}
-                            <Button 
-                              size="sm"
+          <Button 
+            size="sm"
             variant="ghost"
             onClick={() => window.location.reload()}
             className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg hover:bg-gray-50"
-                            >
+          >
             <RefreshCw className="w-4 h-4" />
-                            </Button>
+          </Button>
           
           {/* 积分显示和购买按钮 */}
           <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-lg">
             <CreditDisplay showBuyButton={true} />
-                          </div>
-                      </div>
-                    </div>
+          </div>
+        </div>
+      </div>
 
       {/* 高级设置面板（可展开/收缩） */}
       {showAdvancedPanel && (
