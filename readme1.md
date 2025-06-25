@@ -15,4 +15,14 @@
 - **功能**: 优化 Labubu 作品画廊页面的搜索栏样式
 - **详情**:
   - **布局**: 移除了搜索框的最大宽度限制，使其能够自动拉伸并填满左侧的可用空间，提升了大屏幕下的使用体验。
-- **文件**: `src/components/labubu/LabubuGalleryContent.tsx` 
+- **文件**: `src/components/labubu/LabubuGalleryContent.tsx`
+
+---
+
+### 2024-07-28 (修复)
+
+- **功能**: 修复作品卡片弹窗的渲染问题并优化UI
+- **详情**:
+  - **问题修复**: 重构了作品详情弹窗的实现方式，使用 `createPortal` 和更健壮的背景锁定逻辑，彻底解决了因修改 `body` 样式而导致的灰色圆形阴影渲染问题。
+  - **UI/UX优化**: 重新设计了弹窗的布局和样式，使其更具现代感和易用性。
+- **文件**: `src/components/labubu/PostCard.tsx` 
