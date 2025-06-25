@@ -9,6 +9,7 @@ import { PostWithUser } from '@/lib/database'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { useModalManager } from '@/hooks/useModalManager'
 
 interface PostCardProps {
   post: PostWithUser
@@ -24,8 +25,8 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
   const [likeCount, setLikeCount] = useState(post.likeCount)
   const [isLoading, setIsLoading] = useState(false)
   
-  // 🎪 弹窗状态
-  const [showDetailModal, setShowDetailModal] = useState(false)
+  // 🎪 使用全局模态框管理器
+  const { isOpen: showDetailModal, openModal, closeModal } = useModalManager(post.id)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [imageLoadError, setImageLoadError] = useState(false)
 
@@ -107,7 +108,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
     e?.stopPropagation()
     
     console.log('🎪 点击卡片，打开弹窗:', { postId: post.id, title: post.title })
-    setShowDetailModal(true)
+    openModal()
     setCurrentImageIndex(0)
   }
 
@@ -117,32 +118,16 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
     e?.stopPropagation()
     
     console.log('🎪 关闭弹窗:', { postId: post.id })
-    setShowDetailModal(false)
+    closeModal()
     setCurrentImageIndex(0)
   }
-
-  // 🔒 滚动锁定效果 - 防止背景滚动穿透 (新版)
-  useEffect(() => {
-    if (showDetailModal) {
-      console.log('🔒 锁定页面滚动 - PostCard:', post.id)
-      document.documentElement.style.overflow = 'hidden'
-    } else {
-      console.log('🔓 恢复页面滚动 - PostCard:', post.id)
-      document.documentElement.style.overflow = ''
-    }
-    // 组件卸载时也要恢复
-    return () => {
-      console.log('🧹 清理滚动状态 - PostCard:', post.id)
-      document.documentElement.style.overflow = ''
-    }
-  }, [showDetailModal, post.id])
 
   // 🎪 ESC键关闭弹窗
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && showDetailModal) {
         console.log('⌨️ ESC键关闭弹窗 - PostCard:', post.id)
-        handleCloseModal()
+        closeModal()
       }
     }
 
@@ -150,7 +135,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       document.addEventListener('keydown', handleEscape)
       return () => document.removeEventListener('keydown', handleEscape)
     }
-  }, [showDetailModal, post.id])
+  }, [showDetailModal, post.id, closeModal])
 
   // 🎪 切换图片
   const handlePrevImage = () => {
@@ -391,10 +376,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       </Card>
 
       {/* 弹窗传送门 */}
-      {showDetailModal && (() => {
-        console.log('🎪 渲染模态框 - PostCard:', post.id, 'showDetailModal:', showDetailModal)
-        return createPortal(modalContent, document.body)
-      })()}
+      {showDetailModal && createPortal(modalContent, document.body)}
     </>
   )
 } 
