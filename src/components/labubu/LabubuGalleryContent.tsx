@@ -358,7 +358,7 @@ export function LabubuGalleryContent() {
         ) : (
           <div className="relative">
             {/* 瀑布流布局 - 添加 transform-gpu 开启硬件加速 */}
-            <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 transform-gpu">
+            <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-5 gap-4 space-y-4 transform-gpu">
               {posts.map(post => (
                 // 添加 break-inside-avoid-column 防止卡片在列中被分割，解决闪动问题
                 <div key={post.id} className="break-inside-avoid">
