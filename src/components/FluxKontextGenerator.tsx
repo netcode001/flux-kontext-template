@@ -814,12 +814,12 @@ export function FluxKontextGenerator() {
                         placeholder="Random" 
                         value={seed || ''}
                         onChange={(e) => setSeed(e.target.value ? Number(e.target.value) : undefined)}
-                        className="flex-1 text-sm border-gray-300 focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
+                        className="flex-1 text-sm border-gray-300 focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800 bg-white"
                       />
                       <Button 
                         size="sm"
                         onClick={generateRandomSeed}
-                        className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 border-gray-300"
+                        className="px-3 py-2 bg-white hover:bg-gray-100 text-gray-800 border border-gray-300"
                       >
                         🎲
                       </Button>

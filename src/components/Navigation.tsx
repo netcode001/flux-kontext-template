@@ -157,7 +157,7 @@ export function Navigation() {
             <div className="relative user-dropdown">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center space-x-2 p-2 rounded-2xl hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 transition-all duration-300 hover:shadow-labubu hover:-translate-y-0.5 active:scale-95"
+                className="flex items-center space-x-2 p-2 rounded-2xl bg-white border border-gray-200 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 transition-all duration-300 hover:shadow-labubu hover:-translate-y-0.5 active:scale-95"
               >
                 {session.user?.image ? (
                   <img 
