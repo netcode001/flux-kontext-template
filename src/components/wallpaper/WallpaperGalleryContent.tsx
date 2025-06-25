@@ -261,8 +261,7 @@ export function WallpaperGalleryContent() {
               onClick={() => setShowFilters(!showFilters)}
               size="sm"
             >
-              <Filter className="w-4 h-4 mr-2" />
-              筛选
+              <Filter className="w-4 h-4" />
             </LabubuButton>
             
             <div className="flex border border-labubu-200 rounded-2xl overflow-hidden">
