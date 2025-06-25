@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
-import { Download, Info, Zap, Ratio } from 'lucide-react'
+import { Dialog, DialogContent, DialogTrigger, DialogClose } from '@/components/ui/dialog'
+import { Download, Info, Zap, Ratio, X } from 'lucide-react'
 
 // 定义从页面传入的图片类型
 interface Generation {
@@ -76,46 +76,59 @@ export function DashboardGallery({ generations }: DashboardGalleryProps) {
       </div>
 
       {selectedItem && (
-        <DialogContent className="max-w-[90vw] max-h-[90vh] w-auto h-auto p-0 gap-0 bg-background border-border flex items-start">
-          <div className="flex flex-col md:flex-row h-full max-h-[90vh]">
+        <DialogContent className="max-w-none w-auto h-[90vh] bg-transparent border-none shadow-none p-0 flex items-center justify-center">
+          <div className="flex h-full rounded-2xl overflow-hidden shadow-2xl">
             {/* 左侧：图片 */}
-            <div className="relative w-full md:w-auto md:h-full flex-shrink-0 flex items-center justify-center bg-black/90">
+            <div className="relative h-full flex-shrink-0 flex items-center justify-center">
               <Image
                 src={selectedItem.url}
                 alt={selectedItem.generation.prompt}
                 width={1920}
                 height={1080}
-                className="object-contain w-auto h-auto max-w-full max-h-[90vh]"
+                className="object-contain h-full w-auto"
+                priority
               />
             </div>
 
-            {/* 右侧：信息 */}
-            <div className="w-full md:w-[320px] flex-shrink-0 p-6 space-y-4 overflow-y-auto">
-              <h3 className="text-lg font-semibold">图片提示词</h3>
-              <p className="text-sm text-muted-foreground bg-secondary p-3 rounded-lg">
-                {selectedItem.generation.prompt}
-              </p>
+            {/* 右侧：信息面板 */}
+            <div className="relative w-[380px] flex-shrink-0 bg-black text-white p-8 flex flex-col overflow-y-auto">
+               <DialogClose asChild>
+                 <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-gray-400 hover:text-white hover:bg-gray-800 rounded-full">
+                   <X className="h-5 w-5" />
+                 </Button>
+              </DialogClose>
               
-              <div className="border-t border-border pt-4 space-y-3 text-sm">
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground flex items-center gap-2"><Info size={14} /> 生成日期</span>
-                  <span>{new Date(selectedItem.generation.created_at).toLocaleDateString()}</span>
+              <div className="flex-grow">
+                <h3 className="text-xl font-semibold mb-4">图片提示词</h3>
+                <div className="bg-gray-800 p-4 rounded-lg mb-6">
+                  <p className="text-sm text-gray-200 leading-relaxed">
+                    {selectedItem.generation.prompt}
+                  </p>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground flex items-center gap-2"><Zap size={14} /> 模型</span>
-                  <span className="font-mono text-xs bg-secondary px-2 py-1 rounded">{selectedItem.generation.model.replace('text-to-image-', '')}</span>
-                </div>
-                {selectedItem.generation.settings?.aspect_ratio && (
+                
+                <div className="space-y-4 text-sm">
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground flex items-center gap-2"><Ratio size={14} /> 比例</span>
-                    <span className="font-mono text-xs bg-secondary px-2 py-1 rounded">{selectedItem.generation.settings.aspect_ratio}</span>
+                    <span className="text-gray-400 flex items-center gap-2"><Info size={16} /> 生成日期</span>
+                    <span className="font-mono text-gray-200">{new Date(selectedItem.generation.created_at).toLocaleDateString()}</span>
                   </div>
-                )}
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 flex items-center gap-2"><Zap size={16} /> 模型</span>
+                    <span className="font-mono text-xs bg-gray-700 text-gray-200 px-2 py-1 rounded">{selectedItem.generation.model.replace('text-to-image-', '')}</span>
+                  </div>
+                  {selectedItem.generation.settings?.aspect_ratio && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400 flex items-center gap-2"><Ratio size={16} /> 比例</span>
+                      <span className="font-mono text-xs bg-gray-700 text-gray-200 px-2 py-1 rounded">{selectedItem.generation.settings.aspect_ratio}</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="border-t border-border pt-4 flex flex-col gap-3">
-                 <Button className="w-full" onClick={() => handleDownload(selectedItem.url)}>
-                   <Download className="w-4 h-4 mr-2" />
+              <div className="mt-8">
+                 <Button 
+                   className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 text-base" 
+                   onClick={() => handleDownload(selectedItem.url)}>
+                   <Download className="w-5 h-5 mr-2" />
                    下载图片
                  </Button>
               </div>
