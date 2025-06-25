@@ -42,9 +42,18 @@ interface Generation {
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
+  console.log('🔍 Dashboard页面 - Session信息:', {
+    hasSession: !!session,
+    userId: session?.user?.id,
+    userEmail: session?.user?.email
+  });
+
   if (!session?.user?.id) {
+    console.log('❌ 用户未登录，重定向到登录页面');
     redirect('/auth/signin?callbackUrl=/dashboard');
   }
+
+  console.log('🔍 开始查询用户生成记录，用户ID:', session.user.id);
 
   const userGenerations = await prisma.generations.findMany({
     where: {
@@ -54,6 +63,15 @@ export default async function DashboardPage() {
       created_at: 'desc',
     },
     take: 100, // 最多获取最近100条记录
+  });
+
+  console.log('📊 查询结果:', {
+    generationsCount: userGenerations.length,
+    sampleData: userGenerations.slice(0, 2).map(g => ({
+      id: g.id,
+      prompt: g.prompt?.substring(0, 50) + '...',
+      imageUrlsCount: g.image_urls?.length || 0
+    }))
   });
 
   return (
