@@ -391,8 +391,8 @@ export function FluxKontextGenerator() {
         throw new Error(data.error || 'Generation failed')
       }
 
-      if (data.images && data.images.length > 0) {
-        const newImages: GeneratedImage[] = data.images.map((imageData: any) => ({
+      if (data.data && data.data.images && data.data.images.length > 0) {
+        const newImages: GeneratedImage[] = data.data.images.map((imageData: any) => ({
           url: imageData.url,
           width: imageData.width,
           height: imageData.height,
@@ -403,6 +403,8 @@ export function FluxKontextGenerator() {
         
         setGeneratedImages(prev => [...newImages, ...prev])
         setRetryCount(0)
+      } else if (data.error) {
+        throw new Error(data.error)
       }
     } catch (error: any) {
       console.error('Generation error:', error)
