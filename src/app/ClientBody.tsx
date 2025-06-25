@@ -20,13 +20,22 @@ export default function ClientBody({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isGalleryPage = pathname === '/labubu-gallery';
+  
+  // 需要清爽背景的页面（不应用深色渐变）
+  const cleanBackgroundPages = [
+    '/labubu-gallery',
+    '/dashboard', 
+    '/wallpapers',
+    '/秀场' // 秀场页面也可能有多图
+  ];
+  
+  const shouldApplyHeroGradient = !cleanBackgroundPages.includes(pathname);
 
   const containerClasses = [
     geistSans.variable,
     geistMono.variable,
     'antialiased',
-    !isGalleryPage ? 'hero-gradient' : '',
+    shouldApplyHeroGradient ? 'hero-gradient' : '',
   ].filter(Boolean).join(' ');
 
   return (
