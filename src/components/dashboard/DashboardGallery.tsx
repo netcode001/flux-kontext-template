@@ -62,7 +62,7 @@ export function DashboardGallery({ generations }: DashboardGalleryProps) {
           generation.image_urls.map(url => (
             <div key={url} className="relative group">
               <DialogTrigger asChild onClick={() => setSelectedItem({ generation, url })}>
-                <div className="aspect-square bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer">
+                <div className="relative aspect-square bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer">
                   <Image
                     src={url}
                     alt={generation.prompt}
