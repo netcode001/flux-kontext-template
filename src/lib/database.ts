@@ -182,6 +182,39 @@ export interface PostWithUser extends Post {
   comments?: Comment[]
 }
 
+// 🎨 新增：图片生成历史记录接口
+export interface Generation {
+  id: string;
+  user_id: string;
+  prompt: string;
+  model: string;
+  credits_used: number;
+  image_urls: string[];
+  settings?: any;
+  created_at: Date;
+}
+
+// 🎨 社区功能接口定义
+export interface Post {
+  id: string
+  userId: string
+  title: string
+  content?: string
+  imageUrls: string[]
+  prompt?: string
+  model?: string
+  tags: string[]
+  isFeatured: boolean
+  isPublic: boolean
+  viewCount: number
+  likeCount: number
+  commentCount: number
+  bookmarkCount: number
+  generationId?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 // Supabase适配器，提供类似Prisma的接口
 class SupabaseAdapter {
   user = {
@@ -1317,6 +1350,64 @@ class SupabaseAdapter {
       } catch (error) {
         console.error('🚨 Tag findMany error:', error)
         return []
+      }
+    }
+  }
+
+  // 补全缺失的generations实现
+  generations = {
+    async findMany(args: any): Promise<Generation[]> {
+      try {
+        const supabase = getSupabaseAdmin()
+        let query = supabase.from('generations').select('*')
+
+        if (args?.where?.user_id) {
+          query = query.eq('user_id', args.where.user_id)
+        }
+
+        if (args?.orderBy) {
+          const orderField = Object.keys(args.orderBy)[0]
+          const orderDirection = args.orderBy[orderField]
+          query = query.order(orderField, { ascending: orderDirection === 'asc' })
+        }
+
+        if (args?.take) {
+          query = query.limit(args.take)
+        }
+
+        const { data, error } = await query
+
+        if (error) {
+          console.error('🚨 Generations findMany error:', error)
+          return []
+        }
+
+        return data || []
+      } catch (error) {
+        console.error('🚨 Generations findMany critical error:', error)
+        return []
+      }
+    },
+
+    async create(args: any): Promise<Generation> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('generations')
+          .insert(args.data)
+          .select()
+          .single()
+
+        if (error) {
+          console.error('🚨 Generations create error:', error)
+          throw error
+        }
+        
+        return data
+
+      } catch (error) {
+        console.error('🚨 Generations create critical error:', error)
+        throw error
       }
     }
   }
