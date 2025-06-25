@@ -124,20 +124,24 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
   // 🔒 滚动锁定效果 - 防止背景滚动穿透 (新版)
   useEffect(() => {
     if (showDetailModal) {
+      console.log('🔒 锁定页面滚动 - PostCard:', post.id)
       document.documentElement.style.overflow = 'hidden'
     } else {
+      console.log('🔓 恢复页面滚动 - PostCard:', post.id)
       document.documentElement.style.overflow = ''
     }
     // 组件卸载时也要恢复
     return () => {
+      console.log('🧹 清理滚动状态 - PostCard:', post.id)
       document.documentElement.style.overflow = ''
     }
-  }, [showDetailModal])
+  }, [showDetailModal, post.id])
 
   // 🎪 ESC键关闭弹窗
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && showDetailModal) {
+        console.log('⌨️ ESC键关闭弹窗 - PostCard:', post.id)
         handleCloseModal()
       }
     }
@@ -146,7 +150,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       document.addEventListener('keydown', handleEscape)
       return () => document.removeEventListener('keydown', handleEscape)
     }
-  }, [showDetailModal])
+  }, [showDetailModal, post.id])
 
   // 🎪 切换图片
   const handlePrevImage = () => {
@@ -387,7 +391,10 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       </Card>
 
       {/* 弹窗传送门 */}
-      {showDetailModal && createPortal(modalContent, document.body)}
+      {showDetailModal && (() => {
+        console.log('🎪 渲染模态框 - PostCard:', post.id, 'showDetailModal:', showDetailModal)
+        return createPortal(modalContent, document.body)
+      })()}
     </>
   )
 } 
