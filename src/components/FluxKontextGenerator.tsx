@@ -497,11 +497,11 @@ export function FluxKontextGenerator() {
       <div className="bg-white rounded-3xl shadow-lg border border-purple-100 p-6 mb-6">
         
         {/* 顶部：只保留标题 */}
-        <div className="text-center mb-6">
+                <div className="text-center mb-6">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
-            LabubuHub AI Generator
+                    LabubuHub AI Generator
           </h1>
-        </div>
+                </div>
 
         {/* 第一行: Image Description 输入框 */}
         <div className="mb-6">
@@ -512,52 +512,52 @@ export function FluxKontextGenerator() {
               value={textPrompt}
               onChange={(e) => setTextPrompt(e.target.value)}
               className="w-full h-20 p-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-sm bg-white text-gray-900 placeholder:text-gray-500"
-            />
-            <Button 
-              size="sm"
+                        />
+                        <Button 
+                          size="sm"
               variant="ghost"
               onClick={handleEnhancePrompt}
               disabled={!textPrompt.trim()}
               className="absolute top-2 right-2 text-xs bg-labubu-100 text-labubu-700 hover:bg-labubu-200 transition-colors pointer-events-auto z-10"
-            >
-              ✨ AI Enhance
-            </Button>
-          </div>
-        </div>
+                      >
+                        ✨ AI Enhance
+                      </Button>
+                    </div>
+                  </div>
 
         {/* 第二行: 设置和操作 */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-6 items-start">
           {/* Reference Image */}
           <div className="lg:col-span-1">
             <Label className="block text-sm font-medium text-gray-700 mb-2 text-center">Reference Image</Label>
             <div 
               onClick={() => multiFileInputRef.current?.click()}
-              className="w-2/3 mx-auto aspect-square border-2 border-dashed border-gray-300 rounded-xl p-2 cursor-pointer hover:border-labubu-400 transition-colors bg-gray-50 hover:bg-labubu-50 flex flex-col items-center justify-center"
+              className="w-1/2 mx-auto aspect-square border-2 border-dashed border-gray-300 rounded-xl p-2 cursor-pointer hover:border-labubu-400 transition-colors bg-gray-50 hover:bg-labubu-50 flex flex-col items-center justify-center"
             >
-              {uploadedImages.length > 0 ? (
+                      {uploadedImages.length > 0 ? (
                 <div className="flex flex-col items-center gap-1 text-center">
                   <div className="w-10 h-10 bg-labubu-100 rounded-lg flex items-center justify-center">📸</div>
                   <span className="text-xs text-gray-700">{uploadedImages.length} image(s)</span>
-                  <Button 
-                    size="sm"
+                          <Button 
+                            size="sm"
                     variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation()
+                            onClick={(e) => {
+                              e.stopPropagation()
                       clearUpload()
                     }}
                     className="text-red-500 hover:text-red-700 text-xs p-1 h-auto"
                   >
                     Remove
-                  </Button>
-                </div>
-              ) : (
+                          </Button>
+                        </div>
+                      ) : (
                 <div className="flex flex-col items-center gap-1 text-gray-500 text-center">
                   <Upload className="w-6 h-6" />
                   <span className="text-xs font-medium">Upload</span>
                   <span className="text-xs text-gray-400">Click to add</span>
-                </div>
-              )}
-            </div>
+                        </div>
+                      )}
+                    </div>
             <input 
               ref={multiFileInputRef}
               type="file" 
@@ -566,42 +566,41 @@ export function FluxKontextGenerator() {
               multiple 
               onChange={(e) => handleFileUpload(e.target.files)}
             />
-          </div>
+                </div>
 
           {/* Generation Settings */}
-          <div className="lg:col-span-2">
-            <Label className="block text-sm font-medium text-gray-700 mb-2">Generation Settings</Label>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="block text-xs text-gray-600 mb-1">Images Count</Label>
-                <select
+          <div className="lg:col-span-2 pt-8">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                <Label className="block text-xs text-gray-600 mb-1">Images</Label>
+                    <select
                   value={numImages}
                   onChange={(e) => setNumImages(Number(e.target.value))}
-                  className="w-full py-1.5 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
+                  className="w-full py-1 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
                 >
                   {getImageCountOptions(userType).map(option => (
                     <option key={option.value} value={option.value} disabled={option.premium && userType !== UserType.PREMIUM} className="text-gray-800">
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <Label className="block text-xs text-gray-600 mb-1">Aspect Ratio</Label>
-                <select
-                  value={aspectRatio}
-                  onChange={(e) => setAspectRatio(e.target.value)}
-                  className="w-full py-1.5 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                        </div>
+                  <div>
+                <Label className="block text-xs text-gray-600 mb-1">Ratio</Label>
+                    <select
+                      value={aspectRatio}
+                      onChange={(e) => setAspectRatio(e.target.value)}
+                  className="w-full py-1 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-labubu-500 focus:border-labubu-500 text-gray-800"
                 >
                   {getAvailableAspectRatios(userType).map(ratio => (
                     <option key={ratio.value} value={ratio.value} disabled={ratio.premium && userType !== UserType.PREMIUM} className="text-gray-800">
                       {ratio.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
+                        </option>
+                      ))}
+                    </select>
+                        </div>
+                  </div>
+                </div>
 
           {/* Advanced Settings 按钮 */}
           <div className="lg:col-span-1">
@@ -614,13 +613,14 @@ export function FluxKontextGenerator() {
               <div className="flex items-center gap-2">
                 <Settings className="w-4 h-4" />
                 <span>{showAdvancedPanel ? 'Hide' : 'Show'}</span>
-              </div>
+                        </div>
               {showAdvancedPanel ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </Button>
-          </div>
+                            </div>
 
           {/* 生成按钮 */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-2">
+            <Label className="block text-sm font-medium text-gray-700 mb-2 invisible">Generate</Label>
             <Button 
               onClick={handleGenerate}
               disabled={isGenerating || !textPrompt.trim()}
@@ -637,9 +637,9 @@ export function FluxKontextGenerator() {
                 </>
               )}
             </Button>
-          </div>
-        </div>
-      </div>
+                        </div>
+                      </div>
+                          </div>
 
       {/* 左下角固定位置：用户状态信息 */}
       <div className="absolute bottom-4 left-4 z-10">
@@ -647,37 +647,37 @@ export function FluxKontextGenerator() {
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
             <span>{session ? 'Registered User' : 'Guest User'}</span>
-          </div>
+                        </div>
           {session && (
             <div className="flex items-center gap-1">
               <div className="w-5 h-5 bg-green-100 rounded-md flex items-center justify-center text-xs">
                 🛡️
-              </div>
+                      </div>
               <span>Verified</span>
-            </div>
-          )}
-        </div>
-      </div>
+                  </div>
+                              )}
+                            </div>
+                            </div>
 
       {/* 右下角固定位置：积分显示和刷新按钮 */}
       <div className="absolute bottom-4 right-4 z-10 group">
         <div className="flex items-center gap-3">
           {/* 刷新按钮 - 默认隐藏，hover显示 */}
-          <Button 
-            size="sm"
+                            <Button 
+                              size="sm"
             variant="ghost"
             onClick={() => window.location.reload()}
             className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg hover:bg-gray-50"
-          >
+                            >
             <RefreshCw className="w-4 h-4" />
-          </Button>
+                            </Button>
           
           {/* 积分显示和购买按钮 */}
           <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-lg">
             <CreditDisplay showBuyButton={true} />
-          </div>
-        </div>
-      </div>
+                          </div>
+                      </div>
+                    </div>
 
       {/* 高级设置面板（可展开/收缩） */}
       {showAdvancedPanel && (
@@ -887,7 +887,7 @@ export function FluxKontextGenerator() {
                     index={index}
                     onRemove={() => setGeneratedImages(prev => prev.filter((_, i) => i !== index))}
                   />
-                </div>
+          </div>
                 <div className="p-4">
                   <p className="text-sm text-gray-600 mb-2 line-clamp-2">{image.prompt}</p>
                   <div className="flex items-center justify-between">
