@@ -13,6 +13,9 @@ interface Generation {
   model: string;
   image_urls: string[];
   created_at: Date;
+  settings: {
+    aspect_ratio?: string;
+  } | null;
 }
 
 interface DashboardGalleryProps {
@@ -63,16 +66,24 @@ export function DashboardGallery({ generations }: DashboardGalleryProps) {
                   />
                 </div>
               </DialogTrigger>
-              <div className="mt-3 flex justify-between items-center">
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-800 truncate" title={generation.prompt}>
-                    {generation.prompt}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(generation.created_at).toLocaleDateString()}
-                  </p>
+              <div className="mt-3 flex flex-col gap-2">
+                <p className="text-sm font-medium text-gray-800 truncate" title={generation.prompt}>
+                  {generation.prompt}
+                </p>
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <span>🗓️ {new Date(generation.created_at).toLocaleDateString()}</span>
+                  <span>﹒</span>
+                  <span>🤖 {generation.model.replace('text-to-image-', '')}</span>
+                  {generation.settings?.aspect_ratio && (
+                    <>
+                      <span>﹒</span>
+                      <span>📏 {generation.settings.aspect_ratio}</span>
+                    </>
+                  )}
                 </div>
-                <Button size="icon" variant="ghost" className="text-gray-500 hover:text-gray-800" onClick={() => handleDownload(url)}>
+              </div>
+              <div className="absolute top-2 right-2">
+                <Button size="icon" variant="ghost" className="text-gray-500 hover:text-gray-800 h-8 w-8" onClick={() => handleDownload(url)}>
                   <Download className="w-4 h-4" />
                 </Button>
               </div>

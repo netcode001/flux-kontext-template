@@ -27,6 +27,9 @@ interface Generation {
   model: string;
   image_urls: string[];
   created_at: Date;
+  settings: {
+    aspect_ratio?: string;
+  } | null;
 }
 
 export default async function DashboardPage() {
