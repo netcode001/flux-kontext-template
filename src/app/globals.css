@@ -529,4 +529,32 @@
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
   }
 }
+
 /* Force CSS refresh - 05/28/2025 18:43:11 */
+
+/* 🔧 临时调试：强制移除黑色阴影 */
+@media screen {
+  /* 移除所有可能的黑色背景 */
+  [class*="bg-black"],
+  [class*="bg-gray-900"],
+  [class*="bg-slate-900"],
+  .hero-gradient {
+    background: transparent !important;
+  }
+  
+  /* 移除所有fixed定位的黑色元素 */
+  .fixed[class*="bg-black"] {
+    display: none !important;
+  }
+  
+  /* 确保labubu-gallery页面使用白色背景 */
+  body:has([data-page="labubu-gallery"]) {
+    background: white !important;
+  }
+  
+  /* 移除所有可能的遮罩层 */
+  [class*="backdrop-blur"][class*="bg-black"],
+  [class*="backdrop-blur"][class*="inset-0"] {
+    display: none !important;
+  }
+}

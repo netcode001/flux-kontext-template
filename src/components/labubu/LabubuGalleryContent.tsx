@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
+import { usePathname } from 'next/navigation'
 import { DynamicNavigation } from '@/components/DynamicNavigation'
 import { PostCard } from './PostCard'
 import { PostPublisher } from './PostPublisher'
@@ -17,6 +18,7 @@ type FilterType = 'all' | 'featured' | 'recent' | 'popular'
 
 export function LabubuGalleryContent() {
   const { data: session } = useSession()
+  const pathname = usePathname()
   const [posts, setPosts] = useState<PostWithUser[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [showPublisher, setShowPublisher] = useState(false)
@@ -199,7 +201,7 @@ export function LabubuGalleryContent() {
   ] as const
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" data-page="labubu-gallery">
       {/* 统一的导航栏 */}
       <DynamicNavigation />
       
@@ -209,7 +211,9 @@ export function LabubuGalleryContent() {
           <div>Posts: {posts.length}</div>
           <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
           <div>Publisher: {showPublisher ? 'Open' : 'Closed'}</div>
-          <div>Path: {typeof window !== 'undefined' ? window.location.pathname : 'SSR'}</div>
+          <div>Path: {pathname}</div>
+          <div>Body overflow: {typeof document !== 'undefined' ? document.documentElement.style.overflow || 'auto' : 'SSR'}</div>
+          <div>Fixed elements: {typeof document !== 'undefined' ? document.querySelectorAll('[class*="fixed"]').length : 'SSR'}</div>
         </div>
       )}
       
