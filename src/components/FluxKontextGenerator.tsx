@@ -878,23 +878,26 @@ export function FluxKontextGenerator() {
 
             {generatedImages.map((image, index) => (
               <div key={image.url || index} className="bg-gray-50 rounded-xl overflow-hidden shadow-sm relative group">
-                <div className="aspect-square">
-                  <SmartImagePreview
-                    url={image.url}
+                <div className="relative w-full"> 
+                  <Image
+                    src={image.url}
                     alt={`Generated: ${image.prompt}`}
-                    index={index}
-                    onRemove={() => setGeneratedImages(prev => prev.filter((_, i) => i !== index))}
+                    width={image.width || 512}
+                    height={image.height || 512}
+                    className="w-full h-auto object-contain bg-gray-100"
                   />
                 </div>
                 <div className="p-4">
-                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">{image.prompt}</p>
+                  <p className="text-sm text-gray-600 mb-2 line-clamp-2" title={image.prompt}>{image.prompt}</p>
                   <div className="flex items-center justify-between">
                     <Badge variant="outline" className="text-xs">
                       {image.action.replace('text-to-image-', '').replace('edit-image-', 'edit-').toUpperCase()}
                     </Badge>
-                    <Button size="sm" variant="outline">
-                      <Download className="w-4 h-4" />
-                    </Button>
+                    <a href={image.url} download={`labubuhub-${Date.now()}.png`} target="_blank" rel="noopener noreferrer">
+                      <Button size="sm" variant="outline">
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </a>
                   </div>
                 </div>
               </div>
