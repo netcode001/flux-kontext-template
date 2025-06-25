@@ -356,22 +356,12 @@ export function LabubuGalleryContent() {
             )}
           </div>
         ) : (
-          <div className="space-y-8">
-            {/* 作品网格 - 优化的瀑布流布局 */}
-            <div className={`${
-              viewMode === 'grid' 
-                ? 'columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-3 masonry-container columns-masonry' 
-                : 'grid grid-cols-1 max-w-2xl mx-auto gap-6'
-            } search-transition ${isLoading ? 'searching' : ''}`}>
-              {posts.map((post, index) => (
-                <div 
-                  key={post.id} 
-                  className={viewMode === 'grid' ? 'mb-3 masonry-item' : ''}
-                  style={viewMode === 'grid' ? { 
-                    // 添加轻微的延迟动画，减少布局跳动
-                    animationDelay: `${(index % 5) * 50}ms`
-                  } : {}}
-                >
+          <div className="relative">
+            {/* 瀑布流布局 - 添加 transform-gpu 开启硬件加速 */}
+            <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 transform-gpu">
+              {posts.map(post => (
+                // 添加 break-inside-avoid-column 防止卡片在列中被分割，解决闪动问题
+                <div key={post.id} className="break-inside-avoid">
                   <PostCard
                     post={post}
                     onLike={handleLike}
@@ -381,27 +371,27 @@ export function LabubuGalleryContent() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
 
-            {/* 加载更多按钮 */}
-            {hasMore && (
-              <div className="text-center py-10">
-                <LabubuButton
-                  variant="secondary"
-                  onClick={loadMore}
-                  disabled={isLoading}
-                  className="flex items-center gap-2 mx-auto"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>加载中...</span>
-                    </>
-                  ) : (
-                    '发现更多作品'
-                  )}
-                </LabubuButton>
-              </div>
-            )}
+        {/* 加载更多按钮 */}
+        {hasMore && (
+          <div className="text-center py-10">
+            <LabubuButton
+              variant="secondary"
+              onClick={loadMore}
+              disabled={isLoading}
+              className="flex items-center gap-2 mx-auto"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>加载中...</span>
+                </>
+              ) : (
+                '发现更多作品'
+              )}
+            </LabubuButton>
           </div>
         )}
       </div>
