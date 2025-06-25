@@ -57,6 +57,36 @@
 
 ### 🚀 版本更新
 
+#### 2025年01月23日 - v2.8.12 UI设计一致性修复 🎨 ✅ 已完成 ⭐ 设计规范统一
+
+**🎨 模型选择布局优化**:
+- 🏷️ **Recommended标签位置调整**: 将推荐标签从模型名称右侧移到上方，避免模型名称换行
+- 📐 **布局结构优化**: 标签独立占一行，模型名称和选择框占一行，描述和参数信息占一行
+- 🎯 **视觉层次清晰**: 推荐标签更加突出，模型信息层次分明
+- ✨ **避免文字换行**: 确保模型名称在一行内完整显示
+
+**🎨 主题色彩统一**:
+- 🌈 **统一labubu主题**: 将所有pink颜色替换为labubu主题色，与new-generator-design.html保持一致
+- 📝 **Image Description输入框**: focus状态使用`focus:ring-labubu-500 focus:border-labubu-500`
+- ✨ **AI Enhance按钮**: 使用`bg-labubu-100 text-labubu-700 hover:bg-labubu-200`
+- 🎯 **生成按钮**: 使用`from-labubu-500 to-labubu-600`渐变背景
+- 🔽 **下拉框focus**: Images Count、Aspect Ratio、Format都使用labubu主题色
+- 📤 **上传区域**: hover状态使用`hover:border-labubu-400 hover:bg-labubu-50`
+- 🤖 **模型选择**: 选中状态使用`border-labubu-200 bg-labubu-50`
+- ⚙️ **高级参数**: Strength和Safety数值显示使用`text-labubu-600`
+
+**🔧 技术实现详情**:
+- 📋 **模型卡片重构**: 调整HTML结构，推荐标签独立div，避免flex布局冲突
+- 🎨 **颜色系统统一**: 全面替换pink-*类为labubu-*类，保持品牌一致性
+- 📱 **响应式保持**: 修改不影响移动端和桌面端的响应式布局
+- 🛡️ **兼容性确保**: 修改不影响现有的hover、focus、disabled等交互状态
+
+**🎯 用户体验提升**:
+- 👁️ **视觉一致性**: 整个生成器界面与设计稿完全一致，品牌识别度更强
+- 📐 **布局清晰**: 模型选择区域信息层次更加清晰，用户选择更便捷
+- 🌈 **色彩和谐**: 统一的labubu主题色营造更好的视觉体验
+- ✅ **设计规范**: 完全符合new-generator-design.html的UI设计规范
+
 #### 2025年01月23日 - v2.8.11 高级设置面板文字颜色修复 🔧 ✅ 已完成 ⭐ 界面优化
 
 **🎨 高级设置面板可读性修复**:
