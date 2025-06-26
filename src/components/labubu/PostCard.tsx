@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/react'
 import { Heart, Bookmark, Eye, MessageCircle, Share2, MoreHorizontal, X, ChevronLeft, ChevronRight, Images } from 'lucide-react'
 import { PostWithUser } from '@/lib/database'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+// 移除Card组件，使用纯div避免默认边框
 import { Badge } from '@/components/ui/badge'
 import { useModalManager } from '@/hooks/useModalManager'
 
@@ -281,11 +281,11 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
   return (
     <>
       {/* 主卡片 */}
-      <Card 
-        className="group overflow-hidden transition-all duration-300 hover:scale-[1.02] bg-white border-gray-100 rounded-xl mb-3 break-inside-avoid cursor-pointer"
+      <div 
+        className="group overflow-hidden transition-all duration-300 bg-white rounded-xl cursor-pointer"
         onClick={handleCardClick}
       >
-        <CardContent className="p-0">
+        <div className="p-0">
           {/* 🖼️ 只显示第一张图片 */}
           {post.imageUrls.length > 0 && (
             <div className="relative">
@@ -324,7 +324,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
               </div>
             </div>
           )}
-        </CardContent>
+        </div>
 
         {/* 极简信息区域 */}
         <div className="p-2">
@@ -373,7 +373,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
             </div>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* 弹窗传送门 */}
       {showDetailModal && createPortal(modalContent, document.body)}

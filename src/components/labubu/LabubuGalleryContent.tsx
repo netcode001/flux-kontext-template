@@ -337,10 +337,10 @@ export function LabubuGalleryContent() {
           </div>
         ) : (
           <div className="relative">
-            {/* 瀑布流布局 - 简化样式，移除可能导致阴影的属性 */}
-            <div className="columns-1 sm:columns-2 md:columns-5 gap-4 space-y-4">
+            {/* 🔄 改为网格布局 - 避免瀑布流的叠加问题 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {posts.map(post => (
-                <div key={post.id} className="break-inside-avoid mb-4">
+                <div key={post.id} className="w-full">
                   <PostCard
                     post={post}
                     onLike={handleLike}
