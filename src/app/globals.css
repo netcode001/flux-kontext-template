@@ -85,18 +85,11 @@
     background: radial-gradient(ellipse at center, rgba(204, 175, 133, 0.1) 0%, rgba(11, 16, 19, 0.8) 70%);
   }
 
-  /* 🔧 强制覆盖：多图页面绝对不使用深色背景 */
-  .hero-gradient[data-page="labubu-gallery"],
-  .hero-gradient[data-page="dashboard"], 
-  .hero-gradient[data-page="wallpapers"],
-  [data-page="labubu-gallery"].hero-gradient,
-  [data-page="dashboard"].hero-gradient,
-  [data-page="wallpapers"].hero-gradient,
-  body:has([data-page="labubu-gallery"]) .hero-gradient,
-  body:has([data-page="dashboard"]) .hero-gradient,
-  body:has([data-page="wallpapers"]) .hero-gradient {
+  /* 🔧 精确修复：多图页面覆盖hero-gradient深色背景 */
+  [data-page="labubu-gallery"] .hero-gradient,
+  [data-page="dashboard"] .hero-gradient,
+  [data-page="wallpapers"] .hero-gradient {
     background: white !important;
-    background-image: none !important;
   }
 
   /* 多图页面例外：覆盖hero-gradient */
@@ -170,18 +163,11 @@
       background: radial-gradient(ellipse at center, rgba(204, 175, 133, 0.05) 0%, rgba(11, 16, 19, 0.9) 50%);
     }
     
-    /* 🔧 移动端强制覆盖：多图页面绝对不使用深色背景 */
-    .hero-gradient[data-page="labubu-gallery"],
-    .hero-gradient[data-page="dashboard"], 
-    .hero-gradient[data-page="wallpapers"],
-    [data-page="labubu-gallery"].hero-gradient,
-    [data-page="dashboard"].hero-gradient,
-    [data-page="wallpapers"].hero-gradient,
-    body:has([data-page="labubu-gallery"]) .hero-gradient,
-    body:has([data-page="dashboard"]) .hero-gradient,
-    body:has([data-page="wallpapers"]) .hero-gradient {
+    /* 🔧 移动端精确修复：多图页面覆盖hero-gradient深色背景 */
+    [data-page="labubu-gallery"] .hero-gradient,
+    [data-page="dashboard"] .hero-gradient,
+    [data-page="wallpapers"] .hero-gradient {
       background: white !important;
-      background-image: none !important;
     }
     
     /* 移动端多图页面例外 */
@@ -602,25 +588,10 @@
   background: white !important;
 }
 
-/* 💪 终极修复：最高优先级强制白色背景 */
-html:has([data-page="labubu-gallery"]),
-html:has([data-page="dashboard"]),
-html:has([data-page="wallpapers"]) {
+/* 🎯 精确修复：确保多图页面容器使用白色背景 */
+[data-page="labubu-gallery"],
+[data-page="dashboard"], 
+[data-page="wallpapers"] {
   background: white !important;
-}
-
-html:has([data-page="labubu-gallery"]) body,
-html:has([data-page="dashboard"]) body,
-html:has([data-page="wallpapers"]) body {
-  background: white !important;
-  background-image: none !important;
-}
-
-/* 确保ClientBody容器也是白色 */
-html:has([data-page="labubu-gallery"]) body > div,
-html:has([data-page="dashboard"]) body > div,
-html:has([data-page="wallpapers"]) body > div {
-  background: white !important;
-  background-image: none !important;
 }
 
