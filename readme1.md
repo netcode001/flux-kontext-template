@@ -197,6 +197,58 @@ Dashboard页面（http://localhost:3000/dashboard）功能异常，样式错乱�
 
 ---
 
+## 🎯 2025年1月 - 黑色阴影问题强力修复
+
+### 问题持续性
+用户反馈经过前期修复后，多图页面的黑色阴影问题仍然存在，需要更彻底的解决方案。
+
+### 强力修复方案 ✅
+实施了最高优先级的CSS修复，确保从根元素开始强制白色背景：
+
+#### 🔧 终极修复代码
+```css
+/* 💪 终极修复：最高优先级强制白色背景 */
+html:has([data-page="labubu-gallery"]),
+html:has([data-page="dashboard"]),
+html:has([data-page="wallpapers"]) {
+  background: white !important;
+}
+
+html:has([data-page="labubu-gallery"]) body,
+html:has([data-page="dashboard"]) body,
+html:has([data-page="wallpapers"]) body {
+  background: white !important;
+  background-image: none !important;
+}
+
+/* 确保ClientBody容器也是白色 */
+html:has([data-page="labubu-gallery"]) body > div,
+html:has([data-page="dashboard"]) body > div,
+html:has([data-page="wallpapers"]) body > div {
+  background: white !important;
+  background-image: none !important;
+}
+```
+
+#### 🎯 修复特点
+1. **html:has()选择器** - 从HTML根元素开始强制覆盖
+2. **多层级覆盖** - 覆盖html、body、ClientBody三个层级
+3. **background-image: none** - 移除所有渐变背景图
+4. **最高优先级** - 使用!important确保生效
+5. **桌面+移动端** - 同时修复两个平台的显示
+
+#### 📊 修复范围
+- ✅ Desktop端完全修复
+- ✅ Mobile端完全修复  
+- ✅ 所有hero-gradient类完全覆盖
+- ✅ Layout.tsx的body背景完全覆盖
+- ✅ ClientBody容器背景完全覆盖
+
+### 提交记录
+- `2246a61`: 🔧 强力修复：彻底解决多图页面黑色阴影问题
+
+---
+
 ## 🚀 快速开始
 
 ### 环境要求
