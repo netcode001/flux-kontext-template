@@ -212,8 +212,6 @@ export function LabubuGalleryContent() {
           <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
           <div>Publisher: {showPublisher ? 'Open' : 'Closed'}</div>
           <div>Path: {pathname}</div>
-          <div>Body overflow: {typeof document !== 'undefined' ? document.documentElement.style.overflow || 'auto' : 'SSR'}</div>
-          <div>Fixed elements: {typeof document !== 'undefined' ? document.querySelectorAll('[class*="fixed"]').length : 'SSR'}</div>
         </div>
       )}
       

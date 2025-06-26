@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function WallpapersPage() {
   return (
-    <div className="min-h-screen bg-hero-gradient">
+    <div className="min-h-screen" data-page="wallpapers">
       <WallpaperGalleryContent />
     </div>
   )

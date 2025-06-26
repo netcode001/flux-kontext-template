@@ -59,7 +59,7 @@ export default async function DashboardPage() {
   return (
     <>
       <DynamicNavigation />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" data-page="dashboard">
         {/* 页面标题区域 - 采用Labubu设计风格 */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mb-4">

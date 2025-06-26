@@ -532,29 +532,14 @@
 
 /* Force CSS refresh - 05/28/2025 18:43:11 */
 
-/* 🔧 临时调试：强制移除黑色阴影 */
-@media screen {
-  /* 移除所有可能的黑色背景 */
-  [class*="bg-black"],
-  [class*="bg-gray-900"],
-  [class*="bg-slate-900"],
-  .hero-gradient {
-    background: transparent !important;
-  }
-  
-  /* 移除所有fixed定位的黑色元素 */
-  .fixed[class*="bg-black"] {
-    display: none !important;
-  }
-  
-  /* 确保labubu-gallery页面使用白色背景 */
-  body:has([data-page="labubu-gallery"]) {
-    background: white !important;
-  }
-  
-  /* 移除所有可能的遮罩层 */
-  [class*="backdrop-blur"][class*="bg-black"],
-  [class*="backdrop-blur"][class*="inset-0"] {
-    display: none !important;
-  }
+/* 🎨 Labubu Gallery 页面专用样式修复 */
+[data-page="labubu-gallery"] {
+  background: white !important;
+}
+
+/* 确保多图页面不应用深色渐变背景 */
+[data-page="labubu-gallery"] .hero-gradient,
+[data-page="dashboard"] .hero-gradient,
+[data-page="wallpapers"] .hero-gradient {
+  background: white !important;
 }
