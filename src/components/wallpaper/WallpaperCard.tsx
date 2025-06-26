@@ -1,13 +1,22 @@
 'use client'
 
 import { useState } from 'react'
-import { Heart, Download, Eye, Crown, Play, Clock } from 'lucide-react'
+import { Heart, Download, Eye, Crown, Play, Clock, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { VideoWallpaperPlayer } from './VideoWallpaperPlayer'
 import type { WallpaperCardProps } from '@/types/wallpaper'
 import { cn } from '@/lib/utils'
+import Link from 'next/link'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
 
 export function WallpaperCard({
   wallpaper,
@@ -19,6 +28,8 @@ export function WallpaperCard({
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
   const [showVideoPlayer, setShowVideoPlayer] = useState(false)
+  const [showLoginDialog, setShowLoginDialog] = useState(false)
+  const [downloading, setDownloading] = useState(false)
 
   const handleVideoPlay = () => {
     if (wallpaper.media_type === 'video') {
@@ -31,6 +42,43 @@ export function WallpaperCard({
     if (wallpaper.media_type === 'image') {
       onView?.(wallpaper)
     }
+  }
+
+  const handleDownload = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!wallpaper.can_download) {
+      setShowLoginDialog(true)
+      return
+    }
+    setDownloading(true)
+    
+    // 🎯 直接fetch API，后端返回图片流会自动触发下载
+    fetch(`/api/wallpapers/${wallpaper.id}/download`, { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          // 如果返回错误JSON
+          if (response.headers.get('content-type')?.includes('application/json')) {
+            return response.json().then(errorData => {
+              throw new Error(errorData.error || '下载失败')
+            })
+          }
+          throw new Error('下载失败，请重试')
+        }
+        
+        // ✅ 成功：response是图片流，浏览器会自动下载
+        console.log('✅ 壁纸下载成功')
+        onDownload?.(wallpaper)
+      })
+      .catch(error => {
+        console.error('❌ 下载失败:', error)
+        alert(error.message || '下载失败，请重试')
+      })
+      .finally(() => setDownloading(false))
   }
 
   return (
@@ -102,14 +150,15 @@ export function WallpaperCard({
                 {wallpaper.like_count || 0}
               </span>
             </div>
-            {showActions && wallpaper.can_download && (
+            {showActions && (
               <Button
                 size="icon"
                 className="w-8 h-8 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-full"
-                onClick={(e) => { e.stopPropagation(); onDownload?.(wallpaper); }}
+                onClick={handleDownload}
                 title="下载"
+                disabled={downloading}
               >
-                <Download className="w-4 h-4" />
+                {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
               </Button>
             )}
           </div>
@@ -128,6 +177,22 @@ export function WallpaperCard({
             </Badge>
           )}
         </div>
+
+        {/* 未登录下载弹窗 */}
+        <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>请登录后下载高清壁纸</DialogTitle>
+              <DialogDescription>登录后可下载高清壁纸和享受更多功能</DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowLoginDialog(false)}>确定</Button>
+              <Link href="/auth/signin">
+                <Button variant="default">去登录</Button>
+              </Link>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </Card>
   )

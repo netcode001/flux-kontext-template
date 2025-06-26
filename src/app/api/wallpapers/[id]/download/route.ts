@@ -275,25 +275,63 @@ export async function POST(
       download_count: wallpaper.download_count + 1
     })
 
-    // 🎯 返回下载信息
-    return NextResponse.json({
-      success: true,
-      data: {
-        wallpaper: {
-          id: wallpaper.id,
-          title: wallpaper.title,
-          image_url: wallpaper.image_url,
-          file_size: wallpaper.file_size,
-          dimensions: wallpaper.dimensions,
-          original_filename: wallpaper.original_filename
-        },
-        download_url: wallpaper.image_url, // 直接返回图片URL
-        rate_limit: {
-          remaining: rateLimitCheck.remaining || 0,
-          reset_in_hours: 1
-        }
+    // 🖼️ 代理R2图片流 - 解决CORS问题
+    try {
+      console.log('📡 开始代理图片流:', wallpaper.image_url)
+      
+      // 🔍 从R2获取图片流
+      const imageResponse = await fetch(wallpaper.image_url)
+      
+      if (!imageResponse.ok) {
+        console.error('❌ R2图片获取失败:', imageResponse.status, imageResponse.statusText)
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: '图片资源暂时不可用，请稍后重试',
+            code: 'IMAGE_FETCH_FAILED'
+          },
+          { status: 503 }
+        )
       }
-    })
+
+      // 📦 获取图片二进制数据
+      const imageBuffer = await imageResponse.arrayBuffer()
+      
+      // 🏷️ 生成下载文件名
+      const fileExtension = wallpaper.original_filename?.split('.').pop() || 'jpg'
+      const safeTitle = wallpaper.title.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_').substring(0, 50)
+      const downloadFilename = `${safeTitle}.${fileExtension}`
+
+      console.log('📥 准备返回图片流:', {
+        filename: downloadFilename,
+        size: imageBuffer.byteLength,
+        contentType: imageResponse.headers.get('content-type')
+      })
+
+      // 🎯 返回图片流，设置下载响应头
+      return new NextResponse(imageBuffer, {
+        status: 200,
+        headers: {
+          'Content-Type': imageResponse.headers.get('content-type') || 'image/jpeg',
+          'Content-Disposition': `attachment; filename="${downloadFilename}"; filename*=UTF-8''${encodeURIComponent(downloadFilename)}`,
+          'Content-Length': imageBuffer.byteLength.toString(),
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      })
+
+    } catch (imageError) {
+      console.error('❌ 图片流代理失败:', imageError)
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: '图片下载失败，请稍后重试',
+          code: 'IMAGE_PROXY_FAILED'
+        },
+        { status: 500 }
+      )
+    }
 
   } catch (error) {
     console.error('❌ 壁纸下载API错误:', error)

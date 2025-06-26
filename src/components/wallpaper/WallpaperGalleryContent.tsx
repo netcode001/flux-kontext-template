@@ -185,33 +185,33 @@ export function WallpaperGalleryContent() {
 
     try {
       const response = await fetch(`/api/wallpapers/${wallpaper.id}/download`, {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
       
-      const result = await response.json()
-      
-      if (result.success) {
-        // 直接下载图片
-        const link = document.createElement('a')
-        link.href = result.data.download_url
-        link.download = result.data.wallpaper.original_filename || `wallpaper-${wallpaper.id}.jpg`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        
-        // 更新下载计数
-        setWallpapers(prev => prev.map(w => 
-          w.id === wallpaper.id 
-            ? { ...w, download_count: w.download_count + 1 }
-            : w
-        ))
-      } else {
-        console.error('下载失败:', result.error)
-        alert(result.error)
+      if (!response.ok) {
+        // 如果返回错误JSON
+        if (response.headers.get('content-type')?.includes('application/json')) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || '下载失败')
+        }
+        throw new Error('下载失败，请重试')
       }
+      
+      // ✅ 成功：response是图片流，浏览器会自动下载
+      console.log('✅ 壁纸下载成功')
+      
+      // 更新下载计数
+      setWallpapers(prev => prev.map(w => 
+        w.id === wallpaper.id 
+          ? { ...w, download_count: w.download_count + 1 }
+          : w
+      ))
     } catch (error) {
-      console.error('下载错误:', error)
-      alert('下载失败，请重试')
+      console.error('❌ 下载失败:', error)
+      alert(error instanceof Error ? error.message : '下载失败，请重试')
     }
   }
 

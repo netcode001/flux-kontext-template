@@ -2,41 +2,49 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { Download, Heart, Eye, Play, Image as ImageIcon } from 'lucide-react'
+import { Download, Heart, Eye, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { Wallpaper } from '@/types/wallpaper'
+import Link from 'next/link'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
+import { cn } from '@/lib/utils'
 
 // 壁纸数据类型
 interface WallpaperData {
   id: string
   title: string
-  description?: string
   image_url?: string
-  video_url?: string
   thumbnail_url?: string
-  preview_gif_url?: string
   media_type: 'image' | 'video'
-  tags: string[]
   download_count: number
-  view_count: number
   like_count: number
   is_liked?: boolean
   can_download?: boolean
+  view_count?: number
 }
 
 export function WallpaperCard() {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const [wallpapers, setWallpapers] = useState<WallpaperData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showLoginDialog, setShowLoginDialog] = useState(false)
+  const [downloadingId, setDownloadingId] = useState<string | null>(null)
 
   // 获取壁纸数据
   useEffect(() => {
     const fetchWallpapers = async () => {
       try {
         setLoading(true)
-        const response = await fetch('/api/wallpapers?limit=6&sort=popular')
+        const response = await fetch('/api/wallpapers?limit=4&sort=popular')
         
         if (!response.ok) {
           throw new Error('获取壁纸失败')
@@ -68,42 +76,45 @@ export function WallpaperCard() {
   const getMockWallpapers = (): WallpaperData[] => [
     {
       id: '1',
-      title: '梦幻星空动态壁纸',
-      description: '美丽的星空背景，适合夜晚使用',
+      title: '梦幻星空',
       image_url: '/images/wallpapers/starry-night.jpg',
+      thumbnail_url: '/images/wallpapers/starry-night.jpg',
       media_type: 'image',
-      tags: ['星空', '梦幻', '夜晚'],
       download_count: 1250,
-      view_count: 8900,
       like_count: 456,
       is_liked: false,
       can_download: !!session
     },
     {
       id: '2',
-      title: '樱花飘落动画壁纸',
-      description: '粉色樱花飘落效果，春季主题',
+      title: '樱花飘落',
       image_url: '/images/wallpapers/cherry-blossom.jpg',
-      preview_gif_url: '/images/wallpapers/cherry-blossom-preview.gif',
-      media_type: 'video',
-      tags: ['樱花', '春季', '粉色'],
+      thumbnail_url: '/images/wallpapers/cherry-blossom.jpg',
+      media_type: 'image',
       download_count: 980,
-      view_count: 6700,
       like_count: 234,
       is_liked: false,
       can_download: !!session
     },
     {
       id: '3',
-      title: '极光动态壁纸',
-      description: '北极光流动效果，神秘而美丽',
+      title: '极光',
       image_url: '/images/wallpapers/aurora.jpg',
-      preview_gif_url: '/images/wallpapers/aurora-preview.gif',
-      media_type: 'video',
-      tags: ['极光', '神秘', '蓝色'],
+      thumbnail_url: '/images/wallpapers/aurora.jpg',
+      media_type: 'image',
       download_count: 2100,
-      view_count: 15600,
       like_count: 789,
+      is_liked: false,
+      can_download: !!session
+    },
+    {
+      id: '4',
+      title: '泳池派对',
+      image_url: '/images/wallpapers/pool-party.jpg',
+      thumbnail_url: '/images/wallpapers/pool-party.jpg',
+      media_type: 'image',
+      download_count: 500,
+      like_count: 120,
       is_liked: false,
       can_download: !!session
     }
@@ -112,7 +123,7 @@ export function WallpaperCard() {
   // 处理点赞
   const handleLike = async (wallpaper: WallpaperData) => {
     if (!session) {
-      alert('请先登录才能点赞')
+      setShowLoginDialog(true)
       return
     }
 
@@ -148,39 +159,39 @@ export function WallpaperCard() {
   // 处理下载
   const handleDownload = async (wallpaper: WallpaperData) => {
     if (!session) {
-      alert('请先登录才能下载壁纸')
+      setShowLoginDialog(true)
       return
     }
-
+    setDownloadingId(wallpaper.id)
     try {
       const response = await fetch(`/api/wallpapers/${wallpaper.id}/download`, {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
       
-      const result = await response.json()
-      
-      if (result.success) {
-        // 直接下载图片
-        const link = document.createElement('a')
-        link.href = result.data.download_url
-        link.download = result.data.wallpaper.original_filename || `wallpaper-${wallpaper.id}.jpg`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        
-        // 更新下载计数
-        setWallpapers(prev => prev.map(w => 
-          w.id === wallpaper.id 
-            ? { ...w, download_count: w.download_count + 1 }
-            : w
-        ))
-      } else {
-        console.error('下载失败:', result.error)
-        alert(result.error)
+      if (!response.ok) {
+        // 如果返回错误JSON
+        if (response.headers.get('content-type')?.includes('application/json')) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || '下载失败')
+        }
+        throw new Error('下载失败，请重试')
       }
+      
+      // ✅ 成功：response是图片流，浏览器会自动下载
+      console.log('✅ 壁纸下载成功')
+      setWallpapers(prev => prev.map(w =>
+        w.id === wallpaper.id
+          ? { ...w, download_count: w.download_count + 1 }
+          : w
+      ))
     } catch (error) {
-      console.error('下载错误:', error)
-      alert('下载失败，请重试')
+      console.error('❌ 下载失败:', error)
+      alert(error instanceof Error ? error.message : '下载失败，请重试')
+    } finally {
+      setDownloadingId(null)
     }
   }
 
@@ -198,118 +209,75 @@ export function WallpaperCard() {
   const safeWallpapers = Array.isArray(wallpapers) ? wallpapers : getMockWallpapers()
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-purple-100">
-      {/* 卡片头部 */}
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl px-4 py-6 border border-purple-100 relative">
+      <div className="flex items-center mb-4">
         <div className="flex items-center space-x-3">
           <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center">
-            <ImageIcon className="w-6 h-6 text-white" />
+            <span className="text-white text-2xl">🎨</span>
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-800">🎨 精美壁纸</h3>
+            <h3 className="text-xl font-bold text-gray-800">精美壁纸</h3>
             <p className="text-sm text-gray-600">高清动态壁纸，让桌面更生动</p>
           </div>
         </div>
-        
-        <Badge variant="secondary" className="bg-purple-100 text-purple-700">
-          {safeWallpapers.length} 张
-        </Badge>
+        {/* 查看更多按钮右上角绝对定位 */}
+        <a
+          href="/wallpapers"
+          className="absolute top-6 right-8 inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-medium rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-105 shadow-lg z-10"
+        >
+          查看更多
+        </a>
       </div>
-
-      {/* 壁纸预览网格 */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        {safeWallpapers.slice(0, 4).map((wallpaper) => (
+      {/* 壁纸图片网格 */}
+      <div className="grid grid-cols-4 gap-6 mb-2">
+        {safeWallpapers.map((wallpaper) => (
           <div
             key={wallpaper.id}
-            className="relative group cursor-pointer rounded-xl overflow-hidden bg-gray-200 aspect-video"
+            className="group relative w-full overflow-hidden rounded-lg transition-all duration-300 border-none bg-transparent p-0 aspect-[9/16] min-h-[420px] max-h-[520px]"
           >
-            {/* 壁纸图片 */}
-            <div 
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `url(${wallpaper.thumbnail_url || wallpaper.image_url || '/images/wallpapers/default.jpg'})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}
-            >
-              {/* 占位图 */}
-              <div className="w-full h-full bg-gradient-to-br from-purple-200 to-pink-200 flex items-center justify-center">
-                <div className="text-2xl">
-                  {wallpaper.media_type === 'video' ? '🎬' : '🖼️'}
+            <img
+              src={wallpaper.thumbnail_url || wallpaper.image_url || '/images/wallpapers/default.jpg'}
+              alt={wallpaper.title}
+              className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+              draggable={false}
+              style={{ minHeight: '420px', maxHeight: '520px' }}
+            />
+            {/* 悬浮信息层 */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <h3 className="font-semibold text-white text-base mb-2 line-clamp-2">
+                {wallpaper.title}
+              </h3>
+              <div className="flex items-center justify-between text-xs text-gray-200">
+                <div className="flex items-center gap-4">
+                  <span className="flex items-center gap-1.5" title="浏览量">
+                    <Eye className="w-5 h-5" />
+                    {wallpaper.view_count || 0}
+                  </span>
+                  <button
+                    className="flex items-center gap-1.5 cursor-pointer hover:text-white text-base"
+                    title="点赞"
+                    onClick={(e) => { e.stopPropagation(); handleLike(wallpaper) }}
+                  >
+                    <Heart className={cn('w-5 h-5 transition-colors', wallpaper.is_liked ? 'text-red-500 fill-current' : 'hover:text-red-400')} />
+                    {wallpaper.like_count || 0}
+                  </button>
                 </div>
-              </div>
-            </div>
-            
-            {/* 视频播放图标 */}
-            {wallpaper.media_type === 'video' && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-8 h-8 bg-black/50 rounded-full flex items-center justify-center">
-                  <Play className="w-4 h-4 text-white fill-white" />
-                </div>
-              </div>
-            )}
-            
-            {/* 悬停操作 */}
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-2">
-              <Button
-                size="sm"
-                variant="secondary"
-                className="bg-white/90 text-gray-800 hover:bg-white"
-                onClick={() => handleLike(wallpaper)}
-              >
-                <Heart className={`w-3 h-3 ${wallpaper.is_liked ? 'fill-red-500 text-red-500' : ''}`} />
-              </Button>
-              
-              {session ? (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="bg-white/90 text-gray-800 hover:bg-white"
-                  onClick={() => handleDownload(wallpaper)}
+                <button
+                  className="w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-full text-base"
+                  onClick={(e) => { e.stopPropagation(); session ? handleDownload(wallpaper) : setShowLoginDialog(true) }}
+                  title="下载"
+                  disabled={downloadingId === wallpaper.id}
                 >
-                  <Download className="w-3 h-3" />
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="bg-white/90 text-gray-800 hover:bg-white"
-                  onClick={() => alert('请先登录才能下载')}
-                >
-                  <Eye className="w-3 h-3" />
-                </Button>
-              )}
-            </div>
-            
-            {/* 统计信息 */}
-            <div className="absolute bottom-1 left-1 right-1">
-              <div className="flex items-center justify-between text-xs text-white bg-black/50 backdrop-blur-sm rounded px-2 py-1">
-                <span className="flex items-center space-x-1">
-                  <Download className="w-2 h-2" />
-                  <span>{formatNumber(wallpaper.download_count)}</span>
-                </span>
-                <span className="flex items-center space-x-1">
-                  <Heart className="w-2 h-2" />
-                  <span>{formatNumber(wallpaper.like_count)}</span>
-                </span>
+                  {downloadingId === wallpaper.id ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Download className="w-5 h-5" />
+                  )}
+                </button>
               </div>
             </div>
           </div>
         ))}
-      </div>
-
-      {/* 卡片底部 */}
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-600">
-          {session ? '登录用户可下载高清版本' : '登录后即可下载高清壁纸'}
-        </div>
-        
-        <a
-          href="/wallpapers"
-          className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-medium rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-105"
-        >
-          查看更多
-        </a>
       </div>
 
       {/* 加载状态 */}
@@ -327,6 +295,22 @@ export function WallpaperCard() {
           </p>
         </div>
       )}
+
+      {/* 未登录下载弹窗 */}
+      <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>请登录后下载高清壁纸</DialogTitle>
+            <DialogDescription>登录后可下载高清壁纸和享受更多功能</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowLoginDialog(false)}>确定</Button>
+            <Link href="/auth/signin">
+              <Button variant="default">去登录</Button>
+            </Link>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 } 

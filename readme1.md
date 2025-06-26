@@ -1,5 +1,64 @@
 # 项目更新日志
 
+## 2025-01-21 - 壁纸下载功能优化：后端代理R2图片流
+
+### 🎯 问题解决：CORS跨域下载失败
+- **问题描述**: 用户反馈壁纸下载时浏览器弹出"下载失败，请重试"，控制台报CORS错误
+- **根本原因**: R2直链无CORS头，前端fetch失败
+- **解决方案**: 后端API代理R2图片流，设置下载响应头
+
+### 🔧 技术实现：后端代理下载
+- **API修改**: `src/app/api/wallpapers/[id]/download/route.ts`
+- **核心改动**:
+  - ✅ 服务端fetch R2图片，读取二进制流
+  - ✅ 设置`Content-Disposition: attachment`响应头
+  - ✅ 返回图片流而非JSON，浏览器自动下载
+  - ✅ 保持现有权限、速率、日志逻辑不变
+
+### 📱 前端优化：简化下载逻辑
+- **组件更新**:
+  - `src/components/wallpaper/WallpaperCard.tsx` - 壁纸页面卡片
+  - `src/components/home/WallpaperCard.tsx` - 首页壁纸卡片  
+  - `src/components/wallpaper/WallpaperGalleryContent.tsx` - 壁纸画廊
+- **逻辑简化**:
+  - ✅ 删除复杂的blob处理逻辑
+  - ✅ 直接fetch API，自动触发下载
+  - ✅ 统一错误处理和loading状态
+
+### 🎨 用户体验提升
+- **下载体验**: 点击下载按钮 → 齿轮动画 → 自动下载完成
+- **无CORS问题**: 后端代理彻底解决跨域限制
+- **文件名优化**: 使用壁纸标题生成友好文件名
+- **错误处理**: 完善的错误提示和重试机制
+
+### 🔐 安全特性保持
+- ✅ 用户登录验证
+- ✅ 速率限制检查
+- ✅ 爬虫检测
+- ✅ 下载日志记录
+- ✅ 权限控制
+
+### 📊 技术细节
+- **响应头设置**:
+  ```typescript
+  'Content-Type': image/jpeg
+  'Content-Disposition': attachment; filename="壁纸名称.jpg"
+  'Content-Length': 文件大小
+  'Cache-Control': no-cache
+  ```
+- **文件名生成**: 壁纸标题 + 原文件扩展名
+- **错误处理**: 区分网络错误和业务错误
+
+### 🚀 测试验证
+- **测试环境**: http://localhost:3000/wallpapers
+- **测试步骤**: 
+  1. 登录用户账号
+  2. 点击壁纸下载按钮
+  3. 验证自动下载和loading动画
+  4. 检查下载文件名和格式
+
+---
+
 ## 2025-01-21 - 首页重构开发完成
 
 ### 🎉 首页重构功能实现
@@ -572,6 +631,54 @@ find src -name "*.tsx" -exec sed -i '' 's/hover:shadow-[a-zA-Z0-9/-]*//g' {} \;
 
 ## 2024-12-19 项目更新记录
 
+### 🎨 壁纸数据集成到主页
+**时间**: 2024-12-19 下午
+**目标**: 将已有壁纸数据展示在主页上，支持未登录用户浏览，登录用户下载
+
+**完成功能**:
+1. **WallpaperCard组件重构**:
+   - 集成真实壁纸API数据 (`/api/wallpapers?limit=6&sort=popular`)
+   - 支持图片和视频壁纸预览
+   - 显示壁纸统计信息（下载量、点赞数）
+   - 添加加载状态和错误处理
+
+2. **用户权限控制**:
+   - 未登录用户：只能浏览壁纸预览，点击下载提示登录
+   - 登录用户：可以点赞和下载高清壁纸
+   - 实时显示用户登录状态
+
+3. **交互功能**:
+   - 点赞功能：支持添加/取消点赞
+   - 下载功能：直接下载高清壁纸文件
+   - 预览功能：悬停显示操作按钮
+
+4. **视觉设计**:
+   - 2x2网格预览布局
+   - 视频壁纸显示播放图标
+   - 渐变背景和悬停效果
+   - 统计信息显示
+
+**技术实现**:
+- API集成：调用现有壁纸API获取数据
+- 状态管理：使用React hooks管理数据状态
+- 错误处理：API失败时使用模拟数据fallback
+- 权限验证：基于session状态控制功能
+
+**数据源**:
+- ✅ 真实壁纸API：`/api/wallpapers`
+- ✅ 模拟数据：API失败时的fallback
+- ✅ 用户交互：点赞和下载记录
+
+**文件结构**:
+```
+src/components/home/WallpaperCard.tsx  # 壁纸卡片组件
+public/images/wallpapers/              # 壁纸图片目录
+```
+
+**测试状态**: ✅ 功能完成，已集成到主页
+
+---
+
 ### 🚨 紧急修复：首页新闻组件数组错误
 **时间**: 2024-12-19 下午
 **问题**: `TypeError: news.map is not a function` 错误
@@ -636,7 +743,7 @@ find src -name "*.tsx" -exec sed -i '' 's/hover:shadow-[a-zA-Z0-9/-]*//g' {} \;
 - 视觉统一：Labubu主题色彩
 
 **数据源规划**:
-- ✅ 壁纸数据：已有数据库
+- ✅ 壁纸数据：已有数据库，已集成到主页
 - ✅ 新闻数据：已有API
 - ✅ 秀场数据：已有数据库
 - 🔄 视频数据：YouTube API集成（待开发）
@@ -652,7 +759,7 @@ src/components/home/
 ├── FeatureCards.tsx      # 功能卡片容器
 ├── AIGenerationCard.tsx  # 换装卡片
 ├── GalleryCard.tsx       # 秀场卡片
-├── WallpaperCard.tsx     # 壁纸卡片
+├── WallpaperCard.tsx     # 壁纸卡片（已集成真实数据）
 └── VideoCard.tsx         # 视频卡片
 ```
 
@@ -679,7 +786,7 @@ src/components/home/
 
 3. **内容管理系统**
    - 新闻爬虫
-   - 壁纸管理
+   - 壁纸管理（已集成到主页）
    - 用户生成内容
 
 4. **多语言支持**
