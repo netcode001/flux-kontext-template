@@ -59,14 +59,20 @@
 1. **模态框功能正常** - 通过全局模态框管理器已修复模态框状态冲突
 2. **根本原因确定** - hero-gradient CSS类的深色渐变背景导致阴影
 3. **CSS层叠问题** - ClientBody组件的背景样式优先级问题
+4. **页面级样式覆盖** - wallpapers页面直接使用了bg-hero-gradient类
 
-### 解决方案
-1. **扩展清爽页面列表** - 在ClientBody.tsx中添加更多需要清爽背景的页面
-2. **明确背景设置** - 为清爽页面明确设置`bg-white`类
-3. **样式优化** - 简化瀑布流布局，移除可能导致GPU渲染问题的属性
+### 最终解决方案 ✅
+经过系统性排查，发现问题有多个层面：
 
-### 技术细节
-```typescript
+#### 1. 页面级别修复
+```tsx
+// wallpapers/page.tsx - 移除深色背景
+- <div className="min-h-screen bg-hero-gradient">
++ <div className="min-h-screen" data-page="wallpapers">
+```
+
+#### 2. 组件级别修复
+```tsx
 // ClientBody.tsx - 清爽背景页面配置
 const cleanBackgroundPages = [
   '/labubu-gallery',
@@ -75,7 +81,6 @@ const cleanBackgroundPages = [
   '/秀场'
 ];
 
-// 明确设置背景样式
 const containerClasses = [
   geistSans.variable,
   geistMono.variable,
@@ -84,23 +89,54 @@ const containerClasses = [
 ].filter(Boolean).join(' ');
 ```
 
-### CSS样式分析
+#### 3. CSS级别修复
 ```css
-/* 问题源头 - hero-gradient的深色渐变 */
+/* 🎨 Labubu Gallery 页面专用样式修复 */
+[data-page="labubu-gallery"] {
+  background: white !important;
+}
+
+/* 确保多图页面不应用深色渐变背景 */
+[data-page="labubu-gallery"] .hero-gradient,
+[data-page="dashboard"] .hero-gradient,
+[data-page="wallpapers"] .hero-gradient {
+  background: white !important;
+}
+```
+
+### 技术细节分析
+
+#### 问题源头
+```css
+/* 深色渐变导致阴影效果 */
 .hero-gradient {
   background: radial-gradient(ellipse at center, rgba(204, 175, 133, 0.1) 0%, rgba(11, 16, 19, 0.8) 70%);
 }
 ```
 
+#### 调试过程
+1. **强制CSS规则测试** - 通过临时移除所有黑色背景确认问题源头
+2. **水合错误修复** - 移除导致SSR不匹配的`typeof window`检查
+3. **页面标识系统** - 使用`data-page`属性精确控制样式
+
 ### 修复效果
-- ✅ Dashboard页面：白色背景，图片正常显示
-- ✅ Labubu-gallery页面：清爽背景，无黑色阴影
-- ✅ 模态框功能：正常打开/关闭，状态管理完善
-- ✅ 瀑布流布局：简化样式，性能优化
+- ✅ **Dashboard页面**: 白色背景，图片正常显示，无阴影
+- ✅ **Labubu-gallery页面**: 清爽背景，模态框正常工作，无阴影  
+- ✅ **Wallpapers页面**: 白色背景，多图布局正常，无阴影
+- ✅ **模态框功能**: 全局状态管理，正常打开/关闭
+- ✅ **水合错误**: 完全修复，无SSR不匹配警告
 
 ### 提交记录
+- `dc97321`: ✅ 修复: 彻底解决多图页面黑色阴影问题
+- `5f6548d`: 🔧 调试: 添加强制CSS规则移除黑色阴影  
 - `b924c63`: 🎨 修复: 为多图页面明确设置白色背景
 - `a2820aa`: 🔧 诊断: 添加路径调试信息，简化瀑布流样式
+
+### 经验总结
+1. **系统性排查** - 从CSS、组件、页面三个层面全面检查
+2. **临时调试法** - 使用强制CSS规则快速定位问题源头
+3. **精确修复** - 避免过度修复，只针对问题页面实施修复
+4. **防范措施** - 建立页面标识系统，防止类似问题复发
 
 ---
 
