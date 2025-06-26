@@ -4,7 +4,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { runNewsCrawlerTask } from '@/lib/services/news-crawler'
+import { runNewsCrawlerTask, getNewsSourceStats } from '@/lib/services/news-crawler'
 
 // 🚀 POST - 手动触发新闻获取
 export async function POST(request: NextRequest) {
@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 🚀 执行新闻获取任务
-    const result = await runNewsCrawlerTask()
+    // 🚀 执行新闻获取任务，返回详细日志
+    const result = await runNewsCrawlerTask({ withLogs: true })
 
     console.log('✅ 新闻爬虫任务完成:', result)
 
@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
       data: {
         articlesCount: result.count,
         message: result.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        logs: result.logs || []
       }
     })
 
@@ -79,20 +80,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // 获取每个数据源的累计抓取数量
+    const sourcesStats = await getNewsSourceStats()
+
     // 📊 返回爬虫状态信息
     return NextResponse.json({
       success: true,
       data: {
         status: 'ready',
         lastRun: null, // 实际项目中可以从数据库获取
-        sources: [
-          'BBC News',
-          'CNN', 
-          'Reuters',
-          'Entertainment Weekly',
-          'Hypebeast',
-          '社交媒体模拟数据'
-        ],
+        sources: sourcesStats, // [{ name, count }]
         message: '新闻爬虫服务就绪，可手动触发获取任务'
       }
     })
