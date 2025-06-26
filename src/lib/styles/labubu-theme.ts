@@ -19,14 +19,7 @@ export const labubuStyles = {
     white: 'bg-white/95',
   },
 
-  // 阴影效果
-  shadows: {
-    soft: 'shadow-soft',
-    card: 'shadow-card',
-    labubu: 'shadow-labubu',
-    hover: 'shadow-hover',
-    warm: 'shadow-warm',
-  },
+
 
   // 边框圆角
   rounded: {
@@ -43,12 +36,11 @@ export const labubuStyles = {
     slow: 'transition-all duration-500',
   },
 
-  // 悬停效果
+      // 悬停效果
   hover: {
     scale: 'hover:scale-105',
     scaleSmall: 'hover:scale-102',
     lift: 'hover:-translate-y-0.5',
-    shadow: 'hover:shadow-labubu',
   },
 
   // 激活效果
@@ -102,17 +94,17 @@ export const labubuStyles = {
   components: {
     // 按钮样式
     button: {
-      primary: 'bg-gradient-to-r from-labubu-500 to-labubu-600 text-white hover:from-labubu-600 hover:to-labubu-700 hover:scale-105 active:scale-95 transition-all duration-300 shadow-labubu hover:shadow-hover rounded-2xl',
-      secondary: 'border-labubu-300 text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 hover:scale-105 active:scale-95 transition-all duration-300 rounded-2xl hover:border-labubu-400 hover:shadow-soft',
+      primary: 'bg-gradient-to-r from-labubu-500 to-labubu-600 text-white hover:from-labubu-600 hover:to-labubu-700 hover:scale-105 active:scale-95 transition-all duration-300 rounded-2xl',
+      secondary: 'border-labubu-300 text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 hover:scale-105 active:scale-95 transition-all duration-300 rounded-2xl hover:border-labubu-400',
       ghost: 'text-soft-700 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 hover:scale-105 active:scale-95 transition-all duration-300 rounded-2xl',
-      warm: 'bg-gradient-to-r from-warm-400 to-warm-500 text-white hover:from-warm-500 hover:to-warm-600 hover:scale-105 active:scale-95 transition-all duration-300 shadow-warm hover:shadow-hover rounded-2xl',
+      warm: 'bg-gradient-to-r from-warm-400 to-warm-500 text-white hover:from-warm-500 hover:to-warm-600 hover:scale-105 active:scale-95 transition-all duration-300 rounded-2xl',
     },
 
     // 卡片样式
     card: {
-      default: 'bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl shadow-card hover:shadow-hover transition-all duration-300',
-      gradient: 'bg-gradient-to-br from-white to-labubu-50/30 border border-labubu-200/30 rounded-2xl shadow-card hover:shadow-hover transition-all duration-300',
-      interactive: 'bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl shadow-card hover:shadow-hover hover:scale-105 hover:-translate-y-1 transition-all duration-300 cursor-pointer',
+      default: 'bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl transition-all duration-300',
+      gradient: 'bg-gradient-to-br from-white to-labubu-50/30 border border-labubu-200/30 rounded-2xl transition-all duration-300',
+      interactive: 'bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl hover:scale-105 hover:-translate-y-1 transition-all duration-300 cursor-pointer',
     },
 
     // 输入框样式
@@ -130,16 +122,16 @@ export const labubuStyles = {
 
     // 导航样式
     nav: {
-      link: 'relative transition-all duration-300 hover:font-semibold active:scale-95 flex items-center space-x-2 px-4 py-2 rounded-2xl hover:shadow-labubu hover:-translate-y-0.5',
-      activeLink: 'text-labubu-600 font-semibold bg-gradient-to-r from-labubu-50 to-labubu-100 shadow-labubu',
+      link: 'relative transition-all duration-300 hover:font-semibold active:scale-95 flex items-center space-x-2 px-4 py-2 rounded-2xl hover:-translate-y-0.5',
+      activeLink: 'text-labubu-600 font-semibold bg-gradient-to-r from-labubu-50 to-labubu-100',
       inactiveLink: 'text-soft-700 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50',
-      dropdown: 'bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl shadow-card py-3',
+      dropdown: 'bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl py-3',
       dropdownItem: 'flex items-center space-x-3 px-4 py-3 text-sm transition-all duration-300 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 rounded-xl mx-2 hover:scale-105 active:scale-95',
     },
 
     // 页眉样式
     header: {
-      default: 'bg-white/70 backdrop-blur-md shadow-soft border-b border-labubu-200/30',
+      default: 'bg-white/70 backdrop-blur-md border-b border-labubu-200/30',
       transparent: 'bg-transparent',
     },
 

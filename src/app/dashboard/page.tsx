@@ -72,7 +72,7 @@ export default async function DashboardPage() {
 
         {userGenerations.length === 0 ? (
           // 空状态 - 采用Labubu设计风格的卡片
-          <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 text-center max-w-lg mx-auto">
+          <div className="bg-white rounded-3xl p-8  border border-gray-100 text-center max-w-lg mx-auto">
             <div className="h-32 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mb-6">
               <span className="text-5xl">🖼️</span>
             </div>

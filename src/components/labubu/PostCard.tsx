@@ -183,7 +183,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
       onClick={handleCloseModal}
     >
       <div 
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col lg:flex-row overflow-hidden animate-in zoom-in-95"
+        className="relative bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col lg:flex-row overflow-hidden animate-in zoom-in-95"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 关闭按钮 */}
@@ -282,7 +282,7 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
     <>
       {/* 主卡片 */}
       <Card 
-        className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-white border-gray-100 rounded-xl mb-3 break-inside-avoid cursor-pointer"
+        className="group overflow-hidden transition-all duration-300 hover:scale-[1.02] bg-white border-gray-100 rounded-xl mb-3 break-inside-avoid cursor-pointer"
         onClick={handleCardClick}
       >
         <CardContent className="p-0">

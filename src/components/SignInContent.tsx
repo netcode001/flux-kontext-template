@@ -219,7 +219,7 @@ export function SignInContent() {
               </div>
             )}
 
-            <div className="rounded-md shadow-sm -space-y-px">
+            <div className="rounded-md  -space-y-px">
               <div>
                 <label htmlFor="email" className="sr-only">
                   Email address

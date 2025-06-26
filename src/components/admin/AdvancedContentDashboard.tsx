@@ -349,7 +349,7 @@ export function AdvancedContentDashboard() {
               onClick={() => setActiveTab(tab.key as any)}
               className={`flex-1 px-6 py-3 rounded-xl font-medium transition-all ${
                 activeTab === tab.key
-                  ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white '
                   : 'text-gray-600 hover:bg-white/50'
               }`}
             >
@@ -706,7 +706,7 @@ export function AdvancedContentDashboard() {
         {/* 🔄 加载状态 */}
         {loading && (
           <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-8 shadow-2xl">
+            <div className="bg-white rounded-2xl p-8 ">
               <div className="flex items-center space-x-3">
                 <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
                 <span className="text-gray-700">加载中...</span>

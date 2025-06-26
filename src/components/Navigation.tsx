@@ -64,7 +64,7 @@ export function Navigation() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md shadow-soft border-b border-labubu-200/30">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md  border-b border-labubu-200/30">
       <div className="container mx-auto px-4 h-16 flex items-center">
         {/* 左侧：Logo */}
         <div className="flex-shrink-0">
@@ -85,9 +85,9 @@ export function Navigation() {
                 <div className="relative resources-dropdown">
                   <button
                     onClick={() => setIsResourcesMenuOpen(!isResourcesMenuOpen)}
-                    className={`flex items-center space-x-2 relative transition-all duration-300 hover:font-semibold active:scale-95 px-4 py-2 rounded-2xl hover:shadow-labubu hover:-translate-y-0.5 ${
+                    className={`flex items-center space-x-2 relative transition-all duration-300 hover:font-semibold active:scale-95 px-4 py-2 rounded-2xl hover: hover:-translate-y-0.5 ${
                       pathname.startsWith('/resources') 
-                        ? 'text-labubu-600 font-semibold bg-gradient-to-r from-labubu-50 to-labubu-100 shadow-labubu' 
+                        ? 'text-labubu-600 font-semibold bg-gradient-to-r from-labubu-50 to-labubu-100 ' 
                         : 'text-gray-800 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50'
                     }`}
                   >
@@ -105,7 +105,7 @@ export function Navigation() {
                   
                   {/* Resources下拉菜单内容 */}
                   {isResourcesMenuOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl shadow-card py-3 z-[9999]">
+                    <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl  py-3 z-[9999]">
                       {link.subItems?.map((subItem) => (
                         <Link
                           key={subItem.href}
@@ -124,9 +124,9 @@ export function Navigation() {
                 // 普通导航链接
                 <Link 
                   href={link.href} 
-                  className={`relative transition-all duration-300 hover:font-semibold active:scale-95 flex items-center space-x-2 px-4 py-2 rounded-2xl hover:shadow-labubu hover:-translate-y-0.5 ${
+                  className={`relative transition-all duration-300 hover:font-semibold active:scale-95 flex items-center space-x-2 px-4 py-2 rounded-2xl hover: hover:-translate-y-0.5 ${
                     pathname === link.href 
-                      ? 'text-labubu-600 font-semibold bg-gradient-to-r from-labubu-50 to-labubu-100 shadow-labubu' 
+                      ? 'text-labubu-600 font-semibold bg-gradient-to-r from-labubu-50 to-labubu-100 ' 
                       : 'text-gray-800 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50'
                   }`}
                 >
@@ -157,7 +157,7 @@ export function Navigation() {
             <div className="relative user-dropdown">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center space-x-2 p-2 rounded-2xl bg-white border border-gray-200 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 transition-all duration-300 hover:shadow-labubu hover:-translate-y-0.5 active:scale-95"
+                className="flex items-center space-x-2 p-2 rounded-2xl bg-white border border-gray-200 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 transition-all duration-300 hover: hover:-translate-y-0.5 active:scale-95"
               >
                 {session.user?.image ? (
                   <img 
@@ -176,7 +176,7 @@ export function Navigation() {
               
               {/* 用户下拉菜单 */}
               {isUserMenuOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl shadow-card py-3 z-[9999]">
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl  py-3 z-[9999]">
                   <Link
                     href="/dashboard"
                     className="block px-4 py-3 text-sm transition-all duration-300 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 rounded-xl mx-2 hover:scale-105 active:scale-95 text-gray-800 hover:text-labubu-600"
@@ -210,7 +210,7 @@ export function Navigation() {
               <Link href="/auth/signup">
                 <Button 
                   size="sm" 
-                  className="bg-gradient-to-r from-labubu-500 to-labubu-600 text-white hover:from-labubu-600 hover:to-labubu-700 hover:scale-105 active:scale-95 transition-all duration-300 shadow-labubu hover:shadow-hover rounded-2xl px-6"
+                  className="bg-gradient-to-r from-labubu-500 to-labubu-600 text-white hover:from-labubu-600 hover:to-labubu-700 hover:scale-105 active:scale-95 transition-all duration-300  hover: rounded-2xl px-6"
                 >
                   {common.buttons.signUp}
                 </Button>

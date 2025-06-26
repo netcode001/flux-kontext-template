@@ -215,7 +215,7 @@ export function DynamicNavigation({ fullWidth = false }: DynamicNavigationProps)
           
           {/* 下拉菜单内容 */}
           {isResourcesMenuOpen && (
-            <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-purple-100 rounded-xl shadow-lg py-2 z-[9999]">
+            <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-purple-100 rounded-xl  py-2 z-[9999]">
               {item.children.map((subItem) => (
                 hasPermission(subItem) && (
                   <Link
@@ -320,7 +320,7 @@ export function DynamicNavigation({ fullWidth = false }: DynamicNavigationProps)
                 
                 {/* 用户下拉菜单 */}
                 {isUserMenuOpen && (
-                  <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-purple-100 rounded-xl shadow-lg py-2 z-[9999]">
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-purple-100 rounded-xl  py-2 z-[9999]">
                     <Link
                       href="/dashboard"
                       className="block px-4 py-3 text-sm transition-colors hover:bg-purple-50 hover:text-purple-600"

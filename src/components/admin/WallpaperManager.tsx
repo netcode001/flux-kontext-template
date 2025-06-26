@@ -152,7 +152,7 @@ export function WallpaperManager() {
                 <div 
                   key={wp.id} 
                   className={cn(
-                    "relative group aspect-[9/16] bg-gray-200 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md transition-all hover:shadow-xl hover:-translate-y-1 cursor-pointer",
+                    "relative group aspect-[9/16] bg-gray-200 dark:bg-gray-800 rounded-lg overflow-hidden transition-all hover:-translate-y-1 cursor-pointer",
                     isSelected && "ring-2 ring-blue-500 ring-inset"
                   )}
                   onClick={() => handleSelectionChange(wp.id)}
@@ -195,7 +195,7 @@ export function WallpaperManager() {
                   </div>
                   
                   <div className="absolute bottom-0 left-0 p-3 w-full">
-                     <p className="text-white font-bold text-sm truncate drop-shadow-lg">{wp.title}</p>
+                     <p className="text-white font-bold text-sm truncate">{wp.title}</p>
                      <span className={`text-xs px-2 py-1 rounded-full mt-1 inline-block ${wp.is_active ? 'bg-green-500/80 text-white' : 'bg-red-500/80 text-white'}`}>
                         {wp.is_active ? '已激活' : '未激活'}
                      </span>

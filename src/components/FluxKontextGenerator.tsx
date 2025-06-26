@@ -520,7 +520,7 @@ export function FluxKontextGenerator() {
       )}
 
       {/* 主要生成界面卡片 */}
-      <div className="relative bg-white rounded-3xl shadow-lg border border-purple-100 p-6 mb-6">
+      <div className="relative bg-white rounded-3xl  border border-purple-100 p-6 mb-6">
         
         {/* 顶部：只保留标题 */}
                 <div className="text-center mb-6">
@@ -649,7 +649,7 @@ export function FluxKontextGenerator() {
             <Button 
               onClick={handleGenerate}
               disabled={isGenerating || !textPrompt.trim()}
-              className="w-full bg-gradient-to-r from-labubu-500 to-labubu-600 text-white px-4 py-7 rounded-xl font-medium hover:from-labubu-600 hover:to-labubu-700 transition-all hover:scale-105 shadow-lg text-base"
+              className="w-full bg-gradient-to-r from-labubu-500 to-labubu-600 text-white px-4 py-7 rounded-xl font-medium hover:from-labubu-600 hover:to-labubu-700 transition-all hover:scale-105  text-base"
             >
               {isGenerating ? (
                 <>
@@ -669,7 +669,7 @@ export function FluxKontextGenerator() {
       <div className="absolute bottom-4 right-6 z-10">
         <div className="flex items-center gap-2">
           {/* 用户状态信息 */}
-          <div className="flex items-center gap-3 text-xs text-gray-500 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-lg">
+          <div className="flex items-center gap-3 text-xs text-gray-500 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 ">
             <div className="flex items-center gap-1">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span>{session ? 'Registered User' : 'Guest User'}</span>
@@ -685,7 +685,7 @@ export function FluxKontextGenerator() {
           </div>
 
           {/* 积分显示和购买按钮 */}
-          <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-lg">
+          <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 ">
             <CreditDisplay showBuyButton={true} />
           </div>
         </div>
@@ -694,7 +694,7 @@ export function FluxKontextGenerator() {
 
       {/* 高级设置面板（可展开/收缩） */}
       {showAdvancedPanel && (
-        <div className="bg-white rounded-3xl shadow-lg border border-purple-100 p-6 mb-6">
+        <div className="bg-white rounded-3xl  border border-purple-100 p-6 mb-6">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             
             {/* 模型选择 */}
@@ -860,7 +860,7 @@ export function FluxKontextGenerator() {
 
       {/* Turnstile验证 */}
       {userLimits.requiresTurnstile && isTurnstileEnabled && (
-        <div className="bg-white rounded-2xl shadow-lg border border-purple-100 p-6 mb-6">
+        <div className="bg-white rounded-2xl  border border-purple-100 p-6 mb-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             🛡️ Security Verification
           </h3>
@@ -883,7 +883,7 @@ export function FluxKontextGenerator() {
 
       {/* 生成结果展示区域 */}
       {(isGenerating || generatedImages.length > 0) && (
-        <div className="bg-white rounded-2xl shadow-lg border border-purple-100 p-6 mt-6">
+        <div className="bg-white rounded-2xl  border border-purple-100 p-6 mt-6">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
               🖼️ Generated Images
@@ -893,7 +893,7 @@ export function FluxKontextGenerator() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {isGenerating &&
               Array.from({ length: numImages }).map((_, index) => (
-                <div key={`loader-${index}`} className="bg-gray-50 rounded-xl overflow-hidden shadow-sm relative group aspect-square">
+                <div key={`loader-${index}`} className="bg-gray-50 rounded-xl overflow-hidden  relative group aspect-square">
                   <div className="w-full h-full flex items-center justify-center bg-gray-100 animate-pulse">
                     <ImageIcon className="w-10 h-10 text-gray-300" />
                   </div>
@@ -901,7 +901,7 @@ export function FluxKontextGenerator() {
               ))}
 
             {generatedImages.map((image, index) => (
-              <div key={image.url || index} className="bg-gray-50 rounded-xl overflow-hidden shadow-sm relative group">
+              <div key={image.url || index} className="bg-gray-50 rounded-xl overflow-hidden  relative group">
                 <div className="relative w-full"> 
                   <Image
                     src={image.url}

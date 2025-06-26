@@ -77,11 +77,11 @@ export function AdvancedContentControl() {
           onClick={handleAdvancedCrawl}
           disabled={isLoading}
           className={`
-            px-8 py-4 rounded-2xl font-semibold text-white shadow-xl
+            px-8 py-4 rounded-2xl font-semibold text-white 
             transition-all duration-300 transform hover:scale-105
             ${isLoading 
               ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:shadow-2xl'
+              : 'bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:'
             }
           `}
         >

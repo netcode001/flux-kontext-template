@@ -263,7 +263,7 @@ export function LabubuNewsContent() {
           {/* 🔥 左侧边栏 - 热搜标签 */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
-              <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 shadow-card border border-labubu-200/30 hover:shadow-hover transition-all duration-300">
+              <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6  border border-labubu-200/30 hover: transition-all duration-300">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-gradient-to-r from-labubu-500 to-warm-500 rounded-full flex items-center justify-center animate-pulse">
                     <span className="text-white text-sm">🔥</span>
@@ -279,10 +279,10 @@ export function LabubuNewsContent() {
                       onClick={() => handleTrendingClick(keyword.keyword)}
                       className={`group inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm cursor-pointer transition-all duration-300 hover:scale-110 hover:rotate-1 animate-fade-in-up ${
                         keyword.rank <= 3 
-                          ? 'bg-gradient-to-r from-labubu-500 to-labubu-600 text-white shadow-labubu hover:shadow-hover hover:from-labubu-600 hover:to-labubu-700' 
+                          ? 'bg-gradient-to-r from-labubu-500 to-labubu-600 text-white  hover: hover:from-labubu-600 hover:to-labubu-700' 
                           : keyword.rank <= 6
-                          ? 'bg-gradient-to-r from-warm-400 to-warm-500 text-white shadow-warm hover:shadow-hover hover:from-warm-500 hover:to-warm-600'
-                          : 'bg-gradient-to-r from-labubu-300 to-warm-300 text-labubu-700 shadow-soft hover:shadow-card hover:from-labubu-400 hover:to-warm-400'
+                          ? 'bg-gradient-to-r from-warm-400 to-warm-500 text-white  hover: hover:from-warm-500 hover:to-warm-600'
+                          : 'bg-gradient-to-r from-labubu-300 to-warm-300 text-labubu-700  hover: hover:from-labubu-400 hover:to-warm-400'
                       }`}
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
@@ -304,7 +304,7 @@ export function LabubuNewsContent() {
           <div className="lg:col-span-3 space-y-6">
             
             {/* 🔍 搜索和筛选栏 */}
-            <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 shadow-card border border-labubu-200/30 hover:shadow-hover transition-all duration-300">
+            <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6  border border-labubu-200/30 hover: transition-all duration-300">
               <div className="flex flex-col gap-6">
                 
                 {/* 搜索框 */}
@@ -318,7 +318,7 @@ export function LabubuNewsContent() {
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onKeyPress={handleSearchKeyPress}
-                    className="pl-12 pr-12 h-12 text-lg border-2 border-labubu-200/50 focus:border-labubu-400 focus:ring-labubu-400/20 rounded-2xl bg-gradient-to-r from-labubu-50/50 to-warm-50/50 focus:bg-white transition-all duration-300 focus:shadow-labubu"
+                    className="pl-12 pr-12 h-12 text-lg border-2 border-labubu-200/50 focus:border-labubu-400 focus:ring-labubu-400/20 rounded-2xl bg-gradient-to-r from-labubu-50/50 to-warm-50/50 focus:bg-white transition-all duration-300 focus:"
                   />
                   {searchInput && (
                     <button
@@ -340,7 +340,7 @@ export function LabubuNewsContent() {
                       onClick={() => handleCategoryChange(category.key)}
                       className={`flex items-center gap-2 px-4 py-2 rounded-2xl transition-all duration-300 hover:scale-105 animate-fade-in-up ${
                         currentCategory === category.key
-                          ? 'bg-gradient-to-r from-labubu-500 to-labubu-600 text-white shadow-labubu hover:shadow-hover hover:from-labubu-600 hover:to-labubu-700'
+                          ? 'bg-gradient-to-r from-labubu-500 to-labubu-600 text-white  hover: hover:from-labubu-600 hover:to-labubu-700'
                           : 'border-2 border-labubu-200/50 text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 hover:border-labubu-400'
                       }`}
                       style={{ animationDelay: `${index * 50}ms` }}
@@ -366,7 +366,7 @@ export function LabubuNewsContent() {
                         onClick={() => handleSortChange(option.key)}
                         className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:scale-105 animate-fade-in-up ${
                           currentSort === option.key
-                            ? 'bg-gradient-to-r from-warm-400 to-warm-500 text-white shadow-warm hover:shadow-hover'
+                            ? 'bg-gradient-to-r from-warm-400 to-warm-500 text-white  hover:'
                             : 'text-labubu-600 hover:bg-gradient-to-r hover:from-warm-50 hover:to-labubu-50 hover:text-warm-600'
                         }`}
                         style={{ animationDelay: `${index * 50}ms` }}
@@ -427,7 +427,7 @@ export function LabubuNewsContent() {
                     {articles.map((article, index) => (
                     <div 
                       key={article.id} 
-                      className="group bg-white/95 backdrop-blur-lg rounded-3xl overflow-hidden shadow-card border border-labubu-200/30 hover:shadow-hover transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1 animate-fade-in-up cursor-pointer"
+                      className="group bg-white/95 backdrop-blur-lg rounded-3xl overflow-hidden  border border-labubu-200/30 hover: transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1 animate-fade-in-up cursor-pointer"
                       style={{ animationDelay: `${index * 100}ms` }}
                       onClick={() => window.open(article.originalUrl, '_blank')}
                     >
@@ -448,7 +448,7 @@ export function LabubuNewsContent() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         
                         {/* 热度标签 */}
-                        <div className="absolute top-3 right-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                        <div className="absolute top-3 right-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-white px-3 py-1 rounded-full text-xs font-bold ">
                           🔥 {(article.hotScore || 0).toFixed(1)}
                         </div>
                       </div>

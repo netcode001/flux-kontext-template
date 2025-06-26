@@ -62,7 +62,7 @@ export function DashboardGallery({ generations }: DashboardGalleryProps) {
           generation.image_urls.map(url => (
             <div key={url} className="relative group">
               <DialogTrigger asChild onClick={() => setSelectedItem({ generation, url })}>
-                <div className="relative w-full h-0 pb-[100%] bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer">
+                <div className="relative w-full h-0 pb-[100%] bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer">
                   <Image
                     src={url}
                     alt={generation.prompt}
@@ -83,8 +83,8 @@ export function DashboardGallery({ generations }: DashboardGalleryProps) {
       </div>
 
       {selectedItem && (
-        <DialogContent className="max-w-7xl w-full h-auto max-h-[90vh] bg-transparent border-none shadow-none p-0">
-          <div className="flex flex-col md:flex-row h-full max-h-[90vh] bg-black rounded-2xl overflow-hidden shadow-2xl">
+        <DialogContent className="max-w-7xl w-full h-auto max-h-[90vh] bg-transparent border-none p-0">
+          <div className="flex flex-col md:flex-row h-full max-h-[90vh] bg-black rounded-2xl overflow-hidden">
             {/* 左侧：图片 */}
             <div className="relative md:h-full flex-shrink-0 flex items-center justify-center bg-black/50 md:w-auto w-full aspect-square md:aspect-auto">
               <Image

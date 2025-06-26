@@ -186,14 +186,14 @@ function PricingMainContent() {
                 </span>
                 <button
                   onClick={() => setIsYearly(!isYearly)}
-                  className={`relative inline-flex h-6 w-12 items-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95 ${
+                  className={`relative inline-flex h-6 w-12 items-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 transform hover:scale-105 active:scale-95 ${
                     isYearly 
                       ? 'bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 focus:ring-indigo-300 dark:focus:ring-indigo-500' 
                       : 'bg-gradient-to-r from-slate-300 via-slate-350 to-slate-400 dark:from-slate-600 dark:via-slate-650 dark:to-slate-700 focus:ring-slate-300 dark:focus:ring-slate-500'
                   }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-lg transition-all duration-300 ${
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-all duration-300 ${
                       isYearly ? 'translate-x-7' : 'translate-x-1'
                     }`}
                   />
@@ -218,7 +218,7 @@ function PricingMainContent() {
                   key={plan.id}
                   className={`relative bg-card border rounded-lg p-6 ${
                     plan.isPopular
-                      ? 'border-primary shadow-lg shadow-primary/20'
+                      ? 'border-primary'
                       : 'border-border hover:border-primary/50'
                   } transition-all duration-300`}
                 >
@@ -294,7 +294,7 @@ function PricingMainContent() {
                   key={pack.id}
                   className={`relative bg-card border rounded-lg p-6 ${
                     pack.isPopular
-                      ? 'border-primary shadow-lg shadow-primary/20'
+                      ? 'border-primary'
                       : 'border-border hover:border-primary/50'
                   } transition-all duration-300`}
                 >

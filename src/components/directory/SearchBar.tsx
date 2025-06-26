@@ -49,11 +49,11 @@ export function SearchBar({
           defaultValue={searchParams.get("search") ?? ""}
           onChange={(e) => handleSearch(e.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-xl border-2 border-pink-200 p-4 pl-12 shadow-lg outline-none 
+          className="w-full rounded-xl border-2 border-pink-200 p-4 pl-12  outline-none 
                      focus:border-pink-400 focus:ring-4 focus:ring-pink-100 focus:ring-opacity-60
                      bg-white/95 backdrop-blur-sm
                      placeholder:text-gray-500 placeholder:font-medium
-                     transition-all duration-300 hover:shadow-xl
+                     transition-all duration-300 hover:
                      text-gray-700 font-medium"
         />
 

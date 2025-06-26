@@ -90,7 +90,7 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
         
         {/* 下拉菜单 */}
         {isOpen && (
-          <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-purple-100 rounded-xl shadow-lg py-2 z-[9999] max-h-60 overflow-y-auto">
+          <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-purple-100 rounded-xl  py-2 z-[9999] max-h-60 overflow-y-auto">
             {SUPPORTED_LOCALES.map((locale) => (
               <button
                 key={locale}
@@ -123,7 +123,7 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
         
         {/* 移动端下拉菜单 */}
         {isOpen && (
-          <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-purple-100 rounded-xl shadow-lg py-2 z-[9999] max-h-60 overflow-y-auto">
+          <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-purple-100 rounded-xl  py-2 z-[9999] max-h-60 overflow-y-auto">
             {SUPPORTED_LOCALES.map((locale) => (
               <button
                 key={locale}
@@ -181,7 +181,7 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
       
       {/* 下拉菜单 */}
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg py-2 z-[9999] max-h-60 overflow-y-auto">
+        <div className="absolute top-full right-0 mt-2 w-48 bg-background border border-border rounded-lg  py-2 z-[9999] max-h-60 overflow-y-auto">
           {SUPPORTED_LOCALES.map((locale) => (
             <button
               key={locale}

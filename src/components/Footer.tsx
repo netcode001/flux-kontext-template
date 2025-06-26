@@ -12,7 +12,7 @@ export function Footer() {
   return (
     <footer className="w-full text-center mt-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+        <div className="bg-white rounded-3xl p-8  border border-gray-100">
           <div className="max-w-4xl mx-auto">
             {/* 品牌Logo和标题 */}
             <div className="flex justify-center items-center space-x-3 mb-6">

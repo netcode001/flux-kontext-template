@@ -42,7 +42,7 @@ export function GoogleOneTapTrigger() {
       <button 
         onClick={handleManualTrigger}
         disabled={isTriggering}
-        className="w-12 h-12 bg-white border border-gray-300 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 hover:scale-105 active:scale-95"
+        className="w-12 h-12 bg-white border border-gray-300 rounded-full  hover: transition-all duration-200 flex items-center justify-center disabled:opacity-50 hover:scale-105 active:scale-95"
         title="Quick Google Sign In"
       >
         {isTriggering ? (

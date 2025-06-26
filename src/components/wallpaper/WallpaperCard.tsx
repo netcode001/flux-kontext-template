@@ -34,7 +34,7 @@ export function WallpaperCard({
   }
 
   return (
-    <Card className="group relative w-full overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-300 border-none bg-transparent p-0">
+    <Card className="group relative w-full overflow-hidden rounded-lg transition-all duration-300 border-none bg-transparent p-0">
       <div 
         className="relative w-full overflow-hidden bg-gray-200 dark:bg-gray-800 rounded-lg"
         style={{ aspectRatio: wallpaper.dimensions ? `${wallpaper.dimensions.width} / ${wallpaper.dimensions.height}` : '9 / 16' }}
@@ -88,7 +88,7 @@ export function WallpaperCard({
 
         {/* 悬浮信息层 */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <h3 className="font-semibold text-white text-base mb-2 line-clamp-2 drop-shadow-md">
+          <h3 className="font-semibold text-white text-base mb-2 line-clamp-2">
             {wallpaper.title}
           </h3>
           <div className="flex items-center justify-between text-xs text-gray-200">

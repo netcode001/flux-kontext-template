@@ -245,7 +245,7 @@ export function PostPublisher({ onPublish, onCancel, generationData }: PostPubli
   if (authLoading) {
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div ref={modalRef} className="w-full max-w-md mx-auto bg-white rounded-xl shadow-2xl">
+        <div ref={modalRef} className="w-full max-w-md mx-auto bg-white rounded-xl ">
           <div className="p-6 text-center">
             <div className="w-16 h-16 mx-auto bg-pink-100 rounded-full flex items-center justify-center mb-4">
               <Loader2 className="w-8 h-8 text-pink-500 animate-spin" />
@@ -262,7 +262,7 @@ export function PostPublisher({ onPublish, onCancel, generationData }: PostPubli
   if (isUnauthenticated) {
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div ref={modalRef} className="w-full max-w-md mx-auto bg-white rounded-xl shadow-2xl">
+        <div ref={modalRef} className="w-full max-w-md mx-auto bg-white rounded-xl ">
           {/* 关闭按钮 */}
           <div className="flex justify-end p-4 pb-0">
             <Button
@@ -304,7 +304,7 @@ export function PostPublisher({ onPublish, onCancel, generationData }: PostPubli
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div ref={modalRef} className="w-full max-w-2xl mx-auto bg-white rounded-xl shadow-2xl my-8">
+      <div ref={modalRef} className="w-full max-w-2xl mx-auto bg-white rounded-xl  my-8">
         {/* Header with close button */}
         <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100">
           <div className="flex items-center space-x-2 text-pink-600">

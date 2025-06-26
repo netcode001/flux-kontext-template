@@ -102,13 +102,7 @@ export default {
   			'card-gradient': 'linear-gradient(145deg, #ffffff 0%, #fafafa 100%)',
   			'hero-gradient': 'linear-gradient(135deg, #fdf4ff 0%, #fae8ff 20%, #f5d0fe 40%, #fffbeb 60%, #fef3c7 80%, #fde68a 100%)',
   		},
-  		boxShadow: {
-  			'labubu': '0 4px 20px rgba(217, 70, 239, 0.15)',
-  			'warm': '0 4px 20px rgba(245, 158, 11, 0.15)',
-  			'soft': '0 2px 10px rgba(0, 0, 0, 0.05)',
-  			'card': '0 2px 15px rgba(0, 0, 0, 0.08)',
-  			'hover': '0 8px 30px rgba(217, 70, 239, 0.2)',
-  		},
+  		
   		container: {
   			center: true,
   			padding: {

@@ -260,7 +260,7 @@ export function MenuManagement() {
   const renderMenuItem = (item: MenuItem, isChild = false) => (
     <div
       key={item.id}
-      className={`bg-white rounded-lg border p-4 mb-3 shadow-sm ${
+      className={`bg-white rounded-lg border p-4 mb-3  ${
         isChild ? 'ml-8 border-l-4 border-l-primary/30' : ''
       }`}
     >
