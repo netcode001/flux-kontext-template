@@ -567,13 +567,16 @@
   background: white !important;
 }
 
-/* 🔍 临时诊断：高亮所有可能的阴影源 */
-[data-page="labubu-gallery"] *[class*="bg-black"],
-[data-page="labubu-gallery"] *[class*="bg-gray"],
-[data-page="labubu-gallery"] *[class*="bg-slate"],
-[data-page="labubu-gallery"] *[class*="shadow"],
-[data-page="labubu-gallery"] .hero-gradient {
-  outline: 3px solid red !important;
-  outline-offset: -3px !important;
+/* 🔍 精确诊断：检查页面级别的背景层 */
+[data-page="labubu-gallery"] {
+  background: lime !important; /* 临时用绿色背景测试 */
+}
+
+body:has([data-page="labubu-gallery"]) {
+  background: yellow !important; /* 临时用黄色背景测试 */
+}
+
+html:has([data-page="labubu-gallery"]) {
+  background: orange !important; /* 临时用橙色背景测试 */
 }
 
