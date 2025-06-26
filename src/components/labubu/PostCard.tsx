@@ -313,14 +313,6 @@ export function PostCard({ post, onLike, onBookmark, onShare }: PostCardProps) {
                     </div>
                   </div>
                 )}
-                
-                {/* 🏷️ 图片数量标识 */}
-                {post.imageUrls.length > 1 && (
-                  <div className="absolute top-2 right-2 bg-black/60 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1">
-                    <Images className="w-3 h-3" />
-                    <span>{post.imageUrls.length}</span>
-                  </div>
-                )}
               </div>
             </div>
           )}
