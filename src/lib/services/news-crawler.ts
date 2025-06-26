@@ -2,6 +2,7 @@
 // 从多个数据源获取热点新闻和社交媒体内容
 
 import { createAdminClient } from '@/lib/supabase/server'
+import Parser from 'rss-parser'
 
 // 🌐 数据源配置
 interface NewsSource {
@@ -85,44 +86,39 @@ export class NewsCrawler {
 
   // 📡 获取RSS内容 (只保留Labubu相关)
   private async fetchRSSContent(url: string): Promise<NewsArticle[]> {
+    const parser = new Parser()
     try {
       console.log('🔍 获取RSS内容:', url)
-      
-      // 使用RSS解析API或自建解析服务
-      const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`)
-      const data = await response.json()
-      
-      if (!data.items) {
-        console.log('❌ RSS数据格式错误')
+      const feed = await parser.parseURL(url)
+      if (!feed.items) {
+        console.log('❌ RSS数据格式错误', url)
         return []
       }
-
-      // 🎯 只处理与Labubu相关的文章
-      const relevantItems = data.items.filter((item: any) => {
-        const text = (item.title || '') + ' ' + (item.description || item.content || '')
-        return this.isLabubuRelated(text)
+      // 只保留24小时内的新闻
+      const now = Date.now()
+      const oneDayMs = 24 * 60 * 60 * 1000
+      const relevantItems = feed.items.filter((item: any) => {
+        const text = (item.title || '') + ' ' + (item.content || item.contentSnippet || item.summary || '')
+        const pubDate = item.pubDate ? new Date(item.pubDate).getTime() : 0
+        return this.isLabubuRelated(text) && pubDate > 0 && (now - pubDate) <= oneDayMs
       })
-
-      console.log(`🎯 过滤后相关文章: ${relevantItems.length}/${data.items.length}`)
-
+      console.log(`🎯 过滤后相关文章: ${relevantItems.length}/${feed.items.length}（仅保留24小时内）`)
       const articles: NewsArticle[] = relevantItems.slice(0, 10).map((item: any) => ({
         title: item.title || '无标题',
-        content: item.content || item.description || '',
-        summary: this.extractSummary(item.description || item.content || ''),
-        author: item.author || '未知作者',
+        content: item.content || item.contentSnippet || item.summary || '',
+        summary: this.extractSummary(item.content || item.contentSnippet || item.summary || ''),
+        author: item.creator || item.author || '未知作者',
         sourceId: this.getSourceIdFromUrl(url),
-        originalUrl: item.link || item.guid || '',
-        publishedAt: new Date(item.pubDate || Date.now()),
-        imageUrls: this.extractImages(item.content || item.description || '', item),
-        tags: this.extractTags(item.title + ' ' + (item.description || '')),
-        category: this.categorizeContent(item.title + ' ' + (item.description || ''))
+        originalUrl: item.link || '',
+        publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
+        imageUrls: this.extractImages(item.content || item.contentSnippet || '', item),
+        tags: this.extractTags(item.title + ' ' + (item.content || '')),
+        category: this.categorizeContent(item.title + ' ' + (item.content || ''))
       }))
-
       console.log(`✅ RSS解析成功: ${articles.length}篇Labubu相关文章`)
       return articles
-
     } catch (error) {
-      console.error('🚨 RSS获取失败:', error)
+      console.error('🚨 RSS解析失败:', url, error)
       return []
     }
   }
@@ -422,49 +418,59 @@ export class NewsCrawler {
   }
 
   // 🚀 执行内容获取任务
-  public async crawlContent(): Promise<{ success: boolean; count: number; message: string }> {
+  public async crawlContent(withLogs = false): Promise<{ success: boolean; count: number; message: string; logs?: string[] }> {
+    const logs: string[] = []
     try {
-      console.log('🚀 开始获取热点新闻内容...')
-      
+      logs.push('🚀 开始获取热点新闻内容...')
       let totalSaved = 0
       const allArticles: NewsArticle[] = []
 
       // 获取RSS新闻内容
       for (const source of this.sources.filter(s => s.type === 'rss')) {
+        logs.push(`🔍 获取RSS内容: ${source.url}`)
         const articles = await this.fetchRSSContent(source.url)
+        logs.push(`🎯 过滤后相关文章: ${articles.length}`)
         allArticles.push(...articles)
       }
 
       // 获取社交媒体内容
+      logs.push('🐦 获取社交媒体内容...')
       const socialArticles = await this.fetchSocialContent()
+      logs.push(`✅ 社交媒体内容获取成功: ${socialArticles.length}条`)
       allArticles.push(...socialArticles)
 
       // 保存到数据库
       for (const article of allArticles) {
         const saved = await this.saveArticleToDatabase(article)
-        if (saved) totalSaved++
+        if (saved) {
+          logs.push(`✅ 文章保存成功: ${article.title}`)
+          totalSaved++
+        } else {
+          logs.push(`📄 文章已存在，跳过: ${article.title}`)
+        }
       }
 
       // 更新热搜关键词
+      logs.push('🔥 更新热搜关键词...')
       await this.updateTrendingKeywords(allArticles)
+      logs.push('✅ 热搜关键词更新完成')
 
       const message = `✅ 内容获取完成: 获取${allArticles.length}篇，保存${totalSaved}篇新文章`
-      console.log(message)
-
+      logs.push(message)
       return {
         success: true,
         count: totalSaved,
-        message
+        message,
+        logs: withLogs ? logs : undefined
       }
-
     } catch (error) {
       const message = `🚨 内容获取失败: ${error}`
-      console.error(message)
-      
+      logs.push(message)
       return {
         success: false,
         count: 0,
-        message
+        message,
+        logs: withLogs ? logs : undefined
       }
     }
   }
@@ -510,8 +516,25 @@ export class NewsCrawler {
 // 🎯 导出爬虫实例
 export const newsCrawler = new NewsCrawler()
 
+// 获取每个数据源的累计抓取成功数量
+export async function getNewsSourceStats() {
+  const supabase = createAdminClient()
+  // 查询所有数据源
+  const { data: sources } = await supabase.from('news_sources').select('id, name')
+  if (!sources) return []
+  // 查询所有文章，统计每个source_id出现次数
+  const { data: articles } = await supabase.from('news_articles').select('source_id')
+  const countMap = new Map<string, number>()
+  if (articles) {
+    for (const row of articles) {
+      countMap.set(row.source_id, (countMap.get(row.source_id) || 0) + 1)
+    }
+  }
+  return sources.map((s: any) => ({ name: s.name, count: countMap.get(s.id) || 0 }))
+}
+
 // 🕐 定时任务函数
-export async function runNewsCrawlerTask() {
-  console.log('⏰ 执行定时新闻获取任务...')
-  return await newsCrawler.crawlContent()
+export async function runNewsCrawlerTask(opts?: { withLogs?: boolean }) {
+  const withLogs = opts?.withLogs || false
+  return await newsCrawler.crawlContent(withLogs)
 } 
