@@ -567,16 +567,10 @@
   background: white !important;
 }
 
-/* 🔍 精确诊断：检查页面级别的背景层 */
-[data-page="labubu-gallery"] {
-  background: lime !important; /* 临时用绿色背景测试 */
-}
-
-body:has([data-page="labubu-gallery"]) {
-  background: yellow !important; /* 临时用黄色背景测试 */
-}
-
-html:has([data-page="labubu-gallery"]) {
-  background: orange !important; /* 临时用橙色背景测试 */
+/* 🎨 最终修复：多图页面使用白色背景 */
+[data-page="labubu-gallery"],
+[data-page="dashboard"], 
+[data-page="wallpapers"] {
+  background: white !important;
 }
 
