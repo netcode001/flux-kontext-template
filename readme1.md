@@ -62,47 +62,35 @@
 4. **页面级样式覆盖** - wallpapers页面直接使用了bg-hero-gradient类
 
 ### 最终解决方案 ✅
-经过系统性排查，发现问题有多个层面：
+经过系统性排查和精确诊断，成功解决问题：
 
-#### 1. 页面级别修复
-```tsx
-// wallpapers/page.tsx - 移除深色背景
-- <div className="min-h-screen bg-hero-gradient">
-+ <div className="min-h-screen" data-page="wallpapers">
-```
+#### 🔍 诊断过程
+1. **元素轮廓诊断** - 确认卡片阴影是正常UI效果，非问题源头
+2. **彩色背景测试** - 使用绿色/黄色/橙色背景测试不同层级
+3. **精确定位** - 确认`[data-page="labubu-gallery"]`容器方案有效
 
-#### 2. 组件级别修复
-```tsx
-// ClientBody.tsx - 清爽背景页面配置
-const cleanBackgroundPages = [
-  '/labubu-gallery',
-  '/dashboard', 
-  '/wallpapers',
-  '/秀场'
-];
-
-const containerClasses = [
-  geistSans.variable,
-  geistMono.variable,
-  'antialiased',
-  shouldApplyHeroGradient ? 'hero-gradient' : 'bg-white', // 🔧 关键修复
-].filter(Boolean).join(' ');
-```
-
-#### 3. CSS级别修复
+#### ✅ 最终修复代码
 ```css
-/* 🎨 Labubu Gallery 页面专用样式修复 */
-[data-page="labubu-gallery"] {
-  background: white !important;
-}
-
-/* 确保多图页面不应用深色渐变背景 */
+/* 覆盖ClientBody中的hero-gradient类 */
 [data-page="labubu-gallery"] .hero-gradient,
 [data-page="dashboard"] .hero-gradient,
 [data-page="wallpapers"] .hero-gradient {
   background: white !important;
 }
+
+/* 🎨 最终修复：多图页面使用白色背景 */
+[data-page="labubu-gallery"],
+[data-page="dashboard"], 
+[data-page="wallpapers"] {
+  background: white !important;
+}
 ```
+
+#### 🎯 关键技术要点
+1. **data-page属性系统** - 为特定页面提供精确的样式控制
+2. **CSS优先级管理** - 使用`!important`确保样式覆盖生效
+3. **多层级修复** - 同时处理容器和hero-gradient类
+4. **诊断驱动开发** - 通过可视化诊断精确定位问题
 
 ### 技术细节分析
 
@@ -127,6 +115,9 @@ const containerClasses = [
 - ✅ **水合错误**: 完全修复，无SSR不匹配警告
 
 ### 提交记录
+- `f1eac93`: 🎉 最终修复: 成功解决多图页面黑色阴影问题
+- `ccee4d5`: 🔍 精确诊断: 使用彩色背景测试页面层级
+- `4bcb2c0`: 🔍 诊断: 添加红色轮廓高亮可能的阴影源
 - `dc97321`: ✅ 修复: 彻底解决多图页面黑色阴影问题
 - `5f6548d`: 🔧 调试: 添加强制CSS规则移除黑色阴影  
 - `b924c63`: 🎨 修复: 为多图页面明确设置白色背景
