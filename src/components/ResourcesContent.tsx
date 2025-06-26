@@ -179,7 +179,7 @@ export function ResourcesContent() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredResources.map((resource, index) => (
-              <div key={index} className="bg-card border rounded-lg overflow-hidden hover: transition-shadow">
+                              <div key={index} className="bg-card border rounded-lg overflow-hidden transition-all">
                 <div className="aspect-video bg-muted/50 flex items-center justify-center">
                   <Camera className="w-12 h-12 text-muted-foreground" />
                 </div>
@@ -227,7 +227,7 @@ export function ResourcesContent() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {category.resources.map((resource, index) => (
-                    <div key={index} className="bg-background border rounded-lg p-6 hover: transition-shadow">
+                    <div key={index} className="bg-background border rounded-lg p-6 transition-all">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded-full">
                           {resource.type}
