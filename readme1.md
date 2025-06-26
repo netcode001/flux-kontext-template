@@ -353,10 +353,17 @@ find src -name "*.tsx" -exec sed -i '' 's/hover:shadow-[a-zA-Z0-9/-]*//g' {} \;
 
 ### 🎯 修复效果验证
 - ✅ **Dashboard页面** - 纯净白色背景，无任何阴影叠加
-- ✅ **Labubu Gallery页面** - 清爽布局，瀑布流无阴影干扰  
+- ✅ **Labubu Gallery页面** - 从瀑布流改为网格布局，清爽无阴影干扰  
 - ✅ **Wallpapers页面** - 多选功能正常，无阴影叠加
 - ✅ **模态框功能** - 弹窗正常，无背景阴影冲突
 - ✅ **整体性能** - 移除大量CSS计算，提升渲染性能
+
+### 🔄 布局优化修复
+**瀑布流 → 网格布局转换**：
+- **原布局**: `columns-1 sm:columns-2 md:columns-5` (瀑布流)
+- **新布局**: `grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5` (网格)
+- **优势**: 避免瀑布流的不规则间距和视觉叠加效果
+- **PostCard简化**: 移除Card组件包装，使用纯div避免默认边框
 
 ### 📊 技术债务清理统计
 - **配置文件修改**: 2个 (tailwind.config.ts, labubu-theme.ts)
