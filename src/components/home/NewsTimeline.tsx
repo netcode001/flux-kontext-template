@@ -89,7 +89,20 @@ const groupNewsByDate = (news: NewsItem[]) => {
 }
 
 export function NewsTimeline({ news }: NewsTimelineProps) {
-  const groupedNews = groupNewsByDate(news)
+  // 确保news是数组
+  const safeNews = Array.isArray(news) ? news : []
+  
+  // 如果没有数据，显示空状态
+  if (safeNews.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">📅</div>
+        <p className="text-gray-600">暂无新闻数据</p>
+      </div>
+    )
+  }
+
+  const groupedNews = groupNewsByDate(safeNews)
 
   return (
     <div className="relative">

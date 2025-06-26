@@ -29,33 +29,6 @@ export function NewsSection() {
   const [error, setError] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
 
-  // 获取新闻数据
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch('/api/labubu/news?limit=6')
-        
-        if (!response.ok) {
-          throw new Error('获取新闻失败')
-        }
-
-        const data = await response.json()
-        setNews(data.data || [])
-        setError(null)
-      } catch (err: any) {
-        console.error('获取新闻失败:', err)
-        setError(err.message)
-        // 使用模拟数据作为fallback
-        setNews(getMockNews())
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchNews()
-  }, [])
-
   // 模拟新闻数据
   const getMockNews = (): NewsItem[] => [
     {
@@ -96,8 +69,109 @@ export function NewsSection() {
       commentCount: 234,
       source: 'ip-awards',
       url: '/news/3'
+    },
+    {
+      id: '4',
+      title: 'Labubu主题展览在上海K11开幕',
+      description: '上海K11艺术购物中心举办的Labubu主题展览正式开幕，现场展示了数百款经典作品...',
+      image: '/images/news/labubu-exhibition.jpg',
+      category: '活动',
+      publishedAt: '2024-01-20T09:15:00Z',
+      viewCount: 87600,
+      likeCount: 2100,
+      commentCount: 167,
+      source: 'art-exhibition',
+      url: '/news/4'
+    },
+    {
+      id: '5',
+      title: 'DIY Labubu房间布置创意分享',
+      description: '创意DIY达人分享如何用Labubu装饰房间，打造温馨可爱的个人空间...',
+      image: '/images/news/labubu-diy-room.jpg',
+      category: '创意',
+      publishedAt: '2024-01-19T16:30:00Z',
+      viewCount: 67200,
+      likeCount: 1500,
+      commentCount: 98,
+      source: 'creative-diy',
+      url: '/news/5'
+    },
+    {
+      id: '6',
+      title: 'Labubu购买指南2024：新手必看',
+      description: '2024年最新Labubu购买指南，从入门款到收藏款，帮你找到最适合的款式...',
+      image: '/images/news/labubu-buying-guide.jpg',
+      category: '指南',
+      publishedAt: '2024-01-19T12:00:00Z',
+      viewCount: 156800,
+      likeCount: 4200,
+      commentCount: 312,
+      source: 'buying-guide',
+      url: '/news/6'
     }
   ]
+
+  // 获取新闻数据
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/labubu/news?limit=6')
+        
+        if (!response.ok) {
+          throw new Error('获取新闻失败')
+        }
+
+        const data = await response.json()
+        
+        // 确保数据是数组格式
+        let newsData: NewsItem[] = []
+        
+        if (data && data.success && data.data && data.data.articles && Array.isArray(data.data.articles)) {
+          // API返回的格式: { success: true, data: { articles: [...] } }
+          const articles = data.data.articles
+          newsData = articles.map((article: any) => ({
+            id: article.id,
+            title: article.title,
+            description: article.summary || article.content?.substring(0, 100) + '...',
+            image: article.image_urls?.[0] || '/images/news/default.jpg',
+            category: article.category || '资讯',
+            publishedAt: article.published_at,
+            viewCount: article.view_count || 0,
+            likeCount: article.like_count || 0,
+            commentCount: article.comment_count || 0,
+            source: article.source_name || 'labubu',
+            url: `/labubu-news/${article.id}`
+          }))
+        } else if (data && Array.isArray(data)) {
+          // 如果直接返回数组
+          newsData = data
+        } else if (data && data.data && Array.isArray(data.data)) {
+          // 如果返回 { data: [...] } 格式
+          newsData = data.data
+        } else if (data && data.posts && Array.isArray(data.posts)) {
+          // 如果返回 { posts: [...] } 格式
+          newsData = data.posts
+        } else {
+          // 如果数据格式不符合预期，使用模拟数据
+          console.warn('API返回的数据格式不符合预期，使用模拟数据')
+          newsData = getMockNews()
+        }
+        
+        setNews(newsData)
+        setError(null)
+      } catch (err: any) {
+        console.error('获取新闻失败:', err)
+        setError(err.message)
+        // 使用模拟数据作为fallback
+        setNews(getMockNews())
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchNews()
+  }, [])
 
   if (loading) {
     return (
@@ -111,6 +185,9 @@ export function NewsSection() {
       </section>
     )
   }
+
+  // 确保news是数组
+  const safeNews = Array.isArray(news) ? news : getMockNews()
 
   return (
     <section className="py-12">
@@ -150,11 +227,20 @@ export function NewsSection() {
           </div>
         </div>
 
+        {/* 错误提示 */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
+            <p className="text-red-600 text-sm">
+              加载新闻时出现错误: {error}，正在使用模拟数据
+            </p>
+          </div>
+        )}
+
         {/* 新闻内容 */}
         {viewMode === 'grid' ? (
-          <NewsGrid news={news} />
+          <NewsGrid news={safeNews} />
         ) : (
-          <NewsTimeline news={news} />
+          <NewsTimeline news={safeNews} />
         )}
 
         {/* 查看更多按钮 */}

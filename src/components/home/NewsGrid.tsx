@@ -61,9 +61,22 @@ const getCategoryColor = (category: string) => {
 }
 
 export function NewsGrid({ news }: NewsGridProps) {
+  // 确保news是数组
+  const safeNews = Array.isArray(news) ? news : []
+
+  // 如果没有数据，显示空状态
+  if (safeNews.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">📰</div>
+        <p className="text-gray-600">暂无新闻数据</p>
+      </div>
+    )
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {news.map((item) => (
+      {safeNews.map((item) => (
         <article
           key={item.id}
           className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100"
