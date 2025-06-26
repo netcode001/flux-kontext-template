@@ -205,16 +205,6 @@ export function LabubuGalleryContent() {
       {/* 统一的导航栏 */}
       <DynamicNavigation />
       
-      {/* 调试信息 - 开发环境显示 */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-20 right-4 bg-red-100 border border-red-300 rounded p-2 text-xs z-40">
-          <div>Posts: {posts.length}</div>
-          <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
-          <div>Publisher: {showPublisher ? 'Open' : 'Closed'}</div>
-          <div>Path: {pathname}</div>
-        </div>
-      )}
-      
       {/* 搜索和筛选栏 */}
       <div className="container mx-auto px-4 py-6 pt-24">
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">

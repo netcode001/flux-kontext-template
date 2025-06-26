@@ -85,6 +85,16 @@
     background: radial-gradient(ellipse at center, rgba(204, 175, 133, 0.1) 0%, rgba(11, 16, 19, 0.8) 70%);
   }
 
+  /* 多图页面例外：覆盖hero-gradient */
+  .hero-gradient:has([data-page="labubu-gallery"]),
+  .hero-gradient:has([data-page="dashboard"]),
+  .hero-gradient:has([data-page="wallpapers"]),
+  [data-page="labubu-gallery"] .hero-gradient,
+  [data-page="dashboard"] .hero-gradient,
+  [data-page="wallpapers"] .hero-gradient {
+    background: white !important;
+  }
+
   /* Hide scrollbars */
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -144,6 +154,16 @@
   @media (max-width: 768px) {
     .hero-gradient {
       background: radial-gradient(ellipse at center, rgba(204, 175, 133, 0.05) 0%, rgba(11, 16, 19, 0.9) 50%);
+    }
+    
+    /* 移动端多图页面例外 */
+    .hero-gradient:has([data-page="labubu-gallery"]),
+    .hero-gradient:has([data-page="dashboard"]),
+    .hero-gradient:has([data-page="wallpapers"]),
+    [data-page="labubu-gallery"] .hero-gradient,
+    [data-page="dashboard"] .hero-gradient,
+    [data-page="wallpapers"] .hero-gradient {
+      background: white !important;
     }
   }
 
@@ -532,14 +552,34 @@
 
 /* Force CSS refresh - 05/28/2025 18:43:11 */
 
-/* 🎨 Labubu Gallery 页面专用样式修复 */
-[data-page="labubu-gallery"] {
+/* 🎨 强力修复：彻底移除多图页面的深色背景 */
+/* 使用更高优先级的选择器 */
+body [data-page="labubu-gallery"],
+body [data-page="dashboard"], 
+body [data-page="wallpapers"] {
   background: white !important;
 }
 
-/* 确保多图页面不应用深色渐变背景 */
-[data-page="labubu-gallery"] .hero-gradient,
-[data-page="dashboard"] .hero-gradient,
-[data-page="wallpapers"] .hero-gradient {
+/* 确保ClientBody中的hero-gradient类被覆盖 */
+body [data-page="labubu-gallery"] .hero-gradient,
+body [data-page="dashboard"] .hero-gradient,
+body [data-page="wallpapers"] .hero-gradient,
+.hero-gradient[data-page="labubu-gallery"],
+.hero-gradient[data-page="dashboard"],
+.hero-gradient[data-page="wallpapers"] {
+  background: white !important;
+}
+
+/* 移除所有可能的深色渐变背景 */
+[data-page="labubu-gallery"] *,
+[data-page="dashboard"] *,
+[data-page="wallpapers"] * {
+  background-image: none !important;
+}
+
+/* 确保根容器使用白色背景 */
+html:has([data-page="labubu-gallery"]) body,
+html:has([data-page="dashboard"]) body,
+html:has([data-page="wallpapers"]) body {
   background: white !important;
 }
