@@ -297,10 +297,8 @@ export async function POST(
       // 📦 获取图片二进制数据
       const imageBuffer = await imageResponse.arrayBuffer()
       
-      // 🏷️ 生成下载文件名
-      const fileExtension = wallpaper.original_filename?.split('.').pop() || 'jpg'
-      const safeTitle = wallpaper.title.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_').substring(0, 50)
-      const downloadFilename = `${safeTitle}.${fileExtension}`
+      // 🏷️ 只用R2原始文件名
+      const downloadFilename = wallpaper.original_filename || `wallpaper-${wallpaper.id}.jpg`
 
       console.log('📥 准备返回图片流:', {
         filename: downloadFilename,
@@ -308,12 +306,12 @@ export async function POST(
         contentType: imageResponse.headers.get('content-type')
       })
 
-      // 🎯 返回图片流，设置下载响应头
+      // 🎯 返回图片流，设置下载响应头（只用原始文件名）
       return new NextResponse(imageBuffer, {
         status: 200,
         headers: {
           'Content-Type': imageResponse.headers.get('content-type') || 'image/jpeg',
-          'Content-Disposition': `attachment; filename="${downloadFilename}"; filename*=UTF-8''${encodeURIComponent(downloadFilename)}`,
+          'Content-Disposition': `attachment; filename="${downloadFilename}"`,
           'Content-Length': imageBuffer.byteLength.toString(),
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',

@@ -29,6 +29,7 @@ interface WallpaperData {
   is_liked?: boolean
   can_download?: boolean
   view_count?: number
+  original_filename?: string
 }
 
 export function WallpaperCard() {
@@ -165,23 +166,21 @@ export function WallpaperCard() {
     setDownloadingId(wallpaper.id)
     try {
       const response = await fetch(`/api/wallpapers/${wallpaper.id}/download`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        method: 'POST'
       })
-      
       if (!response.ok) {
-        // 如果返回错误JSON
-        if (response.headers.get('content-type')?.includes('application/json')) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || '下载失败')
-        }
-        throw new Error('下载失败，请重试')
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || '下载失败')
       }
-      
-      // ✅ 成功：response是图片流，浏览器会自动下载
-      console.log('✅ 壁纸下载成功')
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = wallpaper.original_filename || `wallpaper-${wallpaper.id}.jpg`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
       setWallpapers(prev => prev.map(w =>
         w.id === wallpaper.id
           ? { ...w, download_count: w.download_count + 1 }

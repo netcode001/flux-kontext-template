@@ -51,31 +51,25 @@ export function WallpaperCard({
       return
     }
     setDownloading(true)
-    
-    // 🎯 直接fetch API，后端返回图片流会自动触发下载
-    fetch(`/api/wallpapers/${wallpaper.id}/download`, { 
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => {
+    fetch(`/api/wallpapers/${wallpaper.id}/download`, { method: 'POST' })
+      .then(async response => {
         if (!response.ok) {
-          // 如果返回错误JSON
-          if (response.headers.get('content-type')?.includes('application/json')) {
-            return response.json().then(errorData => {
-              throw new Error(errorData.error || '下载失败')
-            })
-          }
-          throw new Error('下载失败，请重试')
+          // 错误处理
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.error || '下载失败')
         }
-        
-        // ✅ 成功：response是图片流，浏览器会自动下载
-        console.log('✅ 壁纸下载成功')
+        const blob = await response.blob()
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = wallpaper.original_filename || `wallpaper-${wallpaper.id}.jpg`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
         onDownload?.(wallpaper)
       })
       .catch(error => {
-        console.error('❌ 下载失败:', error)
         alert(error.message || '下载失败，请重试')
       })
       .finally(() => setDownloading(false))
