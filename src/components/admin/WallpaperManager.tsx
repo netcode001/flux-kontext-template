@@ -153,7 +153,7 @@ export function WallpaperManager() {
                   key={wp.id} 
                   className={cn(
                     "relative group aspect-[9/16] bg-gray-200 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md transition-all hover:shadow-xl hover:-translate-y-1 cursor-pointer",
-                    isSelected && "ring-4 ring-blue-500 ring-offset-2"
+                    isSelected && "ring-2 ring-blue-500 ring-inset"
                   )}
                   onClick={() => handleSelectionChange(wp.id)}
                 >
@@ -167,7 +167,7 @@ export function WallpaperManager() {
                   <div 
                      className={cn(
                        "absolute inset-0 bg-gradient-to-t from-black/70 to-transparent",
-                       isSelected && "bg-black/40"
+                       isSelected && "bg-blue-500/20"
                      )}
                   />
                   {/* 复选框 */}
