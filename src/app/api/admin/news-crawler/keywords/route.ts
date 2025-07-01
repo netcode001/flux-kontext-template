@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { v4 as uuidv4 } from 'uuid'
+import { PrismaClient } from '@prisma/client'
 
-// 用于模拟存储关键字的内存数组
-let keywords = [
-  { id: uuidv4(), keyword: 'Labubu', enabled: true },
-  { id: uuidv4(), keyword: '潮玩', enabled: true },
-  { id: uuidv4(), keyword: '艺术玩具', enabled: true },
-  { id: uuidv4(), keyword: '潮流', enabled: true }
-]
+const prisma = new PrismaClient()
 
-// 获取所有关键字
+// 获取所有关键字（按创建时间倒序）
 export async function GET() {
-  return NextResponse.json({ success: true, data: keywords })
+  try {
+    const keywords = await prisma.newsKeyword.findMany({
+      orderBy: { created_at: 'desc' }
+    })
+    return NextResponse.json({ success: true, data: keywords })
+  } catch (error) {
+    return NextResponse.json({ success: false, error: '数据库查询失败' }, { status: 500 })
+  }
 }
 
 // 新增关键字
@@ -21,11 +22,17 @@ export async function POST(request: NextRequest) {
     if (!keyword) {
       return NextResponse.json({ success: false, error: '关键字不能为空' }, { status: 400 })
     }
-    const newKeyword = { id: uuidv4(), keyword, enabled: true }
-    keywords.push(newKeyword)
+    // 检查是否已存在
+    const exists = await prisma.newsKeyword.findUnique({ where: { keyword } })
+    if (exists) {
+      return NextResponse.json({ success: false, error: '关键字已存在' }, { status: 409 })
+    }
+    const newKeyword = await prisma.newsKeyword.create({
+      data: { keyword, enabled: true }
+    })
     return NextResponse.json({ success: true, data: newKeyword })
   } catch (error) {
-    return NextResponse.json({ success: false, error: '请求格式错误' }, { status: 400 })
+    return NextResponse.json({ success: false, error: '数据库写入失败' }, { status: 500 })
   }
 }
 
@@ -33,29 +40,32 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const { id, keyword, enabled } = await request.json()
-    const idx = keywords.findIndex(k => k.id === id)
-    if (idx === -1) {
-      return NextResponse.json({ success: false, error: '未找到关键字' }, { status: 404 })
+    if (!id) {
+      return NextResponse.json({ success: false, error: '缺少ID' }, { status: 400 })
     }
-    if (typeof keyword === 'string') keywords[idx].keyword = keyword
-    if (typeof enabled === 'boolean') keywords[idx].enabled = enabled
-    return NextResponse.json({ success: true, data: keywords[idx] })
+    const updateData: any = {}
+    if (typeof keyword === 'string') updateData.keyword = keyword
+    if (typeof enabled === 'boolean') updateData.enabled = enabled
+    const updated = await prisma.newsKeyword.update({
+      where: { id },
+      data: updateData
+    })
+    return NextResponse.json({ success: true, data: updated })
   } catch (error) {
-    return NextResponse.json({ success: false, error: '请求格式错误' }, { status: 400 })
+    return NextResponse.json({ success: false, error: '数据库更新失败' }, { status: 500 })
   }
 }
 
-// 删除关键字
+// 删除关键字（物理删除）
 export async function DELETE(request: NextRequest) {
   try {
     const { id } = await request.json()
-    const idx = keywords.findIndex(k => k.id === id)
-    if (idx === -1) {
-      return NextResponse.json({ success: false, error: '未找到关键字' }, { status: 404 })
+    if (!id) {
+      return NextResponse.json({ success: false, error: '缺少ID' }, { status: 400 })
     }
-    const removed = keywords.splice(idx, 1)
-    return NextResponse.json({ success: true, data: removed[0] })
+    const deleted = await prisma.newsKeyword.delete({ where: { id } })
+    return NextResponse.json({ success: true, data: deleted })
   } catch (error) {
-    return NextResponse.json({ success: false, error: '请求格式错误' }, { status: 400 })
+    return NextResponse.json({ success: false, error: '数据库删除失败' }, { status: 500 })
   }
 } 
