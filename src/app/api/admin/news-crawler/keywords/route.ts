@@ -11,6 +11,7 @@ export async function GET() {
     })
     return NextResponse.json({ success: true, data: keywords })
   } catch (error) {
+    console.error('关键词API数据库查询失败:', error)
     return NextResponse.json({ success: false, error: '数据库查询失败' }, { status: 500 })
   }
 }
@@ -32,6 +33,7 @@ export async function POST(request: NextRequest) {
     })
     return NextResponse.json({ success: true, data: newKeyword })
   } catch (error) {
+    console.error('关键词API数据库写入失败:', error)
     return NextResponse.json({ success: false, error: '数据库写入失败' }, { status: 500 })
   }
 }
@@ -52,6 +54,7 @@ export async function PUT(request: NextRequest) {
     })
     return NextResponse.json({ success: true, data: updated })
   } catch (error) {
+    console.error('关键词API数据库更新失败:', error)
     return NextResponse.json({ success: false, error: '数据库更新失败' }, { status: 500 })
   }
 }
@@ -66,6 +69,7 @@ export async function DELETE(request: NextRequest) {
     const deleted = await prisma.newsKeyword.delete({ where: { id } })
     return NextResponse.json({ success: true, data: deleted })
   } catch (error) {
+    console.error('关键词API数据库删除失败:', error)
     return NextResponse.json({ success: false, error: '数据库删除失败' }, { status: 500 })
   }
 } 
