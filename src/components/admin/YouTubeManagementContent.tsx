@@ -169,6 +169,23 @@ export default function YouTubeManagementContent() {
 
     try {
       const videosToImport = searchResults.filter(video => selectedVideos.has(video.videoId))
+        .map(video => ({
+          video_id: video.videoId,
+          title: video.title,
+          description: video.description,
+          thumbnail_url: video.thumbnailUrl,
+          channel_title: video.channelTitle,
+          channel_id: video.channelId,
+          published_at: video.publishedAt,
+          duration_iso: video.durationIso,
+          duration_seconds: video.durationSeconds,
+          view_count: video.viewCount,
+          like_count: video.likeCount,
+          comment_count: video.commentCount,
+          iframe_embed_code: video.iframeEmbedCode,
+          search_keyword: currentKeyword.keyword,
+          category_name: currentKeyword.category_name
+        }))
 
       const response = await fetch('/api/admin/youtube/import', {
         method: 'POST',
