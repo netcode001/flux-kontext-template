@@ -83,24 +83,29 @@ export class YouTubeService {
     order: 'relevance' | 'date' | 'viewCount' = 'relevance'
   ): Promise<YouTubeSearchResult[]> {
     try {
+      // 🔧 简化参数，移除可能导致问题的regionCode和relevanceLanguage
       const params = new URLSearchParams({
         part: 'snippet',
         q: keyword,
         type: 'video',
         maxResults: maxResults.toString(),
         order: order,
-        key: this.apiKey,
-        regionCode: 'US', // 避免地区限制
-        relevanceLanguage: 'zh' // 优先中文内容
+        key: this.apiKey
       })
 
+      console.log(`🎥 YouTube搜索请求: ${keyword}, 最大结果: ${maxResults}`)
       const response = await fetch(`${this.baseUrl}/search?${params}`)
       
+      console.log(`📡 YouTube API响应状态: ${response.status} ${response.statusText}`)
+      
       if (!response.ok) {
+        const errorText = await response.text()
+        console.error(`❌ YouTube API错误响应:`, errorText)
         throw new Error(`YouTube搜索API错误: ${response.status} ${response.statusText}`)
       }
 
       const data = await response.json()
+      console.log(`✅ YouTube搜索成功，找到 ${data.items?.length || 0} 个视频`)
       
       if (data.error) {
         throw new Error(`YouTube API错误: ${data.error.message}`)
