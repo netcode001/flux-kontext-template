@@ -76,15 +76,24 @@ export class NewsCrawler {
     'kaws', 'molly', 'dimoo', 'skullpanda', 'hirono'
   ]
 
-  // 🔍 检查内容是否与Labubu相关
-  private isLabubuRelated(text: string): boolean {
-    const lowerText = text.toLowerCase()
-    return this.labubuKeywords.some(keyword => 
-      lowerText.includes(keyword.toLowerCase())
-    )
+  // 🔍 检查内容是否与Labubu相关（动态关键词）
+  private async isLabubuRelated(text: string): Promise<boolean> {
+    // 动态获取后台关键词
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/admin/news-crawler/keywords`)
+      const data = await res.json()
+      if (!data.success) return false
+      // 只用enabled为true的关键词
+      const keywords: string[] = (data.data || []).filter((k: any) => k.enabled).map((k: any) => k.keyword)
+      const lowerText = text.toLowerCase()
+      return keywords.some(keyword => lowerText.includes(keyword.toLowerCase()))
+    } catch (e) {
+      // 网络异常时兜底返回false
+      return false
+    }
   }
 
-  // 📡 获取RSS内容 (只保留Labubu相关)
+  // 📡 获取RSS内容 (只保留动态关键词相关)
   private async fetchRSSContent(url: string): Promise<NewsArticle[]> {
     const parser = new Parser()
     try {
@@ -97,11 +106,15 @@ export class NewsCrawler {
       // 只保留24小时内的新闻
       const now = Date.now()
       const oneDayMs = 24 * 60 * 60 * 1000
-      const relevantItems = feed.items.filter((item: any) => {
+      // 动态过滤相关性
+      const relevantItems: any[] = []
+      for (const item of feed.items) {
         const text = (item.title || '') + ' ' + (item.content || item.contentSnippet || item.summary || '')
         const pubDate = item.pubDate ? new Date(item.pubDate).getTime() : 0
-        return this.isLabubuRelated(text) && pubDate > 0 && (now - pubDate) <= oneDayMs
-      })
+        if (pubDate > 0 && (now - pubDate) <= oneDayMs && await this.isLabubuRelated(text)) {
+          relevantItems.push(item)
+        }
+      }
       console.log(`🎯 过滤后相关文章: ${relevantItems.length}/${feed.items.length}（仅保留24小时内）`)
       const articles: NewsArticle[] = relevantItems.slice(0, 10).map((item: any) => ({
         title: item.title || '无标题',
@@ -115,7 +128,7 @@ export class NewsCrawler {
         tags: this.extractTags(item.title + ' ' + (item.content || '')),
         category: this.categorizeContent(item.title + ' ' + (item.content || ''))
       }))
-      console.log(`✅ RSS解析成功: ${articles.length}篇Labubu相关文章`)
+      console.log(`✅ RSS解析成功: ${articles.length}篇相关关键词新闻`)
       return articles
     } catch (error) {
       console.error('🚨 RSS解析失败:', url, error)
