@@ -8,24 +8,24 @@ import authData from './auth.json'
 import commonData from './common.json'
 import seoData from './seo.json'
 
-// 支持的语言列表 - 14种语言
+// 支持的语言列表 - 只保留英文和中文，其余注释方便恢复
 export const SUPPORTED_LOCALES = [
   'en',  // English (默认)
   'zh',  // 中文
-  'de',  // Deutsch
-  'es',  // Español
-  'fr',  // Français
-  'it',  // Italiano
-  'ja',  // 日本語
-  'ko',  // 한국어
-  'nl',  // Nederlands
-  'pl',  // Polski
-  'pt',  // Português
-  'ru',  // Русский
-  'tr',  // Türkçe
-  'ar',  // العربية
-  'hi',  // हिन्दी
-  'bn'   // বাংলা
+  // 'de',  // Deutsch
+  // 'es',  // Español
+  // 'fr',  // Français
+  // 'it',  // Italiano
+  // 'ja',  // 日本語
+  // 'ko',  // 한국어
+  // 'nl',  // Nederlands
+  // 'pl',  // Polski
+  // 'pt',  // Português
+  // 'ru',  // Русский
+  // 'tr',  // Türkçe
+  // 'ar',  // العربية
+  // 'hi',  // हिन्दी
+  // 'bn'   // বাংলা
 ] as const
 
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number]
@@ -33,44 +33,44 @@ export type SupportedLocale = typeof SUPPORTED_LOCALES[number]
 // 默认语言
 export const DEFAULT_LOCALE: SupportedLocale = 'en'
 
-// 语言显示名称
+// 语言显示名称，只保留英文和中文，其余注释
 export const LOCALE_NAMES = {
   'en': 'English',
   'zh': '中文',
-  'de': 'Deutsch',
-  'es': 'Español',
-  'fr': 'Français',
-  'it': 'Italiano',
-  'ja': '日本語',
-  'ko': '한국어',
-  'nl': 'Nederlands',
-  'pl': 'Polski',
-  'pt': 'Português',
-  'ru': 'Русский',
-  'tr': 'Türkçe',
-  'ar': 'العربية',
-  'hi': 'हिन्दी',
-  'bn': 'বাংলা'
+  // 'de': 'Deutsch',
+  // 'es': 'Español',
+  // 'fr': 'Français',
+  // 'it': 'Italiano',
+  // 'ja': '日本語',
+  // 'ko': '한국어',
+  // 'nl': 'Nederlands',
+  // 'pl': 'Polski',
+  // 'pt': 'Português',
+  // 'ru': 'Русский',
+  // 'tr': 'Türkçe',
+  // 'ar': 'العربية',
+  // 'hi': 'हिन्दी',
+  // 'bn': 'বাংলা'
 } as const
 
-// 语言标志
+// 语言标志，只保留英文和中文，其余注释
 export const LOCALE_FLAGS = {
   'en': '🇺🇸',
   'zh': '🇨🇳',
-  'de': '🇩🇪',
-  'es': '🇪🇸',
-  'fr': '🇫🇷',
-  'it': '🇮🇹',
-  'ja': '🇯🇵',
-  'ko': '🇰🇷',
-  'nl': '🇳🇱',
-  'pl': '🇵🇱',
-  'pt': '🇵🇹',
-  'ru': '🇷🇺',
-  'tr': '🇹🇷',
-  'ar': '🇸🇦',
-  'hi': '🇮🇳',
-  'bn': '🇧🇩'
+  // 'de': '🇩🇪',
+  // 'es': '🇪🇸',
+  // 'fr': '🇫🇷',
+  // 'it': '🇮🇹',
+  // 'ja': '🇯🇵',
+  // 'ko': '🇰🇷',
+  // 'nl': '🇳🇱',
+  // 'pl': '🇵🇱',
+  // 'pt': '🇵🇹',
+  // 'ru': '🇷🇺',
+  // 'tr': '🇹🇷',
+  // 'ar': '🇸🇦',
+  // 'hi': '🇮🇳',
+  // 'bn': '🇧🇩'
 } as const
 
 // 默认内容映射 (英语)
@@ -164,8 +164,9 @@ export function removeLocaleFromPathname(pathname: string): string {
  * @returns 文本方向
  */
 export function getTextDirection(locale: SupportedLocale): 'ltr' | 'rtl' {
-  // 阿拉伯语使用从右到左的文本方向
-  return locale === 'ar' ? 'rtl' : 'ltr'
+  // 只保留en/zh，默认都是从左到右
+  // if (locale === 'ar') return 'rtl' // 只保留注释
+  return 'ltr'
 }
 
 /**
@@ -177,16 +178,16 @@ export function getFontFamily(locale: SupportedLocale): string {
   switch (locale) {
     case 'zh':
       return '"Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif'
-    case 'ja':
-      return '"Noto Sans JP", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif'
-    case 'ko':
-      return '"Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif'
-    case 'ar':
-      return '"Noto Sans Arabic", "Tahoma", sans-serif'
-    case 'hi':
-      return '"Noto Sans Devanagari", "Mangal", sans-serif'
-    case 'bn':
-      return '"Noto Sans Bengali", "Vrinda", sans-serif'
+    // case 'ja':
+    //   return '"Noto Sans JP", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif'
+    // case 'ko':
+    //   return '"Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif'
+    // case 'ar':
+    //   return '"Noto Sans Arabic", "Tahoma", sans-serif'
+    // case 'hi':
+    //   return '"Noto Sans Devanagari", "Mangal", sans-serif'
+    // case 'bn':
+    //   return '"Noto Sans Bengali", "Vrinda", sans-serif'
     default:
       return 'system-ui, -apple-system, sans-serif'
   }
