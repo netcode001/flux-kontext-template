@@ -3,10 +3,10 @@
 // 📰 新闻爬虫控制面板
 // 管理员可以手动触发新闻获取和查看状态
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { RefreshCw, Play, CheckCircle, AlertCircle, Clock, Trash2, Plus } from 'lucide-react'
+import { RefreshCw, Play, CheckCircle, AlertCircle, Clock, Trash2, Plus, Loader2 } from 'lucide-react'
 
 interface CrawlerStatus {
   status: string
@@ -62,6 +62,14 @@ export function NewsCrawlerControl() {
   const [addSourceLoading, setAddSourceLoading] = useState(false)
   const [addSourceError, setAddSourceError] = useState<string | null>(null)
   const [delSourceLoadingId, setDelSourceLoadingId] = useState<string | null>(null)
+
+  // 新闻列表相关状态
+  const [articles, setArticles] = useState<any[]>([])
+  const [articleLoading, setArticleLoading] = useState(false)
+  const [articleError, setArticleError] = useState<string | null>(null)
+  const [articlePage, setArticlePage] = useState(1)
+  const [articleTotalPages, setArticleTotalPages] = useState(1)
+  const [deleteArticleId, setDeleteArticleId] = useState<string | null>(null)
 
   // 🔍 获取爬虫状态
   const fetchStatus = async () => {
@@ -254,6 +262,53 @@ export function NewsCrawlerControl() {
       setDelSourceLoadingId(null)
     }
   }
+
+  // 获取新闻列表
+  const fetchArticles = useCallback(async (page = 1) => {
+    setArticleLoading(true)
+    setArticleError(null)
+    try {
+      const res = await fetch(`/api/admin/news-crawler/articles?page=${page}&pageSize=10`)
+      const data = await res.json()
+      if (data.success) {
+        setArticles(data.data)
+        setArticlePage(data.pagination.page)
+        setArticleTotalPages(data.pagination.totalPages)
+      } else {
+        setArticleError(data.error || '获取新闻失败')
+      }
+    } catch (e) {
+      setArticleError('网络错误')
+    } finally {
+      setArticleLoading(false)
+    }
+  }, [])
+
+  // 删除新闻
+  const handleDeleteArticle = async (id: string) => {
+    if (!window.confirm('确定要删除这条新闻吗？')) return
+    setDeleteArticleId(id)
+    try {
+      const res = await fetch('/api/admin/news-crawler/articles', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setArticles(prev => prev.filter(a => a.id !== id))
+      } else {
+        alert(data.error || '删除失败')
+      }
+    } catch (e) {
+      alert('网络错误')
+    } finally {
+      setDeleteArticleId(null)
+    }
+  }
+
+  // 页面加载时拉取新闻
+  useEffect(() => { fetchArticles(articlePage) }, [fetchArticles, articlePage])
 
   return (
     <div className="space-y-6">
@@ -512,6 +567,68 @@ export function NewsCrawlerControl() {
               </ul>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* 新增：新闻列表管理区域 */}
+      <div className="mt-8">
+        <h3 className="text-xl font-bold mb-4">新闻内容管理</h3>
+        <div className="bg-white rounded-lg shadow p-4">
+          {articleLoading ? (
+            <div className="flex items-center justify-center py-8 text-gray-500">
+              <Loader2 className="w-6 h-6 animate-spin mr-2" /> 加载新闻中...
+            </div>
+          ) : articleError ? (
+            <div className="text-red-500">{articleError}</div>
+          ) : articles.length === 0 ? (
+            <div className="text-gray-400 text-sm">暂无新闻数据。</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="px-4 py-2 text-left">标题</th>
+                    <th className="px-4 py-2 text-left">来源</th>
+                    <th className="px-4 py-2 text-left">发布时间</th>
+                    <th className="px-4 py-2 text-left">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {articles.map(article => (
+                    <tr key={article.id} className="border-b hover:bg-gray-50">
+                      <td className="px-4 py-2 max-w-xs truncate">{article.title}</td>
+                      <td className="px-4 py-2">{article.source_id}</td>
+                      <td className="px-4 py-2">{article.published_at ? new Date(article.published_at).toLocaleString() : ''}</td>
+                      <td className="px-4 py-2">
+                        <button
+                          className="text-red-500 hover:text-red-700 flex items-center gap-1"
+                          onClick={() => handleDeleteArticle(article.id)}
+                          disabled={deleteArticleId === article.id}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          {deleteArticleId === article.id ? '删除中...' : '删除'}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {/* 分页控件 */}
+              <div className="flex justify-end items-center gap-2 mt-4">
+                <button
+                  className="px-3 py-1 rounded border text-sm disabled:opacity-50"
+                  onClick={() => setArticlePage(p => Math.max(1, p - 1))}
+                  disabled={articlePage <= 1 || articleLoading}
+                >上一页</button>
+                <span>第 {articlePage} / {articleTotalPages} 页</span>
+                <button
+                  className="px-3 py-1 rounded border text-sm disabled:opacity-50"
+                  onClick={() => setArticlePage(p => Math.min(articleTotalPages, p + 1))}
+                  disabled={articlePage >= articleTotalPages || articleLoading}
+                >下一页</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
