@@ -1,286 +1,297 @@
 /**
- * 🎥 YouTube数据集成服务
- * 获取Labubu相关视频数据并集成到现有数据库
+ * 🎥 YouTube API服务类
+ * 处理YouTube视频搜索、获取详情和数据转换
  */
 
-import { mediaAPIConfig } from './media-api-config';
+import { MediaAPIConfigManager } from './media-api-config'
 
-interface YouTubeVideo {
-  videoId: string;
-  title: string;
-  description: string;
-  channelTitle: string;
-  publishedAt: string;
-  thumbnails: {
-    default?: { url: string; width: number; height: number };
-    medium?: { url: string; width: number; height: number };
-    high?: { url: string; width: number; height: number };
-  };
-  statistics?: {
-    viewCount: string;
-    likeCount: string;
-    commentCount: string;
-  };
-  contentDetails?: {
-    duration: string;
-  };
-  tags?: string[];
-}
-
+// YouTube API接口定义
 interface YouTubeSearchResult {
-  items: YouTubeVideo[];
-  nextPageToken?: string;
-  totalResults: number;
-  resultsPerPage: number;
+  id: {
+    videoId: string
+  }
+  snippet: {
+    publishedAt: string
+    channelId: string
+    title: string
+    description: string
+    thumbnails: {
+      default: { url: string, width: number, height: number }
+      medium: { url: string, width: number, height: number }
+      high: { url: string, width: number, height: number }
+      standard?: { url: string, width: number, height: number }
+      maxres?: { url: string, width: number, height: number }
+    }
+    channelTitle: string
+  }
 }
 
-/**
- * YouTube服务类
- */
+interface YouTubeVideoDetails {
+  id: string
+  snippet: {
+    publishedAt: string
+    channelId: string
+    title: string
+    description: string
+    thumbnails: any
+    channelTitle: string
+  }
+  contentDetails: {
+    duration: string  // ISO 8601格式，如"PT5M30S"
+  }
+  statistics: {
+    viewCount: string
+    likeCount: string
+    commentCount: string
+  }
+  player?: {
+    embedHtml: string
+  }
+}
+
+interface ProcessedVideo {
+  videoId: string
+  title: string
+  description: string
+  thumbnailUrl: string
+  channelTitle: string
+  channelId: string
+  publishedAt: string
+  durationIso: string
+  durationSeconds: number
+  viewCount: number
+  likeCount: number
+  commentCount: number
+  iframeEmbedCode: string
+}
+
 export class YouTubeService {
-  private apiKey: string;
-  private baseUrl = 'https://www.googleapis.com/youtube/v3';
+  private apiKey: string
+  private baseUrl = 'https://www.googleapis.com/youtube/v3'
 
   constructor() {
-    this.apiKey = mediaAPIConfig.getYouTubeConfig().apiKey;
+    const config = MediaAPIConfigManager.getInstance()
+    this.apiKey = config.getYouTubeConfig().apiKey
   }
 
   /**
-   * 搜索Labubu相关视频
+   * 搜索YouTube视频
    */
-  async searchLabubuVideos(options: {
-    maxResults?: number;
-    order?: 'relevance' | 'date' | 'rating' | 'viewCount';
-    publishedAfter?: string;
-    pageToken?: string;
-  } = {}): Promise<YouTubeSearchResult> {
-    const {
-      maxResults = 10,
-      order = 'relevance',
-      publishedAfter,
-      pageToken
-    } = options;
-
-    const searchParams = new URLSearchParams({
-      part: 'snippet',
-      q: 'Labubu 拉布布 泡泡玛特 POP MART',
-      maxResults: maxResults.toString(),
-      order,
-      type: 'video',
-      key: this.apiKey,
-    });
-
-    if (publishedAfter) {
-      searchParams.append('publishedAfter', publishedAfter);
-    }
-
-    if (pageToken) {
-      searchParams.append('pageToken', pageToken);
-    }
-
+  async searchVideos(
+    keyword: string, 
+    maxResults: number = 10,
+    order: 'relevance' | 'date' | 'viewCount' = 'relevance'
+  ): Promise<YouTubeSearchResult[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/search?${searchParams}`);
+      const params = new URLSearchParams({
+        part: 'snippet',
+        q: keyword,
+        type: 'video',
+        maxResults: maxResults.toString(),
+        order: order,
+        key: this.apiKey,
+        regionCode: 'US', // 避免地区限制
+        relevanceLanguage: 'zh' // 优先中文内容
+      })
+
+      const response = await fetch(`${this.baseUrl}/search?${params}`)
       
       if (!response.ok) {
-        throw new Error(`YouTube API错误: ${response.status} ${response.statusText}`);
+        throw new Error(`YouTube搜索API错误: ${response.status} ${response.statusText}`)
       }
 
-      const data = await response.json();
-
+      const data = await response.json()
+      
       if (data.error) {
-        throw new Error(`YouTube API错误: ${data.error.message}`);
+        throw new Error(`YouTube API错误: ${data.error.message}`)
       }
 
-      // 获取视频详细信息
-      const videoIds = data.items.map((item: any) => item.id.videoId);
-      const detailedVideos = await this.getVideoDetails(videoIds);
-
-      return {
-        items: detailedVideos,
-        nextPageToken: data.nextPageToken,
-        totalResults: data.pageInfo.totalResults,
-        resultsPerPage: data.pageInfo.resultsPerPage,
-      };
-
+      return data.items || []
     } catch (error) {
-      console.error('YouTube搜索失败:', error);
-      throw error;
+      console.error('YouTube搜索失败:', error)
+      throw error
     }
   }
 
   /**
    * 获取视频详细信息
    */
-  async getVideoDetails(videoIds: string[]): Promise<YouTubeVideo[]> {
-    if (videoIds.length === 0) return [];
-
-    const params = new URLSearchParams({
-      part: 'snippet,statistics,contentDetails',
-      id: videoIds.join(','),
-      key: this.apiKey,
-    });
+  async getVideoDetails(videoIds: string[]): Promise<YouTubeVideoDetails[]> {
+    if (videoIds.length === 0) return []
 
     try {
-      const response = await fetch(`${this.baseUrl}/videos?${params}`);
+      const params = new URLSearchParams({
+        part: 'snippet,contentDetails,statistics,player',
+        id: videoIds.join(','),
+        key: this.apiKey
+      })
+
+      const response = await fetch(`${this.baseUrl}/videos?${params}`)
       
       if (!response.ok) {
-        throw new Error(`YouTube API错误: ${response.status} ${response.statusText}`);
+        throw new Error(`YouTube视频API错误: ${response.status} ${response.statusText}`)
       }
 
-      const data = await response.json();
-
+      const data = await response.json()
+      
       if (data.error) {
-        throw new Error(`YouTube API错误: ${data.error.message}`);
+        throw new Error(`YouTube API错误: ${data.error.message}`)
       }
 
-      return data.items.map((item: any) => ({
-        videoId: item.id,
-        title: item.snippet.title,
-        description: item.snippet.description,
-        channelTitle: item.snippet.channelTitle,
-        publishedAt: item.snippet.publishedAt,
-        thumbnails: item.snippet.thumbnails,
-        statistics: item.statistics,
-        contentDetails: item.contentDetails,
-        tags: item.snippet.tags,
-      }));
-
+      return data.items || []
     } catch (error) {
-      console.error('获取视频详情失败:', error);
-      throw error;
+      console.error('获取YouTube视频详情失败:', error)
+      throw error
     }
   }
 
   /**
-   * 将YouTube视频转换为数据库格式
+   * 搜索并获取完整视频信息
    */
-  convertToNewsArticle(video: YouTubeVideo) {
-    // 计算热度分数
-    const viewCount = parseInt(video.statistics?.viewCount || '0');
-    const likeCount = parseInt(video.statistics?.likeCount || '0');
-    const commentCount = parseInt(video.statistics?.commentCount || '0');
+  async searchAndGetDetails(
+    keyword: string, 
+    maxResults: number = 10,
+    order: 'relevance' | 'date' | 'viewCount' = 'relevance'
+  ): Promise<ProcessedVideo[]> {
+    try {
+      // 第一步：搜索视频
+      const searchResults = await this.searchVideos(keyword, maxResults, order)
+      
+      if (searchResults.length === 0) {
+        return []
+      }
+
+      // 第二步：获取视频详情
+      const videoIds = searchResults.map(item => item.id.videoId)
+      const videoDetails = await this.getVideoDetails(videoIds)
+
+      // 第三步：处理和合并数据
+      const processedVideos: ProcessedVideo[] = []
+
+      for (const detail of videoDetails) {
+        try {
+          const processed = this.processVideoData(detail)
+          processedVideos.push(processed)
+        } catch (error) {
+          console.warn(`处理视频 ${detail.id} 时出错:`, error)
+          // 继续处理其他视频，不因单个视频错误而中断
+        }
+      }
+
+      return processedVideos
+    } catch (error) {
+      console.error('搜索并获取YouTube视频详情失败:', error)
+      throw error
+    }
+  }
+
+  /**
+   * 处理单个视频数据
+   */
+  private processVideoData(video: YouTubeVideoDetails): ProcessedVideo {
+    // 转换持续时间：PT5M30S -> 330秒
+    const durationSeconds = this.parseDuration(video.contentDetails.duration)
     
-    // YouTube平台权重: 1.3 (高于普通平台)
-    const platformWeight = 1.3;
-    const hotScore = Math.min(100, 
-      (Math.log10(viewCount + 1) * 10 + 
-       Math.log10(likeCount + 1) * 5 + 
-       Math.log10(commentCount + 1) * 3) * platformWeight
-    );
+    // 获取最高质量的缩略图
+    const thumbnailUrl = this.getBestThumbnail(video.snippet.thumbnails)
+    
+    // 生成iframe嵌入代码
+    const iframeEmbedCode = this.generateIframeCode(video.id)
+
+    // 安全转换数字字段
+    const viewCount = parseInt(video.statistics.viewCount || '0', 10)
+    const likeCount = parseInt(video.statistics.likeCount || '0', 10)
+    const commentCount = parseInt(video.statistics.commentCount || '0', 10)
 
     return {
-      title: video.title,
-      content: video.description || `来自频道 ${video.channelTitle} 的Labubu相关视频`,
-      summary: video.description ? 
-        video.description.substring(0, 200) + '...' : 
-        `${video.channelTitle}分享的Labubu视频，观看量${viewCount.toLocaleString()}次`,
-      url: `https://www.youtube.com/watch?v=${video.videoId}`,
-      image_url: video.thumbnails.high?.url || video.thumbnails.medium?.url || video.thumbnails.default?.url,
-      published_at: new Date(video.publishedAt),
-      source_name: 'YouTube',
-      source_url: 'https://www.youtube.com',
-      author: video.channelTitle,
-      category: 'video',
-      tags: video.tags || ['Labubu', '视频', 'YouTube'],
-      language: 'zh',
-      hot_score: Math.round(hotScore),
-      view_count: viewCount,
-      like_count: likeCount,
-      comment_count: commentCount,
-      duration: video.contentDetails?.duration,
-      platform_data: {
-        platform: 'youtube',
-        video_id: video.videoId,
-        channel: video.channelTitle,
-        thumbnails: video.thumbnails,
-      }
-    };
-  }
-
-  /**
-   * 获取并保存Labubu视频到数据库
-   */
-  async fetchAndSaveLabubuVideos(maxResults: number = 20) {
-    try {
-      console.log('🎥 开始获取YouTube Labubu视频...');
-      
-      // 获取最新视频 (最近30天)
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
-      const searchResult = await this.searchLabubuVideos({
-        maxResults,
-        order: 'date',
-        publishedAfter: thirtyDaysAgo.toISOString(),
-      });
-
-      console.log(`✅ 找到 ${searchResult.items.length} 个相关视频`);
-
-      // 转换为数据库格式
-      const articles = searchResult.items.map(video => this.convertToNewsArticle(video));
-
-      // 这里可以调用现有的数据库保存逻辑
-      // 例如使用现有的 news-crawler.ts 中的保存方法
-      
-      return {
-        success: true,
-        count: articles.length,
-        articles,
-        quota_used: maxResults * 100 + searchResult.items.length, // 搜索 + 视频详情
-        message: `成功获取 ${articles.length} 个YouTube Labubu视频`
-      };
-
-    } catch (error) {
-      console.error('YouTube数据获取失败:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : '未知错误',
-        quota_used: 0,
-      };
+      videoId: video.id,
+      title: video.snippet.title,
+      description: video.snippet.description || '',
+      thumbnailUrl,
+      channelTitle: video.snippet.channelTitle,
+      channelId: video.snippet.channelId,
+      publishedAt: video.snippet.publishedAt,
+      durationIso: video.contentDetails.duration,
+      durationSeconds,
+      viewCount,
+      likeCount,
+      commentCount,
+      iframeEmbedCode
     }
   }
 
   /**
-   * 获取配额使用情况
+   * 解析ISO 8601持续时间格式
+   * PT5M30S -> 330秒
    */
-  getQuotaInfo() {
-    const config = mediaAPIConfig.getYouTubeConfig();
-    return {
-      daily_limit: config.quota.daily,
-      search_cost: config.quota.searchCost,
-      video_cost: config.quota.videoCost,
-      estimated_remaining: config.quota.daily - 101, // 减去测试时使用的配额
-    };
+  private parseDuration(duration: string): number {
+    const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
+    if (!match) return 0
+
+    const hours = parseInt(match[1] || '0', 10)
+    const minutes = parseInt(match[2] || '0', 10)
+    const seconds = parseInt(match[3] || '0', 10)
+
+    return hours * 3600 + minutes * 60 + seconds
   }
 
   /**
-   * 检查API状态
+   * 获取最高质量的缩略图URL
    */
-  async checkAPIStatus() {
-    try {
-      // 简单测试请求
-      const params = new URLSearchParams({
-        part: 'snippet',
-        q: 'test',
-        maxResults: '1',
-        key: this.apiKey,
-      });
+  private getBestThumbnail(thumbnails: any): string {
+    // 优先级：maxres > standard > high > medium > default
+    if (thumbnails.maxres) return thumbnails.maxres.url
+    if (thumbnails.standard) return thumbnails.standard.url
+    if (thumbnails.high) return thumbnails.high.url
+    if (thumbnails.medium) return thumbnails.medium.url
+    if (thumbnails.default) return thumbnails.default.url
+    return ''
+  }
 
-      const response = await fetch(`${this.baseUrl}/search?${params}`);
-      const data = await response.json();
+  /**
+   * 生成iframe嵌入代码
+   */
+  private generateIframeCode(videoId: string): string {
+    return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+  }
 
-      return {
-        status: response.ok ? 'healthy' : 'error',
-        quota_remaining: data.pageInfo ? 'available' : 'unknown',
-        last_check: new Date().toISOString(),
-      };
+  /**
+   * 格式化视频持续时间为用户友好格式
+   */
+  formatDuration(seconds: number): string {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const remainingSeconds = seconds % 60
 
-    } catch (error) {
-      return {
-        status: 'error',
-        error: error instanceof Error ? error.message : '未知错误',
-        last_check: new Date().toISOString(),
-      };
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
+    } else {
+      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+    }
+  }
+
+  /**
+   * 格式化观看数为用户友好格式
+   */
+  formatViewCount(count: number): string {
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`
+    } else if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`
+    } else {
+      return count.toString()
+    }
+  }
+
+  /**
+   * 验证API配额使用情况
+   */
+  async checkQuota(): Promise<{ remainingQuota: number, dailyLimit: number }> {
+    // 这里可以实现配额监控逻辑
+    // 暂时返回模拟数据
+    return {
+      remainingQuota: 9000,
+      dailyLimit: 10000
     }
   }
 }

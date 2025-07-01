@@ -79,6 +79,15 @@ const adminModules = [
     path: '/admin/x-api-crawler',
     status: 'active',
     features: ['API监控', '速率限制', '内容过滤', '实时同步']
+  },
+  {
+    id: 'youtube-management',
+    title: 'YouTube视频管理',
+    description: 'YouTube视频搜索、导入和管理',
+    icon: Video,
+    path: '/admin/youtube-management',
+    status: 'active',
+    features: ['关键词搜索', '视频导入', '分类管理', '首页展示']
   }
 ]
 

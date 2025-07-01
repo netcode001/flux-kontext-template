@@ -194,6 +194,43 @@ export interface Generation {
   created_at: Date;
 }
 
+// 🎥 YouTube视频管理接口定义
+export interface YouTubeSearchKeyword {
+  id: string;
+  keyword: string;
+  category_name: string;
+  max_results: number;
+  last_search_at?: Date;
+  video_count: number;
+  is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface YouTubeVideo {
+  id: string;
+  video_id: string;
+  title: string;
+  description?: string;
+  thumbnail_url?: string;
+  channel_title?: string;
+  channel_id?: string;
+  published_at?: Date;
+  duration_iso?: string;
+  duration_seconds?: number;
+  view_count: number;
+  like_count: number;
+  comment_count: number;
+  iframe_embed_code?: string;
+  search_keyword?: string;
+  category_name?: string;
+  is_featured: boolean;
+  is_active: boolean;
+  admin_notes?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
 // 🎨 社区功能接口定义
 export interface Post {
   id: string
@@ -1407,6 +1444,293 @@ class SupabaseAdapter {
 
       } catch (error) {
         console.error('🚨 Generations create critical error:', error)
+        throw error
+      }
+    }
+  }
+
+  // 🎥 YouTube搜索关键词管理
+  youtube_search_keywords = {
+    async findMany(args?: any): Promise<YouTubeSearchKeyword[]> {
+      try {
+        const supabase = getSupabaseAdmin()
+        let query = supabase.from('youtube_search_keywords').select('*')
+
+        if (args?.where?.is_active !== undefined) {
+          query = query.eq('is_active', args.where.is_active)
+        }
+
+        if (args?.orderBy) {
+          const orderField = Object.keys(args.orderBy)[0]
+          const orderDirection = args.orderBy[orderField]
+          query = query.order(orderField, { ascending: orderDirection === 'asc' })
+        }
+
+        const { data, error } = await query
+
+        if (error) {
+          console.error('🚨 YouTube keywords findMany error:', error)
+          return []
+        }
+
+        return (data || []).map((item: any) => ({
+          id: item.id,
+          keyword: item.keyword,
+          category_name: item.category_name,
+          max_results: item.max_results,
+          last_search_at: item.last_search_at ? new Date(item.last_search_at) : undefined,
+          video_count: item.video_count,
+          is_active: item.is_active,
+          created_at: new Date(item.created_at),
+          updated_at: new Date(item.updated_at)
+        }))
+      } catch (error) {
+        console.error('🚨 YouTube keywords findMany critical error:', error)
+        return []
+      }
+    },
+
+    async findFirst(args: any): Promise<YouTubeSearchKeyword | null> {
+      try {
+        const supabase = getSupabaseAdmin()
+        let query = supabase.from('youtube_search_keywords').select('*')
+
+        if (args?.where?.keyword) {
+          query = query.eq('keyword', args.where.keyword)
+        }
+
+        if (args?.where?.is_active !== undefined) {
+          query = query.eq('is_active', args.where.is_active)
+        }
+
+        const { data, error } = await query.limit(1).single()
+
+        if (error) {
+          if (error.code === 'PGRST116') return null // No rows returned
+          console.error('🚨 YouTube keywords findFirst error:', error)
+          return null
+        }
+
+        return {
+          id: data.id,
+          keyword: data.keyword,
+          category_name: data.category_name,
+          max_results: data.max_results,
+          last_search_at: data.last_search_at ? new Date(data.last_search_at) : undefined,
+          video_count: data.video_count,
+          is_active: data.is_active,
+          created_at: new Date(data.created_at),
+          updated_at: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 YouTube keywords findFirst critical error:', error)
+        return null
+      }
+    },
+
+    async create(args: any): Promise<YouTubeSearchKeyword> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('youtube_search_keywords')
+          .insert({
+            keyword: args.data.keyword,
+            category_name: args.data.category_name,
+            max_results: args.data.max_results,
+            last_search_at: args.data.last_search_at,
+            video_count: args.data.video_count || 0,
+            is_active: args.data.is_active !== undefined ? args.data.is_active : true
+          })
+          .select()
+          .single()
+
+        if (error) {
+          console.error('🚨 YouTube keywords create error:', error)
+          throw error
+        }
+
+        return {
+          id: data.id,
+          keyword: data.keyword,
+          category_name: data.category_name,
+          max_results: data.max_results,
+          last_search_at: data.last_search_at ? new Date(data.last_search_at) : undefined,
+          video_count: data.video_count,
+          is_active: data.is_active,
+          created_at: new Date(data.created_at),
+          updated_at: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 YouTube keywords create critical error:', error)
+        throw error
+      }
+    },
+
+    async update(args: any): Promise<YouTubeSearchKeyword> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const updateData: any = {}
+
+        if (args.data.keyword !== undefined) updateData.keyword = args.data.keyword
+        if (args.data.category_name !== undefined) updateData.category_name = args.data.category_name
+        if (args.data.max_results !== undefined) updateData.max_results = args.data.max_results
+        if (args.data.last_search_at !== undefined) updateData.last_search_at = args.data.last_search_at
+        if (args.data.video_count !== undefined) updateData.video_count = args.data.video_count
+        if (args.data.is_active !== undefined) updateData.is_active = args.data.is_active
+
+        const { data, error } = await supabase
+          .from('youtube_search_keywords')
+          .update(updateData)
+          .eq('id', args.where.id)
+          .select()
+          .single()
+
+        if (error) {
+          console.error('🚨 YouTube keywords update error:', error)
+          throw error
+        }
+
+        return {
+          id: data.id,
+          keyword: data.keyword,
+          category_name: data.category_name,
+          max_results: data.max_results,
+          last_search_at: data.last_search_at ? new Date(data.last_search_at) : undefined,
+          video_count: data.video_count,
+          is_active: data.is_active,
+          created_at: new Date(data.created_at),
+          updated_at: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 YouTube keywords update critical error:', error)
+        throw error
+      }
+    }
+  }
+
+  // 🎥 YouTube视频管理
+  youtube_videos = {
+    async findMany(args?: any): Promise<YouTubeVideo[]> {
+      try {
+        const supabase = getSupabaseAdmin()
+        let query = supabase.from('youtube_videos').select('*')
+
+        if (args?.where?.is_active !== undefined) {
+          query = query.eq('is_active', args.where.is_active)
+        }
+
+        if (args?.where?.is_featured !== undefined) {
+          query = query.eq('is_featured', args.where.is_featured)
+        }
+
+        if (args?.where?.category_name) {
+          query = query.eq('category_name', args.where.category_name)
+        }
+
+        if (args?.orderBy) {
+          const orderField = Object.keys(args.orderBy)[0]
+          const orderDirection = args.orderBy[orderField]
+          query = query.order(orderField, { ascending: orderDirection === 'asc' })
+        }
+
+        if (args?.take) {
+          query = query.limit(args.take)
+        }
+
+        const { data, error } = await query
+
+        if (error) {
+          console.error('🚨 YouTube videos findMany error:', error)
+          return []
+        }
+
+        return (data || []).map((item: any) => ({
+          id: item.id,
+          video_id: item.video_id,
+          title: item.title,
+          description: item.description,
+          thumbnail_url: item.thumbnail_url,
+          channel_title: item.channel_title,
+          channel_id: item.channel_id,
+          published_at: item.published_at ? new Date(item.published_at) : undefined,
+          duration_iso: item.duration_iso,
+          duration_seconds: item.duration_seconds,
+          view_count: item.view_count || 0,
+          like_count: item.like_count || 0,
+          comment_count: item.comment_count || 0,
+          iframe_embed_code: item.iframe_embed_code,
+          search_keyword: item.search_keyword,
+          category_name: item.category_name,
+          is_featured: item.is_featured,
+          is_active: item.is_active,
+          admin_notes: item.admin_notes,
+          created_at: new Date(item.created_at),
+          updated_at: new Date(item.updated_at)
+        }))
+      } catch (error) {
+        console.error('🚨 YouTube videos findMany critical error:', error)
+        return []
+      }
+    },
+
+    async create(args: any): Promise<YouTubeVideo> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('youtube_videos')
+          .insert({
+            video_id: args.data.video_id,
+            title: args.data.title,
+            description: args.data.description,
+            thumbnail_url: args.data.thumbnail_url,
+            channel_title: args.data.channel_title,
+            channel_id: args.data.channel_id,
+            published_at: args.data.published_at,
+            duration_iso: args.data.duration_iso,
+            duration_seconds: args.data.duration_seconds,
+            view_count: args.data.view_count || 0,
+            like_count: args.data.like_count || 0,
+            comment_count: args.data.comment_count || 0,
+            iframe_embed_code: args.data.iframe_embed_code,
+            search_keyword: args.data.search_keyword,
+            category_name: args.data.category_name,
+            is_featured: args.data.is_featured || false,
+            is_active: args.data.is_active !== undefined ? args.data.is_active : true,
+            admin_notes: args.data.admin_notes
+          })
+          .select()
+          .single()
+
+        if (error) {
+          console.error('🚨 YouTube videos create error:', error)
+          throw error
+        }
+
+        return {
+          id: data.id,
+          video_id: data.video_id,
+          title: data.title,
+          description: data.description,
+          thumbnail_url: data.thumbnail_url,
+          channel_title: data.channel_title,
+          channel_id: data.channel_id,
+          published_at: data.published_at ? new Date(data.published_at) : undefined,
+          duration_iso: data.duration_iso,
+          duration_seconds: data.duration_seconds,
+          view_count: data.view_count || 0,
+          like_count: data.like_count || 0,
+          comment_count: data.comment_count || 0,
+          iframe_embed_code: data.iframe_embed_code,
+          search_keyword: data.search_keyword,
+          category_name: data.category_name,
+          is_featured: data.is_featured,
+          is_active: data.is_active,
+          admin_notes: data.admin_notes,
+          created_at: new Date(data.created_at),
+          updated_at: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 YouTube videos create critical error:', error)
         throw error
       }
     }
