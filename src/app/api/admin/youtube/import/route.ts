@@ -11,19 +11,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '无效的视频数据' }, { status: 400 })
     }
 
+    let importCount = 0
+    let skipCount = 0
     // 批量插入视频，避免重复，校验video_id
     const created = await Promise.all(
       videos.map(async (video: any) => {
         // 校验video_id
-        if (!video.video_id) return null
-
+        if (!video.video_id) {
+          skipCount++
+          return null
+        }
         // 检查是否已存在（用findMany+limit）
         const existsArr = await prisma.youtube_videos.findMany({
           where: { video_id: video.video_id },
           take: 1
         })
-        if (existsArr && existsArr.length > 0) return null
-
+        if (existsArr && existsArr.length > 0) {
+          skipCount++
+          return null
+        }
+        importCount++
         return prisma.youtube_videos.create({
           data: {
             video_id: video.video_id,
@@ -50,7 +57,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      count: created.filter(Boolean).length
+      count: importCount,
+      skipped: skipCount
     })
   } catch (error) {
     console.error('导入YouTube视频失败:', error)
