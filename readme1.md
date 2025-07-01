@@ -248,6 +248,11 @@ src/components/home/
 4. **性能优化**: 图片懒加载、组件懒加载
 5. **SEO优化**: 添加结构化数据
 
+### 🔐 修复验证
+- **测试环境**: http://localhost:3000/admin/youtube-management
+- **登录账户**: test@example.com / password
+- **预期结果**: 创建数据库表后，YouTube搜索功能应恢复正常
+
 ---
 
 ## 2025-01-21 - 首页内容清理
@@ -1122,3 +1127,30 @@ src/components/home/
 - Supabase账户和配置
 - YouTube Data API v3 密钥
 - FAL AI API密钥 
+
+# 2024-多语言选择框精简记录
+
+## 变更内容
+- 只保留了英文（en）和中文（zh）两种语言，其他语言全部注释，方便后续恢复。
+- SUPPORTED_LOCALES、LOCALE_NAMES、LOCALE_FLAGS 只保留 en/zh，其余全部注释。
+- getTextDirection/getFontFamily 相关分支全部注释，保证类型安全。
+- 代码注释全部为中文，未影响网页文案。
+
+## 影响范围
+- 语言选择框（LanguageSwitcher）只显示中英文。
+- 其他功能不受影响。
+
+## 操作原因
+- 按需精简多语言，提升界面简洁性。
+- 保留注释，便于后续恢复和扩展。
+
+## 注意事项
+- 如需恢复其他语言，取消注释即可。
+- 相关类型判断和分支需同步恢复。
+
+## Git提交说明
+- 已提交到master分支，commit message：
+  > 多语言选择框只保留英文和中文，其余语言全部注释，修复相关类型分支，保证类型安全。
+
+---
+如有疑问可随时联系维护者。 
