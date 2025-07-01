@@ -93,8 +93,8 @@ export class NewsCrawler {
     }
   }
 
-  // 📡 获取RSS内容 (只保留动态关键词相关)
-  private async fetchRSSContent(url: string): Promise<NewsArticle[]> {
+  // 📡 获取RSS内容 (支持days参数)
+  private async fetchRSSContent(url: string, days = 1): Promise<NewsArticle[]> {
     const parser = new Parser()
     try {
       console.log('🔍 获取RSS内容:', url)
@@ -103,19 +103,19 @@ export class NewsCrawler {
         console.log('❌ RSS数据格式错误', url)
         return []
       }
-      // 只保留24小时内的新闻
+      // 动态时间范围
       const now = Date.now()
-      const oneDayMs = 24 * 60 * 60 * 1000
+      const rangeMs = days * 24 * 60 * 60 * 1000
       // 动态过滤相关性
       const relevantItems: any[] = []
       for (const item of feed.items) {
         const text = (item.title || '') + ' ' + (item.content || item.contentSnippet || item.summary || '')
         const pubDate = item.pubDate ? new Date(item.pubDate).getTime() : 0
-        if (pubDate > 0 && (now - pubDate) <= oneDayMs && await this.isLabubuRelated(text)) {
+        if (pubDate > 0 && (now - pubDate) <= rangeMs && await this.isLabubuRelated(text)) {
           relevantItems.push(item)
         }
       }
-      console.log(`🎯 过滤后相关文章: ${relevantItems.length}/${feed.items.length}（仅保留24小时内）`)
+      console.log(`🎯 过滤后相关文章: ${relevantItems.length}/${feed.items.length}（仅保留${days}天内）`)
       const articles: NewsArticle[] = relevantItems.slice(0, 10).map((item: any) => ({
         title: item.title || '无标题',
         content: item.content || item.contentSnippet || item.summary || '',
@@ -430,8 +430,8 @@ export class NewsCrawler {
     }
   }
 
-  // 🚀 执行内容获取任务
-  public async crawlContent(withLogs = false): Promise<{ success: boolean; count: number; message: string; logs?: string[] }> {
+  // 🚀 执行内容获取任务（支持days参数）
+  public async crawlContent(withLogs = false, days = 1): Promise<{ success: boolean; count: number; message: string; logs?: string[] }> {
     const logs: string[] = []
     try {
       logs.push('🚀 开始获取热点新闻内容...')
@@ -441,7 +441,7 @@ export class NewsCrawler {
       // 获取RSS新闻内容
       for (const source of this.sources.filter(s => s.type === 'rss')) {
         logs.push(`🔍 获取RSS内容: ${source.url}`)
-        const articles = await this.fetchRSSContent(source.url)
+        const articles = await this.fetchRSSContent(source.url, days)
         logs.push(`🎯 过滤后相关文章: ${articles.length}`)
         allArticles.push(...articles)
       }
@@ -547,7 +547,8 @@ export async function getNewsSourceStats() {
 }
 
 // 🕐 定时任务函数
-export async function runNewsCrawlerTask(opts?: { withLogs?: boolean }) {
+export async function runNewsCrawlerTask(opts?: { withLogs?: boolean, days?: number }) {
   const withLogs = opts?.withLogs || false
-  return await newsCrawler.crawlContent(withLogs)
+  const days = opts?.days || 1
+  return await newsCrawler.crawlContent(withLogs, days)
 } 
