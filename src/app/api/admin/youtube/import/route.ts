@@ -11,9 +11,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '无效的视频数据' }, { status: 400 })
     }
 
-    // 批量插入视频，避免重复
+    // 批量插入视频，避免重复，校验video_id
     const created = await Promise.all(
       videos.map(async (video: any) => {
+        // 校验video_id
+        if (!video.video_id) return null
+
         // 检查是否已存在（用findMany+limit）
         const existsArr = await prisma.youtube_videos.findMany({
           where: { video_id: video.video_id },
