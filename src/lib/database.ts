@@ -1631,7 +1631,7 @@ class SupabaseAdapter {
     async findMany(args?: any): Promise<NewsKeyword[]> {
       try {
         const supabase = getSupabaseAdmin()
-        let query = supabase.from('news_keywords').select('*')
+        let query = supabase.from('newskeyword').select('*')
 
         if (args?.where?.enabled !== undefined) {
           query = query.eq('enabled', args.where.enabled)
@@ -1655,7 +1655,7 @@ class SupabaseAdapter {
           keyword: item.keyword,
           enabled: item.enabled,
           created_at: new Date(item.created_at),
-          updated_at: new Date(item.updated_at)
+          updated_at: item.updated_at ? new Date(item.updated_at) : new Date(item.created_at)
         }))
       } catch (error) {
         console.error('🚨 News keywords findMany critical error:', error)
@@ -1666,7 +1666,7 @@ class SupabaseAdapter {
     async findUnique(args: any): Promise<NewsKeyword | null> {
       try {
         const supabase = getSupabaseAdmin()
-        let query = supabase.from('news_keywords').select('*')
+        let query = supabase.from('newskeyword').select('*')
 
         if (args.where.id) {
           query = query.eq('id', args.where.id)
@@ -1687,7 +1687,7 @@ class SupabaseAdapter {
           keyword: data.keyword,
           enabled: data.enabled,
           created_at: new Date(data.created_at),
-          updated_at: new Date(data.updated_at)
+          updated_at: data.updated_at ? new Date(data.updated_at) : new Date(data.created_at)
         }
       } catch (error) {
         console.error('🚨 News keywords findUnique critical error:', error)
@@ -1699,7 +1699,7 @@ class SupabaseAdapter {
       try {
         const supabase = getSupabaseAdmin()
         const { data, error } = await supabase
-          .from('news_keywords')
+          .from('newskeyword')
           .insert({
             keyword: args.data.keyword,
             enabled: args.data.enabled !== undefined ? args.data.enabled : true
@@ -1717,7 +1717,7 @@ class SupabaseAdapter {
           keyword: data.keyword,
           enabled: data.enabled,
           created_at: new Date(data.created_at),
-          updated_at: new Date(data.updated_at)
+          updated_at: data.updated_at ? new Date(data.updated_at) : new Date(data.created_at)
         }
       } catch (error) {
         console.error('🚨 News keywords create critical error:', error)
@@ -1734,7 +1734,7 @@ class SupabaseAdapter {
         if (args.data.enabled !== undefined) updateData.enabled = args.data.enabled
 
         const { data, error } = await supabase
-          .from('news_keywords')
+          .from('newskeyword')
           .update(updateData)
           .eq('id', args.where.id)
           .select()
@@ -1750,7 +1750,7 @@ class SupabaseAdapter {
           keyword: data.keyword,
           enabled: data.enabled,
           created_at: new Date(data.created_at),
-          updated_at: new Date(data.updated_at)
+          updated_at: data.updated_at ? new Date(data.updated_at) : new Date(data.created_at)
         }
       } catch (error) {
         console.error('🚨 News keywords update critical error:', error)
@@ -1762,7 +1762,7 @@ class SupabaseAdapter {
       try {
         const supabase = getSupabaseAdmin()
         const { data, error } = await supabase
-          .from('news_keywords')
+          .from('newskeyword')
           .delete()
           .eq('id', args.where.id)
           .select()
@@ -1778,7 +1778,7 @@ class SupabaseAdapter {
           keyword: data.keyword,
           enabled: data.enabled,
           created_at: new Date(data.created_at),
-          updated_at: new Date(data.updated_at)
+          updated_at: data.updated_at ? new Date(data.updated_at) : new Date(data.created_at)
         }
       } catch (error) {
         console.error('🚨 News keywords delete critical error:', error)
