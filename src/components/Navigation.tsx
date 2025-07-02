@@ -38,25 +38,31 @@ export function Navigation() {
     { href: "/generate", label: common.navigation.generate, emoji: "✨" },
     { 
       href: "/labubu-news", 
-      label: "Labubu快报",
+      label: "News",
       emoji: "📰"
     },
     { 
       href: "/labubu-gallery", 
-      label: "创意秀场",
+      label: "ShowRoom",
       emoji: "🎨"
     },
-    { href: "/pricing", label: common.navigation.pricing, emoji: "💎" },
     { 
-      href: "/resources", 
-      label: common.navigation.resources,
-      emoji: "📚",
-      hasDropdown: true,
-      subItems: [
-        { href: "/resources", label: common.navigation.resourcesHub, icon: BookOpen },
-        { href: "/resources/api", label: common.navigation.apiDocs, icon: Code }
-      ]
-    }
+      href: "/wallpapers", 
+      label: "Wallpapers",
+      emoji: "🖼️"
+    },
+    { href: "/videos", label: "Videos", emoji: "🎬" },
+    // { href: "/pricing", label: common.navigation.pricing, emoji: "💎" },
+    // { 
+    //   href: "/resources", 
+    //   label: common.navigation.resources,
+    //   emoji: "📚",
+    //   hasDropdown: true,
+    //   subItems: [
+    //     { href: "/resources", label: common.navigation.resourcesHub, icon: BookOpen },
+    //     { href: "/resources/api", label: common.navigation.apiDocs, icon: Code }
+    //   ]
+    // }
   ]
 
   const handleSignOut = async () => {
@@ -67,7 +73,7 @@ export function Navigation() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md  border-b border-labubu-200/30">
       <div className="container mx-auto px-4 h-16 flex items-center">
         {/* 左侧：Logo */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 flex items-center">
           <LogoVariants.Navigation />
         </div>
         
@@ -79,76 +85,32 @@ export function Navigation() {
         {/* 中间：桌面端导航菜单 - 居中显示 */}
         <nav className="hidden md:flex items-center justify-center flex-1 space-x-8">
           {navLinks.map((link) => (
-            <div key={link.href} className="relative">
-              {link.hasDropdown ? (
-                // Resources下拉菜单
-                <div className="relative resources-dropdown">
-                  <button
-                    onClick={() => setIsResourcesMenuOpen(!isResourcesMenuOpen)}
-                    className={`flex items-center space-x-2 relative transition-all duration-300 hover:font-semibold active:scale-95 px-4 py-2 rounded-2xl hover: hover:-translate-y-0.5 ${
-                      pathname.startsWith('/resources') 
-                        ? 'text-labubu-600 font-semibold bg-gradient-to-r from-labubu-50 to-labubu-100 ' 
-                        : 'text-gray-800 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50'
-                    }`}
-                  >
-                    {link.emoji && (
-                      <span className="text-base leading-none flex items-center justify-center w-5 h-5">
-                        {link.emoji}
-                      </span>
-                    )}
-                    <span className="leading-none">{link.label}</span>
-                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isResourcesMenuOpen ? 'rotate-180' : ''}`} />
-                    {pathname.startsWith('/resources') && (
-                      <div className="absolute -bottom-1 left-4 right-4 h-1 bg-gradient-to-r from-labubu-400 to-warm-400 rounded-full" />
-                    )}
-                  </button>
-                  
-                  {/* Resources下拉菜单内容 */}
-                  {isResourcesMenuOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-lg border border-labubu-200/30 rounded-2xl  py-3 z-[9999]">
-                      {link.subItems?.map((subItem) => (
-                        <Link
-                          key={subItem.href}
-                          href={subItem.href}
-                          className="flex items-center space-x-3 px-4 py-3 text-sm transition-all duration-300 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50 rounded-xl mx-2 hover:scale-105 active:scale-95"
-                          onClick={() => setIsResourcesMenuOpen(false)}
-                        >
-                          <subItem.icon className="w-4 h-4 text-labubu-500" />
-                          <span className="text-gray-800 hover:text-labubu-600">{subItem.label}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                // 普通导航链接
-                <Link 
-                  href={link.href} 
-                  className={`relative transition-all duration-300 hover:font-semibold active:scale-95 flex items-center space-x-2 px-4 py-2 rounded-2xl hover: hover:-translate-y-0.5 ${
-                    pathname === link.href 
-                      ? 'text-labubu-600 font-semibold bg-gradient-to-r from-labubu-50 to-labubu-100 ' 
-                      : 'text-gray-800 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50'
-                  }`}
-                >
-                  {link.emoji && (
-                    <span className="text-base leading-none flex items-center justify-center w-5 h-5">
-                      {link.emoji}
-                    </span>
-                  )}
-                  <span className="leading-none">{link.label}</span>
-                  {pathname === link.href && (
-                    <div className="absolute -bottom-1 left-4 right-4 h-1 bg-gradient-to-r from-labubu-400 to-warm-400 rounded-full" />
-                  )}
-                </Link>
+            <Link 
+              key={link.href}
+              href={link.href}
+              className={`relative transition-all duration-300 hover:font-semibold active:scale-95 flex items-center space-x-2 px-4 py-2 rounded-2xl hover: hover:-translate-y-0.5 ${
+                pathname === link.href 
+                  ? 'text-labubu-600 font-semibold bg-gradient-to-r from-labubu-50 to-labubu-100 ' 
+                  : 'text-gray-800 hover:text-labubu-600 hover:bg-gradient-to-r hover:from-labubu-50 hover:to-warm-50'
+              }`}
+            >
+              {link.emoji && (
+                <span className="text-base leading-none flex items-center justify-center w-5 h-5">
+                  {link.emoji}
+                </span>
               )}
-            </div>
+              <span className="leading-none">{link.label}</span>
+              {pathname === link.href && (
+                <div className="absolute -bottom-1 left-4 right-4 h-1 bg-gradient-to-r from-labubu-400 to-warm-400 rounded-full" />
+              )}
+            </Link>
           ))}
         </nav>
 
         {/* 右侧：桌面端语言选择器和用户状态 */}
         <div className="hidden md:flex items-center space-x-4 flex-shrink-0">
           {/* 语言选择器 */}
-          <LanguageSwitcher variant="dropdown" />
+          <LanguageSwitcher variant="icon-only" />
           
           {status === "loading" ? (
             <div className="w-8 h-8 animate-spin rounded-full border-2 border-labubu-400 border-t-transparent" />
@@ -241,69 +203,23 @@ export function Navigation() {
           <div className="container mx-auto px-4 py-4 space-y-4">
             {/* 移动端导航链接 */}
             {navLinks.map((link) => (
-              <div key={link.href}>
-                {link.hasDropdown ? (
-                  // 移动端Resources下拉菜单
-                  <div>
-                    <button
-                      onClick={() => setIsResourcesMenuOpen(!isResourcesMenuOpen)}
-                      className={`flex items-center justify-between w-full py-3 px-4 rounded-lg transition-all duration-200 hover:bg-accent hover:font-semibold active:scale-95 ${
-                        pathname.startsWith('/resources') 
-                          ? 'text-primary font-semibold bg-accent' 
-                          : 'text-foreground'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-3">
-                        {link.emoji && (
-                          <span className="text-lg leading-none flex items-center justify-center w-6 h-6">
-                            {link.emoji}
-                          </span>
-                        )}
-                        <span className="leading-none">{link.label}</span>
-                      </div>
-                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isResourcesMenuOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                    
-                    {/* 移动端Resources子菜单 */}
-                    {isResourcesMenuOpen && (
-                      <div className="ml-4 mt-2 space-y-1">
-                        {link.subItems?.map((subItem) => (
-                          <Link
-                            key={subItem.href}
-                            href={subItem.href}
-                            className="flex items-center space-x-3 py-2 px-3 rounded-md text-sm transition-colors hover:bg-accent"
-                            onClick={() => {
-                              setIsResourcesMenuOpen(false)
-                              setIsMobileMenuOpen(false)
-                            }}
-                          >
-                            <subItem.icon className="w-4 h-4 text-primary" />
-                            <span>{subItem.label}</span>
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  // 普通移动端导航链接
-                  <Link
-                    href={link.href}
-                    className={`flex items-center space-x-3 py-3 px-4 rounded-lg transition-all duration-200 hover:bg-accent hover:font-semibold active:scale-95 ${
-                      pathname === link.href 
-                        ? 'text-primary font-semibold bg-accent' 
-                        : 'text-foreground'
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.emoji && (
-                      <span className="text-lg leading-none flex items-center justify-center w-6 h-6">
-                        {link.emoji}
-                      </span>
-                    )}
-                    <span className="leading-none">{link.label}</span>
-                  </Link>
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex items-center space-x-3 py-3 px-4 rounded-lg transition-all duration-200 hover:bg-accent hover:font-semibold active:scale-95 ${
+                  pathname === link.href 
+                    ? 'text-primary font-semibold bg-accent' 
+                    : 'text-foreground'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {link.emoji && (
+                  <span className="text-lg leading-none flex items-center justify-center w-6 h-6">
+                    {link.emoji}
+                  </span>
                 )}
-              </div>
+                <span className="leading-none">{link.label}</span>
+              </Link>
             ))}
             
             {/* 移动端用户状态和按钮 */}
