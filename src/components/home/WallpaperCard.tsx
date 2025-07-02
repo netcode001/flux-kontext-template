@@ -48,7 +48,7 @@ export function WallpaperCard() {
         const response = await fetch('/api/wallpapers?limit=4&sort=popular')
         
         if (!response.ok) {
-          throw new Error('获取壁纸失败')
+          throw new Error('Failed to fetch wallpapers')
         }
 
         const data = await response.json()
@@ -61,7 +61,7 @@ export function WallpaperCard() {
         }
         setError(null)
       } catch (err: any) {
-        console.error('获取壁纸失败:', err)
+        console.error('Failed to fetch wallpapers:', err)
         setError(err.message)
         // 使用模拟数据作为fallback
         setWallpapers(getMockWallpapers())
@@ -148,12 +148,12 @@ export function WallpaperCard() {
             : w
         ))
       } else {
-        console.error('点赞失败:', result.error)
-        alert(result.error)
+        console.error('Like failed:', result.error)
+        alert('Like failed, please try again')
       }
     } catch (error) {
-      console.error('点赞错误:', error)
-      alert('点赞失败，请重试')
+      console.error('Like error:', error)
+      alert('Like failed, please try again')
     }
   }
 
@@ -170,7 +170,7 @@ export function WallpaperCard() {
       })
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || '下载失败')
+        throw new Error(errorData.error || 'Download failed, please try again')
       }
       const blob = await response.blob()
       const url = URL.createObjectURL(blob)
@@ -187,8 +187,8 @@ export function WallpaperCard() {
           : w
       ))
     } catch (error) {
-      console.error('❌ 下载失败:', error)
-      alert(error instanceof Error ? error.message : '下载失败，请重试')
+      console.error('❌ Download failed:', error)
+      alert(error instanceof Error ? error.message : 'Download failed, please try again')
     } finally {
       setDownloadingId(null)
     }
@@ -215,8 +215,8 @@ export function WallpaperCard() {
             <span className="text-white text-2xl">🎨</span>
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-800">精美壁纸</h3>
-            <p className="text-sm text-gray-600">高清动态壁纸，让桌面更生动</p>
+            <h3 className="text-xl font-bold text-gray-800">Beautiful Wallpapers</h3>
+            <p className="text-sm text-gray-600">High-quality dynamic wallpapers for your desktop</p>
           </div>
         </div>
         {/* 查看更多按钮右上角绝对定位 */}
@@ -224,7 +224,7 @@ export function WallpaperCard() {
           href="/wallpapers"
           className="absolute top-6 right-8 inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-medium rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-105 shadow-lg z-10"
         >
-          查看更多
+          View More
         </a>
       </div>
       {/* 壁纸图片网格 */}
@@ -248,13 +248,13 @@ export function WallpaperCard() {
               </h3>
               <div className="flex items-center justify-between text-xs text-gray-200">
                 <div className="flex items-center gap-4">
-                  <span className="flex items-center gap-1.5" title="浏览量">
+                  <span className="flex items-center gap-1.5" title="Views">
                     <Eye className="w-5 h-5" />
                     {wallpaper.view_count || 0}
                   </span>
                   <button
                     className="flex items-center gap-1.5 cursor-pointer hover:text-white text-base"
-                    title="点赞"
+                    title="Like"
                     onClick={(e) => { e.stopPropagation(); handleLike(wallpaper) }}
                   >
                     <Heart className={cn('w-5 h-5 transition-colors', wallpaper.is_liked ? 'text-red-500 fill-current' : 'hover:text-red-400')} />
@@ -264,7 +264,7 @@ export function WallpaperCard() {
                 <button
                   className="w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-full text-base"
                   onClick={(e) => { e.stopPropagation(); session ? handleDownload(wallpaper) : setShowLoginDialog(true) }}
-                  title="下载"
+                  title="Download"
                   disabled={downloadingId === wallpaper.id}
                 >
                   {downloadingId === wallpaper.id ? (
@@ -290,7 +290,7 @@ export function WallpaperCard() {
       {error && (
         <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-red-600 text-xs">
-            加载壁纸时出现错误: {error}，正在使用模拟数据
+            Error loading wallpapers: {error}, using mock data
           </p>
         </div>
       )}
@@ -299,13 +299,13 @@ export function WallpaperCard() {
       <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>请登录后下载高清壁纸</DialogTitle>
-            <DialogDescription>登录后可下载高清壁纸和享受更多功能</DialogDescription>
+            <DialogTitle>Please login to download HD wallpapers</DialogTitle>
+            <DialogDescription>Login to download HD wallpapers and enjoy more features</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowLoginDialog(false)}>确定</Button>
+            <Button variant="outline" onClick={() => setShowLoginDialog(false)}>OK</Button>
             <Link href="/auth/signin">
-              <Button variant="default">去登录</Button>
+              <Button variant="default">Login</Button>
             </Link>
           </DialogFooter>
         </DialogContent>

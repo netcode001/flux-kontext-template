@@ -40,7 +40,7 @@ export function GalleryCard() {
           className="absolute top-4 right-6 z-20 bg-pink-400 hover:bg-pink-500 text-white text-sm font-semibold px-5 py-1.5 rounded-full shadow transition-colors duration-200"
           onClick={e => e.stopPropagation()}
         >
-          查看更多
+          View More
         </button>
       </Link>
       {/* 背景装饰（已移除渐变，保留结构防止后续扩展） */}
@@ -55,8 +55,8 @@ export function GalleryCard() {
           </div>
           {/* 文字内容 */}
           <div className="text-pink-700">
-            <h3 className="text-xl font-bold mb-1">创意秀场</h3>
-            <p className="text-pink-500 text-sm">分享你的Labubu收藏和创意作品</p>
+            <h3 className="text-xl font-bold mb-1">Creative Gallery</h3>
+            <p className="text-pink-500 text-sm">Share your Labubu collection and creative works</p>
           </div>
         </div>
         {/* 下方：图片区域，单独一行，横向排列，每张图片为300x300白色卡片 */}

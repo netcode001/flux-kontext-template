@@ -1673,3 +1673,17 @@ Can't reach database server at `db.jgiegbhhkfjsqgjdstfe.supabase.co:5432`
 - 注释掉原有的跳转菜单（Link 跳转到 /pricing?tab=credits#credits）。
 - 现在点击 Buy Credits 按钮只会弹出"coming soon"消息提醒，不再跳转。
 - 按钮依然为禁用样式（灰色、不可点击），仅做前端提示。
+
+## 2024-06-09 首页中文文案英文化变更
+
+- 将首页所有中文文案改为英文，提升国际化用户体验。
+- 具体修改文件：
+  - `src/components/home/GalleryCard.tsx`: "创意秀场" → "Creative Gallery", "查看更多" → "View More"
+  - `src/components/home/WallpaperCard.tsx`: "精美壁纸" → "Beautiful Wallpapers", "查看更多" → "View More", 各种按钮文案英文化
+  - `src/components/home/VideoCard.tsx`: "热门视频" → "Popular Videos", "查看更多" → "View More", 加载状态英文化
+  - `src/components/home/NewsSection.tsx`: "Labubu快报" → "Labubu News", "网格视图" → "Grid View", "时间轴" → "Timeline"
+  - `src/components/home/NewsGrid.tsx`: "暂无新闻数据" → "No news data available", 时间格式英文化
+  - `src/components/home/NewsTimeline.tsx`: "暂无新闻数据" → "No news data available", 时间格式英文化
+- 保留视频卡片的 tag 不变，按照用户要求不做修改。
+- 代码注释全部保持中文，网页文案全部改为英文。
+- 影响范围：首页所有用户可见的文案，提升国际化体验。

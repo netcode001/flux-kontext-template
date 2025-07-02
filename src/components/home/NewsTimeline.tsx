@@ -21,8 +21,21 @@ interface NewsTimelineProps {
   news: NewsItem[]
 }
 
+// 获取分类颜色
+function getCategoryColor(category: string): string {
+  const colors: { [key: string]: string } = {
+    '热门': 'bg-red-100 text-red-700',
+    '创意': 'bg-blue-100 text-blue-700',
+    '获奖': 'bg-yellow-100 text-yellow-700',
+    '活动': 'bg-green-100 text-green-700',
+    '指南': 'bg-purple-100 text-purple-700',
+    '资讯': 'bg-gray-100 text-gray-700'
+  }
+  return colors[category] || 'bg-gray-100 text-gray-700'
+}
+
 // 格式化数字
-const formatNumber = (num: number): string => {
+function formatNumber(num: number): string {
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1) + 'M'
   } else if (num >= 1000) {
@@ -32,60 +45,47 @@ const formatNumber = (num: number): string => {
 }
 
 // 格式化时间
-const formatTime = (dateString: string): string => {
+function formatTime(dateString: string): string {
   const date = new Date(dateString)
   const now = new Date()
   const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
   
   if (diffInHours < 1) {
-    return '刚刚'
+    return 'Just now'
   } else if (diffInHours < 24) {
-    return `${diffInHours}小时前`
+    return `${diffInHours}h ago`
   } else {
     const diffInDays = Math.floor(diffInHours / 24)
-    return `${diffInDays}天前`
+    return `${diffInDays}d ago`
   }
-}
-
-// 获取分类颜色
-const getCategoryColor = (category: string) => {
-  const colors = {
-    '热门': 'bg-red-100 text-red-700',
-    '重要': 'bg-blue-100 text-blue-700',
-    '创意': 'bg-green-100 text-green-700',
-    '获奖': 'bg-yellow-100 text-yellow-700',
-    '活动': 'bg-purple-100 text-purple-700',
-    '指南': 'bg-orange-100 text-orange-700'
-  }
-  return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-700'
 }
 
 // 按日期分组新闻
-const groupNewsByDate = (news: NewsItem[]) => {
-  const groups: { [key: string]: NewsItem[] } = {}
+function groupNewsByDate(news: NewsItem[]): { [key: string]: NewsItem[] } {
+  const grouped: { [key: string]: NewsItem[] } = {}
   
   news.forEach(item => {
     const date = new Date(item.publishedAt)
-    const today = new Date()
-    const yesterday = new Date(today)
-    yesterday.setDate(yesterday.getDate() - 1)
+    const dateKey = date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    })
     
-    let dateKey = ''
-    if (date.toDateString() === today.toDateString()) {
-      dateKey = '今天'
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      dateKey = '昨天'
-    } else {
-      dateKey = date.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' })
+    if (!grouped[dateKey]) {
+      grouped[dateKey] = []
     }
-    
-    if (!groups[dateKey]) {
-      groups[dateKey] = []
-    }
-    groups[dateKey].push(item)
+    grouped[dateKey].push(item)
   })
   
-  return groups
+  // 按日期排序
+  return Object.fromEntries(
+    Object.entries(grouped).sort((a, b) => {
+      const dateA = new Date(a[1][0].publishedAt)
+      const dateB = new Date(b[1][0].publishedAt)
+      return dateB.getTime() - dateA.getTime()
+    })
+  )
 }
 
 export function NewsTimeline({ news }: NewsTimelineProps) {
@@ -97,7 +97,7 @@ export function NewsTimeline({ news }: NewsTimelineProps) {
     return (
       <div className="text-center py-12">
         <div className="text-6xl mb-4">📅</div>
-        <p className="text-gray-600">暂无新闻数据</p>
+        <p className="text-gray-600">No news data available</p>
       </div>
     )
   }

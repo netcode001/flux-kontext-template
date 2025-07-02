@@ -119,7 +119,7 @@ export function NewsSection() {
         const response = await fetch('/api/labubu/news?limit=6')
         
         if (!response.ok) {
-          throw new Error('获取新闻失败')
+          throw new Error('Failed to fetch news')
         }
 
         const data = await response.json()
@@ -161,7 +161,7 @@ export function NewsSection() {
         setNews(newsData)
         setError(null)
       } catch (err: any) {
-        console.error('获取新闻失败:', err)
+        console.error('Failed to fetch news:', err)
         setError(err.message)
         // 使用模拟数据作为fallback
         setNews(getMockNews())
@@ -179,7 +179,7 @@ export function NewsSection() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="w-8 h-8 animate-spin rounded-full border-2 border-purple-500 border-t-transparent mx-auto mb-4" />
-            <p className="text-gray-600">加载新闻中...</p>
+            <p className="text-gray-600">Loading news...</p>
           </div>
         </div>
       </section>
@@ -195,8 +195,8 @@ export function NewsSection() {
         {/* 标题和视图切换 */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">📰 Labubu快报</h2>
-            <p className="text-gray-600">获取最新的Labubu资讯和热门话题</p>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">📰 Labubu News</h2>
+            <p className="text-gray-600">Get the latest Labubu updates and trending topics</p>
           </div>
           
           {/* 视图切换按钮 */}
@@ -210,7 +210,7 @@ export function NewsSection() {
               }`}
             >
               <Grid3X3 className="w-4 h-4" />
-              <span className="text-sm font-medium">网格视图</span>
+              <span className="text-sm font-medium">Grid View</span>
             </button>
             
             <button
@@ -222,7 +222,7 @@ export function NewsSection() {
               }`}
             >
               <Clock className="w-4 h-4" />
-              <span className="text-sm font-medium">时间轴</span>
+              <span className="text-sm font-medium">Timeline</span>
             </button>
           </div>
         </div>
@@ -231,7 +231,7 @@ export function NewsSection() {
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
             <p className="text-red-600 text-sm">
-              加载新闻时出现错误: {error}，正在使用模拟数据
+              Error loading news: {error}, using mock data
             </p>
           </div>
         )}
@@ -249,7 +249,7 @@ export function NewsSection() {
             href="/labubu-news"
             className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-105"
           >
-            查看更多新闻
+            View More News
             <ChevronRight className="ml-2 w-4 h-4" />
           </a>
         </div>
