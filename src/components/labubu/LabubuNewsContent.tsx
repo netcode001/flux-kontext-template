@@ -44,23 +44,23 @@ interface TrendingKeyword {
   trendIcon: string
 }
 
-// 🏷️ 分类配置
+// 🏷️ 分类配置（全部改为英文）
 const categories = [
-  { key: 'all', label: '全部', icon: '📰' },
-  { key: 'product', label: '新品发布', icon: '🎁' },
-  { key: 'event', label: '活动预告', icon: '🎉' },
-  { key: 'review', label: '开箱评测', icon: '📦' },
-  { key: 'guide', label: '收藏攻略', icon: '📚' },
-  { key: 'art', label: '艺术创作', icon: '🎨' },
-  { key: 'trend', label: '潮流趋势', icon: '🔥' }
+  { key: 'all', label: 'All', icon: '📰' },
+  { key: 'product', label: 'New Release', icon: '🎁' },
+  { key: 'event', label: 'Event', icon: '🎉' },
+  { key: 'review', label: 'Review', icon: '📦' },
+  { key: 'guide', label: 'Guide', icon: '📚' },
+  { key: 'art', label: 'Art', icon: '🎨' },
+  { key: 'trend', label: 'Trend', icon: '🔥' }
 ]
 
-// 📊 排序选项
+// 📊 排序选项（全部改为英文）
 const sortOptions = [
-  { key: 'hot_score', label: '热度排序', icon: '🔥' },
-  { key: 'published_at', label: '最新发布', icon: '🕐' },
-  { key: 'view_count', label: '最多浏览', icon: '👁️' },
-  { key: 'like_count', label: '最多点赞', icon: '❤️' }
+  { key: 'hot_score', label: 'Sort by Hotness', icon: '🔥' },
+  { key: 'published_at', label: 'Latest', icon: '🕐' },
+  { key: 'view_count', label: 'Most Viewed', icon: '👁️' },
+  { key: 'like_count', label: 'Most Liked', icon: '❤️' }
 ]
 
 export function LabubuNewsContent() {
@@ -259,54 +259,14 @@ export function LabubuNewsContent() {
     <div className="min-h-screen bg-hero-gradient">
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-4 gap-8">
-          
-          {/* 🔥 左侧边栏 - 热搜标签 */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6  border border-labubu-200/30 hover: transition-all duration-300">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 bg-gradient-to-r from-labubu-500 to-warm-500 rounded-full flex items-center justify-center animate-pulse">
-                    <span className="text-white text-sm">🔥</span>
-                  </div>
-                  <h3 className="text-lg font-bold bg-gradient-to-r from-labubu-600 to-warm-600 bg-clip-text text-transparent">
-                    Labubu热搜
-                  </h3>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  {trendingKeywords.map((keyword, index) => (
-                    <div
-                      key={keyword.keyword}
-                      onClick={() => handleTrendingClick(keyword.keyword)}
-                      className={`group inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm cursor-pointer transition-all duration-300 hover:scale-110 hover:rotate-1 animate-fade-in-up ${
-                        keyword.rank <= 3 
-                          ? 'bg-gradient-to-r from-labubu-500 to-labubu-600 text-white  hover: hover:from-labubu-600 hover:to-labubu-700' 
-                          : keyword.rank <= 6
-                          ? 'bg-gradient-to-r from-warm-400 to-warm-500 text-white  hover: hover:from-warm-500 hover:to-warm-600'
-                          : 'bg-gradient-to-r from-labubu-300 to-warm-300 text-labubu-700  hover: hover:from-labubu-400 hover:to-warm-400'
-                      }`}
-                      style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                      <span className="font-semibold group-hover:scale-105 transition-transform"># {keyword.keyword}</span>
-                      <div className="flex items-center gap-1 bg-white/20 rounded-full px-2 py-0.5">
-                        <span className="text-xs font-bold">
-                          {(keyword.hotScore || 0).toFixed(0)}
-                        </span>
-                        <span className="text-xs animate-bounce">{keyword.trendIcon}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* 🔥 左侧边栏 - 热搜标签（已删除） */}
+          {/* <div className="lg:col-span-1">...</div> */}
 
-          {/* 📰 主要内容区域 */}
-          <div className="lg:col-span-3 space-y-6">
-            
+          {/* 📰 主要内容区域，直接占据全部宽度 */}
+          <div className="lg:col-span-4 space-y-6">
             {/* 🔍 搜索和筛选栏 */}
             <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6  border border-labubu-200/30 hover: transition-all duration-300">
               <div className="flex flex-col gap-6">
-                
                 {/* 搜索框 */}
                 <div className="relative group">
                   <Search 
@@ -314,7 +274,7 @@ export function LabubuNewsContent() {
                     onClick={handleSearch}
                   />
                   <Input
-                    placeholder="搜索Labubu资讯..."
+                    placeholder="Search Labubu news..."
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onKeyPress={handleSearchKeyPress}
@@ -355,7 +315,7 @@ export function LabubuNewsContent() {
                 <div className="flex items-center gap-4">
                   <span className="text-labubu-600 text-sm font-medium flex items-center gap-2">
                     <span className="w-2 h-2 bg-gradient-to-r from-labubu-400 to-warm-400 rounded-full animate-pulse"></span>
-                    排序方式
+                    Sort
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {sortOptions.map((option, index) => (
@@ -387,11 +347,11 @@ export function LabubuNewsContent() {
                   <div className="flex items-center space-x-2">
                     <Search className="w-4 h-4 text-labubu-600" />
                     <span className="text-labubu-700">
-                      搜索 "<span className="font-semibold">{searchQuery}</span>" 的结果
+                      Search results for "<span className="font-semibold">{searchQuery}</span>"
                     </span>
                     {!isLoading && (
                       <Badge variant="secondary" className="bg-labubu-100 text-labubu-700 rounded-full">
-                        {articles.length} 个结果
+                        {articles.length} results
                       </Badge>
                     )}
                   </div>
@@ -399,7 +359,7 @@ export function LabubuNewsContent() {
                     onClick={clearSearch}
                     className="text-labubu-600 hover:text-labubu-800 text-sm hover:scale-105 transition-all duration-300"
                   >
-                    清除搜索
+                    Clear
                   </button>
                 </div>
               </div>
@@ -410,14 +370,14 @@ export function LabubuNewsContent() {
               {isLoading && articles.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="animate-spin w-8 h-8 border-4 border-labubu-400 border-t-transparent rounded-full mx-auto mb-4"></div>
-                  <p className="text-soft-600">加载中...</p>
+                  <p className="text-soft-600">Loading...</p>
                 </div>
               ) : articles.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="text-6xl mb-4">📰</div>
-                  <h3 className="text-xl font-bold text-labubu-700 mb-2">暂无资讯</h3>
+                  <h3 className="text-xl font-bold text-labubu-700 mb-2">No News</h3>
                   <p className="text-soft-500">
-                    {searchQuery ? '没有找到相关资讯' : '资讯内容正在建设中...'}
+                    {searchQuery ? 'No related news found' : 'News content is under construction...'}
                   </p>
                 </div>
               ) : (
@@ -528,7 +488,7 @@ export function LabubuNewsContent() {
                         variant="outline"
                         className="border-purple-200 text-purple-600 hover:bg-purple-50"
                       >
-                        {isLoading ? '加载中...' : '加载更多'}
+                        {isLoading ? 'Loading...' : 'Load More'}
                       </Button>
                     </div>
                   )}
