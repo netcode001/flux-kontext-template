@@ -1628,3 +1628,15 @@ Can't reach database server at `db.jgiegbhhkfjsqgjdstfe.supabase.co:5432`
 - 文档：详细API接口说明和故障排除指南
 - 统一：三套并行系统整合为单一可控架构
 ```
+
+# 2024-06-09 Dashboard页面国际化优化
+
+- 将dashboard页面所有中文文案（标题、副标题、空状态提示、按钮等）全部替换为英文：
+  - "我的创作" → "My Creations"
+  - "查看您使用 AI 生成的图像画廊。" → "View your gallery of AI-generated images."
+  - "这里是您所有 AI 生成的杰作。随时回顾、分享或继续您的创作之旅。" → "Here are all your AI-generated masterpieces. Revisit, share, or continue your creative journey anytime."
+  - "尚未开始创作" → "No Creations Yet"
+  - "您的画廊还是空的。立即开始，将您的想法变为现实！" → "Your gallery is empty. Start now and turn your ideas into reality!"
+  - "前往生成器" → "Go to Generator"
+- 保持所有变量、逻辑和注释为中文，符合项目国际化和注释规范。
+- 已提交并推送到master分支。
