@@ -71,6 +71,9 @@ export function NewsCrawlerControl() {
   const [articleTotalPages, setArticleTotalPages] = useState(1)
   const [deleteArticleId, setDeleteArticleId] = useState<string | null>(null)
 
+  // 时间范围选择（天数）
+  const [days, setDays] = useState(1)
+
   // 🔍 获取爬虫状态
   const fetchStatus = async () => {
     try {
@@ -89,18 +92,17 @@ export function NewsCrawlerControl() {
     }
   }
 
-  // 🚀 手动触发新闻获取
+  // 🚀 手动触发新闻获取（支持天数参数）
   const triggerCrawler = async () => {
     try {
       setIsLoading(true)
       setError(null)
-      
-      const response = await fetch('/api/admin/news-crawler', {
-        method: 'POST'
+      const response = await fetch(`/api/admin/news-crawler`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ days })
       })
-      
       const data = await response.json()
-      
       if (data.success) {
         setLastResult(data.data)
         // 获取更新后的状态
@@ -347,6 +349,21 @@ export function NewsCrawlerControl() {
           </CardHeader>
           <CardContent className="space-y-4">
             
+            {/* 时间范围选择控件 */}
+            <div className="flex items-center gap-2 mb-2">
+              <label className="text-sm text-gray-600 font-medium">时间范围：</label>
+              <select
+                className="border rounded px-2 py-1 text-sm"
+                value={days}
+                onChange={e => setDays(Number(e.target.value))}
+                disabled={isLoading}
+              >
+                {[1,2,3,4,5,6,7].map(d => (
+                  <option key={d} value={d}>最近{d}天</option>
+                ))}
+              </select>
+            </div>
+
             {/* 触发按钮 */}
             <Button
               onClick={triggerCrawler}

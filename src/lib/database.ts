@@ -252,6 +252,24 @@ export interface Post {
   updatedAt: Date
 }
 
+// 📰 新闻管理接口定义
+export interface NewsKeyword {
+  id: string;
+  keyword: string;
+  enabled: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface NewsSource {
+  id: string;
+  name: string;
+  url: string;
+  enabled: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
 // Supabase适配器，提供类似Prisma的接口
 class SupabaseAdapter {
   user = {
@@ -1603,6 +1621,302 @@ class SupabaseAdapter {
         }
       } catch (error) {
         console.error('🚨 YouTube keywords update critical error:', error)
+        throw error
+      }
+    }
+  }
+
+  // 📰 新闻关键词管理
+  newsKeyword = {
+    async findMany(args?: any): Promise<NewsKeyword[]> {
+      try {
+        const supabase = getSupabaseAdmin()
+        let query = supabase.from('news_keywords').select('*')
+
+        if (args?.where?.enabled !== undefined) {
+          query = query.eq('enabled', args.where.enabled)
+        }
+
+        if (args?.orderBy) {
+          const orderField = Object.keys(args.orderBy)[0]
+          const orderDirection = args.orderBy[orderField]
+          query = query.order(orderField, { ascending: orderDirection === 'asc' })
+        }
+
+        const { data, error } = await query
+
+        if (error) {
+          console.error('🚨 News keywords findMany error:', error)
+          return []
+        }
+
+        return (data || []).map((item: any) => ({
+          id: item.id,
+          keyword: item.keyword,
+          enabled: item.enabled,
+          created_at: new Date(item.created_at),
+          updated_at: new Date(item.updated_at)
+        }))
+      } catch (error) {
+        console.error('🚨 News keywords findMany critical error:', error)
+        return []
+      }
+    },
+
+    async findUnique(args: any): Promise<NewsKeyword | null> {
+      try {
+        const supabase = getSupabaseAdmin()
+        let query = supabase.from('news_keywords').select('*')
+
+        if (args.where.id) {
+          query = query.eq('id', args.where.id)
+        } else if (args.where.keyword) {
+          query = query.eq('keyword', args.where.keyword)
+        }
+
+        const { data, error } = await query.single()
+
+        if (error) {
+          if (error.code === 'PGRST116') return null // No rows found
+          console.error('🚨 News keywords findUnique error:', error)
+          return null
+        }
+
+        return {
+          id: data.id,
+          keyword: data.keyword,
+          enabled: data.enabled,
+          created_at: new Date(data.created_at),
+          updated_at: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 News keywords findUnique critical error:', error)
+        return null
+      }
+    },
+
+    async create(args: any): Promise<NewsKeyword> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('news_keywords')
+          .insert({
+            keyword: args.data.keyword,
+            enabled: args.data.enabled !== undefined ? args.data.enabled : true
+          })
+          .select()
+          .single()
+
+        if (error) {
+          console.error('🚨 News keywords create error:', error)
+          throw error
+        }
+
+        return {
+          id: data.id,
+          keyword: data.keyword,
+          enabled: data.enabled,
+          created_at: new Date(data.created_at),
+          updated_at: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 News keywords create critical error:', error)
+        throw error
+      }
+    },
+
+    async update(args: any): Promise<NewsKeyword> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const updateData: any = {}
+
+        if (args.data.keyword !== undefined) updateData.keyword = args.data.keyword
+        if (args.data.enabled !== undefined) updateData.enabled = args.data.enabled
+
+        const { data, error } = await supabase
+          .from('news_keywords')
+          .update(updateData)
+          .eq('id', args.where.id)
+          .select()
+          .single()
+
+        if (error) {
+          console.error('🚨 News keywords update error:', error)
+          throw error
+        }
+
+        return {
+          id: data.id,
+          keyword: data.keyword,
+          enabled: data.enabled,
+          created_at: new Date(data.created_at),
+          updated_at: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 News keywords update critical error:', error)
+        throw error
+      }
+    },
+
+    async delete(args: any): Promise<NewsKeyword> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('news_keywords')
+          .delete()
+          .eq('id', args.where.id)
+          .select()
+          .single()
+
+        if (error) {
+          console.error('🚨 News keywords delete error:', error)
+          throw error
+        }
+
+        return {
+          id: data.id,
+          keyword: data.keyword,
+          enabled: data.enabled,
+          created_at: new Date(data.created_at),
+          updated_at: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 News keywords delete critical error:', error)
+        throw error
+      }
+    }
+  }
+
+  // 📰 新闻来源管理
+  newsSource = {
+    async findMany(args?: any): Promise<NewsSource[]> {
+      try {
+        const supabase = getSupabaseAdmin()
+        let query = supabase.from('news_sources').select('*')
+
+        if (args?.where?.enabled !== undefined) {
+          query = query.eq('enabled', args.where.enabled)
+        }
+
+        if (args?.orderBy) {
+          const orderField = Object.keys(args.orderBy)[0]
+          const orderDirection = args.orderBy[orderField]
+          query = query.order(orderField, { ascending: orderDirection === 'asc' })
+        }
+
+        const { data, error } = await query
+
+        if (error) {
+          console.error('🚨 News sources findMany error:', error)
+          return []
+        }
+
+        return (data || []).map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          url: item.url,
+          enabled: item.enabled,
+          created_at: new Date(item.created_at),
+          updated_at: new Date(item.updated_at)
+        }))
+      } catch (error) {
+        console.error('🚨 News sources findMany critical error:', error)
+        return []
+      }
+    },
+
+    async create(args: any): Promise<NewsSource> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('news_sources')
+          .insert({
+            name: args.data.name,
+            url: args.data.url,
+            enabled: args.data.enabled !== undefined ? args.data.enabled : true
+          })
+          .select()
+          .single()
+
+        if (error) {
+          console.error('🚨 News sources create error:', error)
+          throw error
+        }
+
+        return {
+          id: data.id,
+          name: data.name,
+          url: data.url,
+          enabled: data.enabled,
+          created_at: new Date(data.created_at),
+          updated_at: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 News sources create critical error:', error)
+        throw error
+      }
+    },
+
+    async update(args: any): Promise<NewsSource> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const updateData: any = {}
+
+        if (args.data.name !== undefined) updateData.name = args.data.name
+        if (args.data.url !== undefined) updateData.url = args.data.url
+        if (args.data.enabled !== undefined) updateData.enabled = args.data.enabled
+
+        const { data, error } = await supabase
+          .from('news_sources')
+          .update(updateData)
+          .eq('id', args.where.id)
+          .select()
+          .single()
+
+        if (error) {
+          console.error('🚨 News sources update error:', error)
+          throw error
+        }
+
+        return {
+          id: data.id,
+          name: data.name,
+          url: data.url,
+          enabled: data.enabled,
+          created_at: new Date(data.created_at),
+          updated_at: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 News sources update critical error:', error)
+        throw error
+      }
+    },
+
+    async delete(args: any): Promise<NewsSource> {
+      try {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('news_sources')
+          .delete()
+          .eq('id', args.where.id)
+          .select()
+          .single()
+
+        if (error) {
+          console.error('🚨 News sources delete error:', error)
+          throw error
+        }
+
+        return {
+          id: data.id,
+          name: data.name,
+          url: data.url,
+          enabled: data.enabled,
+          created_at: new Date(data.created_at),
+          updated_at: new Date(data.updated_at)
+        }
+      } catch (error) {
+        console.error('🚨 News sources delete critical error:', error)
         throw error
       }
     }

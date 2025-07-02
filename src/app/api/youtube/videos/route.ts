@@ -31,11 +31,13 @@ export async function GET(request: NextRequest) {
     })
     const tags = Array.from(new Set(categories.map(c => c.category_name).filter(Boolean)))
 
-    return NextResponse.json({
+    // 返回数据
+    const result = {
       success: true,
       videos,
       tags
-    })
+    }
+    return NextResponse.json(result)
   } catch (error) {
     console.error('获取YouTube视频失败:', error)
     return NextResponse.json({ error: '获取YouTube视频失败' }, { status: 500 })

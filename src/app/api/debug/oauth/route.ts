@@ -11,9 +11,9 @@ export async function GET(request: NextRequest) {
     // 检查OAuth配置
     const oauthConfig = {
       // Google OAuth配置检查 (使用正确的变量名)
-      googleClientId: process.env.GOOGLE_ID ? 
-        `${process.env.GOOGLE_ID.substring(0, 10)}...` : 'NOT_SET',
-      googleClientSecret: process.env.GOOGLE_SECRET ? 'SET' : 'NOT_SET',
+      googleClientId: process.env.GOOGLE_CLIENT_ID ? 
+        `${process.env.GOOGLE_CLIENT_ID.substring(0, 10)}...` : 'NOT_SET',
+      googleClientSecret: process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT_SET',
       
       // NextAuth配置检查
       nextAuthUrl: process.env.NEXTAUTH_URL,
@@ -38,8 +38,8 @@ export async function GET(request: NextRequest) {
       oauth: oauthConfig,
       message: 'OAuth配置检查完成',
       recommendations: [
-        !process.env.GOOGLE_ID && '❌ 需要设置 GOOGLE_ID',
-        !process.env.GOOGLE_SECRET && '❌ 需要设置 GOOGLE_SECRET',
+        !process.env.GOOGLE_CLIENT_ID && '❌ 需要设置 GOOGLE_CLIENT_ID',
+        !process.env.GOOGLE_CLIENT_SECRET && '❌ 需要设置 GOOGLE_CLIENT_SECRET',
         process.env.NEXTAUTH_URL?.startsWith('http://') && '⚠️ NEXTAUTH_URL 应该使用 https://',
         !session && '⚠️ 当前没有有效会话'
       ].filter(Boolean)

@@ -201,7 +201,7 @@ export default function YouTubeManagementContent() {
       const data = await response.json()
 
       if (data.success) {
-        setSuccess(`成功导入 ${data.imported} 个视频，跳过 ${data.skipped} 个重复视频`)
+        setSuccess(`成功导入 ${data.count ?? 0} 个视频，跳过 ${data.skipped ?? 0} 个重复视频`)
         setSelectedVideos(new Set())
         setImportDialog({ open: false, count: 0 })
         await fetchKeywords()

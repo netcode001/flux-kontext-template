@@ -18,15 +18,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search') // 搜索关键词
     const trending = searchParams.get('trending') === 'true' // 仅热门
     
-    console.log('🔍 获取资讯列表:', { 
-      page, 
-      limit, 
-      category, 
-      source, 
-      sortBy, 
-      search, 
-      trending 
-    })
+    
 
     // 📊 构建查询条件
     let query = supabase
@@ -150,7 +142,7 @@ export async function GET(request: NextRequest) {
       .select('*', { count: 'exact', head: true })
       .eq('status', 'approved')
 
-    console.log('✅ 资讯列表获取成功:', { count: articles?.length, totalCount })
+
 
     return NextResponse.json({
       success: true,

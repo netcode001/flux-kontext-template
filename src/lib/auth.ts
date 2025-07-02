@@ -14,13 +14,13 @@ const providers: any[] = []
 // Google Auth (如果配置了)
 if (
   process.env.NEXT_PUBLIC_AUTH_GOOGLE_ENABLED === "true" &&
-  process.env.GOOGLE_ID &&
-  process.env.GOOGLE_SECRET
+  process.env.GOOGLE_CLIENT_ID &&
+  process.env.GOOGLE_CLIENT_SECRET
 ) {
   providers.push(
     GoogleProvider({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     })
   )
 }

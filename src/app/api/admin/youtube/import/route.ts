@@ -33,15 +33,18 @@ export async function POST(request: NextRequest) {
         const video_id = getField(video, 'video_id', 'videoId')
         if (!video_id) {
           skipCount++
+          console.log(`[跳过] 缺少 video_id，原始数据:`, video)
           return null
         }
-        // 检查是否已存在
+        // 检查是否已存在（联合判重 video_id + category_name）
+        const category_name = getField(video, 'category_name', 'categoryName')
         const existsArr = await prisma.youtube_videos.findMany({
-          where: { video_id },
+          where: { video_id, category_name },
           take: 1
         })
         if (existsArr && existsArr.length > 0) {
           skipCount++
+          console.log(`[跳过重复] video_id: ${video_id}, category_name: ${category_name}`)
           return null
         }
         importCount++
@@ -61,13 +64,15 @@ export async function POST(request: NextRequest) {
             comment_count: getField(video, 'comment_count', 'commentCount'),
             iframe_embed_code: getField(video, 'iframe_embed_code', 'iframeEmbedCode'),
             search_keyword: getField(video, 'search_keyword', 'searchKeyword'),
-            category_name: getField(video, 'category_name', 'categoryName'),
+            category_name,
             is_featured: false,
             is_active: true
           }
         })
       })
     )
+
+    console.log(`[导入结果] 成功导入: ${importCount}，跳过: ${skipCount}`)
 
     return NextResponse.json({
       success: true,

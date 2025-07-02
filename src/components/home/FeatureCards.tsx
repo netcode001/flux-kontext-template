@@ -3,7 +3,6 @@
 import { AIGenerationCard } from './AIGenerationCard'
 import { GalleryCard } from './GalleryCard'
 import { WallpaperCard } from './WallpaperCard'
-import { VideoCard } from './VideoCard'
 
 export function FeatureCards() {
   return (
@@ -25,9 +24,6 @@ export function FeatureCards() {
           
           {/* 壁纸卡片 */}
           <WallpaperCard />
-          
-          {/* 视频卡片 */}
-          <VideoCard />
         </div>
       </div>
     </section>

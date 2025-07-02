@@ -257,7 +257,8 @@ export class YouTubeService {
    * 生成iframe嵌入代码
    */
   private generateIframeCode(videoId: string): string {
-    return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+    // 只保留宽高100%，去掉绝对定位
+    return `<iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%;height:100%;border-radius:16px;"></iframe>`
   }
 
   /**

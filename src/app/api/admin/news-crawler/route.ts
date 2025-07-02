@@ -29,8 +29,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // 解析days参数，默认1天，最大7天
+    let days = 1
+    try {
+      const body = await request.json()
+      if (body.days && Number.isInteger(body.days) && body.days >= 1 && body.days <= 7) {
+        days = body.days
+      }
+    } catch {}
+
     // 🚀 执行新闻获取任务，返回详细日志
-    const result = await runNewsCrawlerTask({ withLogs: true })
+    const result = await runNewsCrawlerTask({ withLogs: true, days })
 
     console.log('✅ 新闻爬虫任务完成:', result)
 
