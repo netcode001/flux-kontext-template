@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { DynamicNavigation } from '@/components/DynamicNavigation'
+import { Navigation } from "@/components/Navigation"
 import { WallpaperCard } from './WallpaperCard'
 import { WallpaperFilter } from './WallpaperFilter'
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,6 @@ import type {
   WallpaperListResponse,
   WallpaperListParams 
 } from '@/types/wallpaper'
-import { Footer } from '@/components/Footer'
 
 export function WallpaperGalleryContent() {
   // 🔐 用户状态
@@ -225,7 +224,7 @@ export function WallpaperGalleryContent() {
   return (
     <LabubuContainer className="min-h-screen">
       {/* 导航栏 */}
-      <DynamicNavigation />
+      <Navigation />
 
       {/* 页面头部 - 这个div被用户要求删除 */}
       {/* 
@@ -378,7 +377,6 @@ export function WallpaperGalleryContent() {
           </>
         )}
       </div>
-      <Footer />
     </LabubuContainer>
   )
 } 
