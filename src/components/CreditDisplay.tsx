@@ -236,17 +236,18 @@ export function CreditDisplay({
 
       {/* 购买积分按钮 */}
       {showBuyButton && (
-        <Link href="/pricing?tab=credits#credits">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-6 px-2 text-xs opacity-50 cursor-not-allowed"
-            disabled={true}
-          >
-            <ShoppingCart className="w-3 h-3 mr-1" />
-            Buy Credits
-          </Button>
-        </Link>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-6 px-2 text-xs opacity-50 cursor-not-allowed"
+          disabled={true}
+          onClick={() => {
+            window.alert('coming soon')
+          }}
+        >
+          <ShoppingCart className="w-3 h-3 mr-1" />
+          Buy Credits
+        </Button>
       )}
     </div>
   )

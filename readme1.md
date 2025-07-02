@@ -1668,3 +1668,8 @@ Can't reach database server at `db.jgiegbhhkfjsqgjdstfe.supabase.co:5432`
 - 影响范围：所有使用 CreditDisplay 组件的页面（如 /generate 生成页右下角、dashboard 等）Buy Credits 按钮全部变为灰色不可点击。
 - 代码注释全部为中文，网页文案未做更改。
 - 如需恢复为可点击，请移除 disabled 属性和相关样式。
+
+### 2024-06-09 Buy Credits 按钮点击事件变更
+- 注释掉原有的跳转菜单（Link 跳转到 /pricing?tab=credits#credits）。
+- 现在点击 Buy Credits 按钮只会弹出"coming soon"消息提醒，不再跳转。
+- 按钮依然为禁用样式（灰色、不可点击），仅做前端提示。
