@@ -1724,3 +1724,12 @@ Can't reach database server at `db.jgiegbhhkfjsqgjdstfe.supabase.co:5432`
 - 解决了tab页和搜索引擎展示内容杂乱、品牌不统一、部分中文等问题。
 
 如需多语言SEO或品牌切换，可在本次提交基础上扩展。
+
+## 2024-06-09 Wallpapers页面文案英文化
+
+- Wallpapers页面所有中文文案全部替换为英文，风格与LabubuHub主页一致，无任何中文残留。
+- 涉及文件：
+  - src/components/wallpaper/WallpaperGalleryContent.tsx
+- 包括搜索框、标签、加载、空状态、按钮等所有用户可见文案。
+
+如需多语言切换或细节优化，可在本次提交基础上扩展。
