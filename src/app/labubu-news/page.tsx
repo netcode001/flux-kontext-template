@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { DynamicNavigation } from "@/components/DynamicNavigation";
+import { Navigation } from "@/components/Navigation";
 import { LabubuNewsContent } from "@/components/labubu/LabubuNewsContent";
 
 export const metadata: Metadata = {
-  title: "Labubu快报 | 最新资讯和活动信息",
-  description: "获取最新的Labubu资讯、活动信息和社区动态，第一时间了解Labubu世界的精彩内容",
-  keywords: ["Labubu", "快报", "资讯", "活动", "新闻", "潮玩"],
+  title: "LabubuHub - News | Latest News, Events and Community Updates",
+  description: "Get the latest Labubu news, event information, and community updates. Stay tuned for exciting content from the world of Labubu.",
+  keywords: ["Labubu", "news", "events", "community", "updates", "toys"],
 };
 
 export default function LabubuNewsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
       {/* 统一的导航栏 */}
-      <DynamicNavigation />
+      <Navigation />
       
       {/* 📰 Labubu资讯内容 */}
       <div className="pt-16">
