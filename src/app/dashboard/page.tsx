@@ -7,13 +7,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Heart, Search } from 'lucide-react';
-import { DynamicNavigation } from '@/components/DynamicNavigation';
+import { Navigation } from "@/components/Navigation";
 import { Footer } from '@/components/Footer';
 import { DashboardGallery } from '@/components/dashboard/DashboardGallery';
 
 export const metadata: Metadata = {
-  title: '我的创作 | Flux Kontext',
-  description: '查看您使用 AI 生成的图像画廊。',
+  title: 'My Creations | Flux Kontext',
+  description: 'View your gallery of AI-generated images.',
   robots: {
     index: false,
     follow: false,
@@ -58,15 +58,15 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <DynamicNavigation />
+      <Navigation />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" data-page="dashboard">
         {/* 页面标题区域 - 采用Labubu设计风格 */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mb-4">
-            我的创作
+            My Creations
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            这里是您所有 AI 生成的杰作。随时回顾、分享或继续您的创作之旅。
+            Here are all your AI-generated masterpieces. Revisit, share, or continue your creative journey anytime.
           </p>
         </div>
 
@@ -76,13 +76,13 @@ export default async function DashboardPage() {
             <div className="h-32 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mb-6">
               <span className="text-5xl">🖼️</span>
             </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">尚未开始创作</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">No Creations Yet</h3>
             <p className="text-gray-600 text-sm mb-6">
-              您的画廊还是空的。立即开始，将您的想法变为现实！
+              Your gallery is empty. Start now and turn your ideas into reality!
             </p>
             <Link href="/generate">
               <Button className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-full hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105">
-                前往生成器
+                Go to Generator
               </Button>
             </Link>
           </div>
