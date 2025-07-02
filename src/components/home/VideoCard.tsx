@@ -18,11 +18,15 @@ interface Video {
   like_count?: number
 }
 
-// 数字格式化
+// 数字格式化（英文单位，保留一位小数）
 function formatNumber(num?: number) {
+  // 如果未定义直接返回空字符串
   if (num === undefined) return ''
-  if (num >= 10000) return (num / 10000).toFixed(1) + '万'
+  // 大于等于100万显示M
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M'
+  // 大于等于1000显示K
   if (num >= 1000) return (num / 1000).toFixed(1) + 'K'
+  // 其余直接显示数字
   return num.toString()
 }
 
