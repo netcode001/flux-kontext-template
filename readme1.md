@@ -1712,3 +1712,15 @@ Can't reach database server at `db.jgiegbhhkfjsqgjdstfe.supabase.co:5432`
 - 优化国际化体验，便于后续多语言扩展。
 
 如需恢复热搜或切换多语言，可在本次提交基础上扩展。
+
+## 2024-06-09 页面metadata英文化与品牌统一
+
+- 统一所有主要页面（News、Gallery、Wallpapers等）的metadata.title、description、keywords为英文，品牌全部统一为LabubuHub。
+- 修正openGraph、twitter等SEO字段，tab页和SEO展示风格与主页一致。
+- 涉及文件：
+  - src/app/labubu-news/page.tsx
+  - src/app/labubu-gallery/page.tsx
+  - src/app/wallpapers/page.tsx
+- 解决了tab页和搜索引擎展示内容杂乱、品牌不统一、部分中文等问题。
+
+如需多语言SEO或品牌切换，可在本次提交基础上扩展。
