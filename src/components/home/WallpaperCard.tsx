@@ -263,9 +263,13 @@ export function WallpaperCard() {
                 </div>
                 <button
                   className="w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-full text-base"
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    session ? handleDownload(wallpaper) : setShowLoginDialog(true);
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (session) {
+                      handleDownload(wallpaper);
+                    } else {
+                      setShowLoginDialog(true);
+                    }
                   }}
                   title="Download"
                   disabled={downloadingId === wallpaper.id}
