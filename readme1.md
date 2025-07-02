@@ -1702,3 +1702,13 @@ Can't reach database server at `db.jgiegbhhkfjsqgjdstfe.supabase.co:5432`
 - 详细中文注释，便于后续维护。
 
 如需切换其他格式或多语言支持，可在formatNumber函数基础上扩展。
+
+## 2024-06-09 Labubu新闻页面国际化与结构优化
+
+- 删除左侧热搜区（Labubu热搜及所有热搜标签），主内容区自动占满宽度。
+- 所有页面文案全部英文化，无任何中文残留，包括空状态、加载、按钮、分类、排序、搜索等。
+- 涉及文件：
+  - src/components/labubu/LabubuNewsContent.tsx
+- 优化国际化体验，便于后续多语言扩展。
+
+如需恢复热搜或切换多语言，可在本次提交基础上扩展。
