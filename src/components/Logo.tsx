@@ -56,7 +56,7 @@ export function Logo({
         <div className={cn("relative", sizeClasses[size])}>
           <Image
             src={logoSrc}
-            alt="Flux Kontext Logo"
+            alt="LabubuHub Logo"
             fill
             className="object-contain"
             priority
@@ -74,7 +74,7 @@ export function Logo({
           size === "lg" && "text-2xl md:text-3xl",
           size === "xl" && "text-3xl md:text-4xl"
         )}>
-          Flux Kontext
+          LabubuHub
         </span>
       )}
     </div>

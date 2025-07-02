@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { DynamicNavigation } from '@/components/DynamicNavigation'
+import { Navigation } from "@/components/Navigation"
 import { Footer } from '@/components/Footer'
 import { FluxKontextGenerator } from '@/components/FluxKontextGenerator'
 import { generateMultilingualMetadata } from '@/lib/seo/metadata-generator'
@@ -28,13 +28,11 @@ export const metadata: Metadata = generateMultilingualMetadata({
 export default function GeneratePage() {
   return (
     <div className="min-h-screen bg-hero-gradient">
-      <DynamicNavigation />
+      <Navigation />
       
-      <main className="container mx-auto px-4 pt-8 pb-16">
+      <main className="container mx-auto px-4 mt-5 pb-16">
         <FluxKontextGenerator />
       </main>
-
-      <Footer />
     </div>
   )
 } 

@@ -51,7 +51,7 @@ export class NewsCrawler {
       const { data: dbSources, error } = await supabase
         .from('news_sources')
         .select('*')
-        .eq('enabled', true)
+        .eq('is_active', true)
         .order('created_at', { ascending: true })
 
       if (!error && dbSources && dbSources.length > 0) {
@@ -133,7 +133,7 @@ export class NewsCrawler {
             .insert({
               name: source.name,
               url: source.url,
-              enabled: true
+              is_active: true
             })
           console.log(`✅ 同步数据源到数据库: ${source.name}`)
         }
@@ -695,7 +695,7 @@ export async function getNewsSourceStats() {
     // 查询所有数据源（包括enabled状态）
     const { data: sources } = await supabase
       .from('news_sources')
-      .select('id, name, url, enabled, updated_at')
+      .select('id, name, url, is_active, updated_at')
       .order('created_at', { ascending: true })
     
     if (!sources) return []
@@ -718,10 +718,10 @@ export async function getNewsSourceStats() {
     return (sources || []).map((s: any) => ({
       name: s.name,
       count: countMap.get(s.name) || 0,
-      enabled: s.enabled,
+      enabled: s.is_active,
       url: s.url,
       lastUsed: s.updated_at,
-      status: s.enabled ? (countMap.get(s.name) > 0 ? 'active' : 'ready') : 'disabled'
+      status: s.is_active ? (countMap.get(s.name) > 0 ? 'active' : 'ready') : 'disabled'
     }))
     
   } catch (error) {

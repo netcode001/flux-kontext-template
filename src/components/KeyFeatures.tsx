@@ -61,7 +61,7 @@ export function KeyFeatures() {
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                     <img
                       src={feature.icon}
-                      alt={`${feature.title} - Flux Kontext AI Feature Icon`}
+                      alt={`${feature.title} - LabubuHub Feature Icon`}
                       className="w-6 h-6 filter brightness-0 invert opacity-80"
                       style={{
                         filter: 'brightness(0) saturate(100%) invert(78%) sepia(15%) saturate(684%) hue-rotate(22deg) brightness(96%) contrast(89%)'

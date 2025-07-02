@@ -14,28 +14,28 @@ interface FAQItem {
 
 const faqItems: FAQItem[] = [
   {
-    question: "What is Flux Kontext AI?",
-    answer: "Flux Kontext AI is an advanced image generation platform that uses cutting-edge artificial intelligence to create stunning images from text descriptions, edit existing images, and process multiple images simultaneously."
+    question: "What is LabubuHub AI?",
+    answer: "LabubuHub AI is an advanced image generation platform that uses cutting-edge artificial intelligence to create stunning images from text descriptions, edit existing images, and process multiple images simultaneously."
   },
   {
     question: "How does text-to-image generation work?",
     answer: "Our AI analyzes your text description and generates high-quality images using advanced Flux Pro and Max models. Simply describe what you want to see, and our AI creates professional-grade images in seconds."
   },
   {
-    question: "Can I edit existing images with Flux Kontext?",
+    question: "Can I edit existing images with LabubuHub?",
     answer: "Yes! Our platform supports image editing through natural language instructions. Upload an image and describe the changes you want, and our AI will apply those modifications professionally."
   },
   {
     question: "What image formats and sizes are supported?",
-    answer: "Flux Kontext AI supports multiple aspect ratios including 1:1, 16:9, 9:16, 4:3, 3:2, and 21:9. You can export images in JPEG and PNG formats at high resolution for professional use."
+    answer: "LabubuHub AI supports multiple aspect ratios including 1:1, 16:9, 9:16, 4:3, 3:2, and 21:9. You can export images in JPEG and PNG formats at high resolution for professional use."
   },
   {
     question: "How many images can I generate at once?",
     answer: "You can generate up to 4 images simultaneously with our multi-image processing feature. This allows you to explore different variations of your concept efficiently."
   },
   {
-    question: "What makes Flux Kontext different from other AI image generators?",
-    answer: "Flux Kontext stands out with its advanced Flux Pro and Max models, professional image editing capabilities, multi-image processing, and flexible aspect ratio support all in one seamless platform."
+    question: "What makes LabubuHub different from other AI image generators?",
+    answer: "LabubuHub stands out with its advanced Flux Pro and Max models, professional image editing capabilities, multi-image processing, and flexible aspect ratio support all in one seamless platform."
   },
   {
     question: "Are there any usage limits or restrictions?",
@@ -43,7 +43,7 @@ const faqItems: FAQItem[] = [
   },
   {
     question: "Can I use generated images commercially?",
-    answer: "Yes, images generated through Flux Kontext AI can typically be used for commercial purposes. Please review the specific terms of service and licensing agreements for detailed usage rights."
+    answer: "Yes, images generated through LabubuHub AI can typically be used for commercial purposes. Please review the specific terms of service and licensing agreements for detailed usage rights."
   }
 ]
 

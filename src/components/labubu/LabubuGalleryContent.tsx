@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
-import { DynamicNavigation } from '@/components/DynamicNavigation'
+import { Navigation } from "@/components/Navigation";
 import { PostCard } from './PostCard'
 import { PostPublisher } from './PostPublisher'
 import { PostWithUser } from '@/lib/database'
@@ -192,18 +192,18 @@ export function LabubuGalleryContent() {
     }
   }
 
-  // 筛选器配置
+  // 筛选器配置（全部英文）
   const filters = [
-    { key: 'all', label: '全部', icon: Grid },
-    { key: 'featured', label: '精选', icon: Star },
-    { key: 'recent', label: '最新', icon: Sparkles },
-    { key: 'popular', label: '热门', icon: Sparkles }
+    { key: 'all', label: 'All', icon: Grid },
+    { key: 'featured', label: 'Featured', icon: Star },
+    { key: 'recent', label: 'Recent', icon: Sparkles },
+    { key: 'popular', label: 'Popular', icon: Sparkles }
   ] as const
 
   return (
     <div className="min-h-screen" data-page="labubu-gallery">
       {/* 统一的导航栏 */}
-      <DynamicNavigation />
+      <Navigation />
       
       {/* 搜索和筛选栏 */}
       <div className="container mx-auto px-4 py-6 pt-24">
@@ -216,7 +216,7 @@ export function LabubuGalleryContent() {
             />
             <LabubuInput
               variant="search"
-              placeholder="搜索标题或内容..."
+              placeholder="Search by title or content..."
               value={searchInput}
               onChange={(e) => handleSearchInputChange(e.target.value)}
               onKeyPress={handleSearchKeyPress}
@@ -257,7 +257,7 @@ export function LabubuGalleryContent() {
                 onClick={() => setShowPublisher(true)}
                 className="flex items-center gap-2"
               >
-                发布Labubu
+                Post Labubu
               </LabubuButton>
             )}
           </div>
@@ -281,11 +281,11 @@ export function LabubuGalleryContent() {
               <div className="flex items-center space-x-2">
                 <Search className="w-4 h-4 text-labubu-600" />
                 <LabubuText className="text-labubu-700">
-                  搜索 "<span className="font-semibold">{searchQuery}</span>" 的结果
+                  Search results for "<span className="font-semibold">{searchQuery}</span>"
                 </LabubuText>
                 {!isLoading && (
                   <LabubuBadge variant="primary">
-                    {posts.length} 个结果
+                    {posts.length} results
                   </LabubuBadge>
                 )}
               </div>
@@ -295,7 +295,7 @@ export function LabubuGalleryContent() {
                 onClick={clearSearch}
                 className="text-labubu-600 hover:text-labubu-800"
               >
-                清除搜索
+                Clear
               </LabubuButton>
             </div>
           </LabubuCard>
@@ -304,18 +304,18 @@ export function LabubuGalleryContent() {
         {isLoading && posts.length === 0 ? (
           <div className="text-center py-20">
             <LabubuLoader />
-            <p className="mt-4 text-soft-500">正在加载Labubu的奇思妙想...</p>
+            <p className="mt-4 text-soft-500">Loading Labubu's creative ideas...</p>
           </div>
         ) : posts.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">{searchQuery ? '🔍' : '🎭'}</div>
             <LabubuHeading level={3} className="text-xl font-bold text-soft-700 mb-2">
-              {searchQuery ? '没有找到相关作品' : '还没有作品'}
+              {searchQuery ? 'No related posts found' : 'No posts yet'}
             </LabubuHeading>
             <LabubuText className="text-soft-500 mb-6">
               {searchQuery 
-                ? `尝试使用其他关键词搜索，或者浏览所有作品` 
-                : '成为第一个分享Labubu创意的人吧！'
+                ? `Try other keywords or browse all posts` 
+                : 'Be the first to share your Labubu creation!'
               }
             </LabubuText>
             {searchQuery ? (
@@ -323,7 +323,7 @@ export function LabubuGalleryContent() {
                 variant="secondary"
                 onClick={clearSearch}
               >
-                查看所有作品
+                View all posts
               </LabubuButton>
             ) : session && (
               <LabubuButton
@@ -331,7 +331,7 @@ export function LabubuGalleryContent() {
                 onClick={() => setShowPublisher(true)}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                发布第一个作品
+                Post the first creation
               </LabubuButton>
             )}
           </div>
@@ -365,10 +365,10 @@ export function LabubuGalleryContent() {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>加载中...</span>
+                  <span>Loading...</span>
                 </>
               ) : (
-                '发现更多作品'
+                'Discover more posts'
               )}
             </LabubuButton>
           </div>

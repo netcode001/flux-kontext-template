@@ -139,12 +139,12 @@ export default function RefundPage() {
       <footer className="bg-card border-t border-border">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <div className="text-xl font-bold text-primary mb-4">Flux Kontext</div>
+            <div className="text-xl font-bold text-primary mb-4">LabubuHub</div>
             <p className="text-muted-foreground text-sm mb-4">
               Professional AI image generation platform. Create stunning images with advanced AI technology.
             </p>
             <div className="text-sm text-muted-foreground">
-              © 2025 Flux Kontext. All rights reserved.
+              © 2025 LabubuHub. All rights reserved.
             </div>
           </div>
         </div>

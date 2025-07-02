@@ -74,7 +74,8 @@ export async function POST(request: NextRequest) {
       data: { 
         name: name.trim(), 
         url: url.trim(),
-        enabled: true 
+        is_active: true,
+        type: 'rss'
       }
     })
 
@@ -103,7 +104,7 @@ export async function PUT(request: NextRequest) {
   if (adminCheck) return adminCheck
 
   try {
-    const { id, name, url, enabled } = await request.json()
+    const { id, name, url, is_active } = await request.json()
     
     if (!id) {
       return NextResponse.json(
@@ -127,7 +128,7 @@ export async function PUT(request: NextRequest) {
     const updateData: any = {}
     if (typeof name === 'string') updateData.name = name.trim()
     if (typeof url === 'string') updateData.url = url.trim()
-    if (typeof enabled === 'boolean') updateData.enabled = enabled
+    if (typeof is_active === 'boolean') updateData.is_active = is_active
 
     const updated = await prisma.newsSource.update({
       where: { id },

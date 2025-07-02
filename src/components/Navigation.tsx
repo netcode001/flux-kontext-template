@@ -33,36 +33,16 @@ export function Navigation() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  // 统一菜单title，全部英文，风格与主页一致
   const navLinks = [
     { href: "/", label: common.navigation.home, emoji: "🏠" },
     { href: "/generate", label: common.navigation.generate, emoji: "✨" },
-    { 
-      href: "/labubu-news", 
-      label: "News",
-      emoji: "📰"
-    },
-    { 
-      href: "/labubu-gallery", 
-      label: "Gallery",
-      emoji: "🎨"
-    },
-    { 
-      href: "/wallpapers", 
-      label: "Wallpapers",
-      emoji: "🖼️"
-    },
+    { href: "/labubu-news", label: "News", emoji: "📰" },
+    { href: "/labubu-gallery", label: "Gallery", emoji: "🎨" },
+    { href: "/wallpapers", label: "Wallpapers", emoji: "🖼️" },
     { href: "/videos", label: "Videos", emoji: "🎬" },
     // { href: "/pricing", label: common.navigation.pricing, emoji: "💎" },
-    // { 
-    //   href: "/resources", 
-    //   label: common.navigation.resources,
-    //   emoji: "📚",
-    //   hasDropdown: true,
-    //   subItems: [
-    //     { href: "/resources", label: common.navigation.resourcesHub, icon: BookOpen },
-    //     { href: "/resources/api", label: common.navigation.apiDocs, icon: Code }
-    //   ]
-    // }
+    // { href: "/resources", label: common.navigation.resources, emoji: "📚" },
   ]
 
   const handleSignOut = async () => {

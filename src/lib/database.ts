@@ -1794,8 +1794,8 @@ class SupabaseAdapter {
         const supabase = getSupabaseAdmin()
         let query = supabase.from('news_sources').select('*')
 
-        if (args?.where?.enabled !== undefined) {
-          query = query.eq('enabled', args.where.enabled)
+        if (args?.where?.is_active !== undefined) {
+          query = query.eq('is_active', args.where.is_active)
         }
 
         if (args?.orderBy) {
@@ -1815,7 +1815,7 @@ class SupabaseAdapter {
           id: item.id,
           name: item.name,
           url: item.url,
-          enabled: item.enabled,
+          enabled: item.is_active,
           created_at: new Date(item.created_at),
           updated_at: new Date(item.updated_at)
         }))
@@ -1833,7 +1833,7 @@ class SupabaseAdapter {
           .insert({
             name: args.data.name,
             url: args.data.url,
-            enabled: args.data.enabled !== undefined ? args.data.enabled : true
+            is_active: args.data.enabled !== undefined ? args.data.enabled : true
           })
           .select()
           .single()
@@ -1847,7 +1847,7 @@ class SupabaseAdapter {
           id: data.id,
           name: data.name,
           url: data.url,
-          enabled: data.enabled,
+          enabled: data.is_active,
           created_at: new Date(data.created_at),
           updated_at: new Date(data.updated_at)
         }
@@ -1864,7 +1864,7 @@ class SupabaseAdapter {
 
         if (args.data.name !== undefined) updateData.name = args.data.name
         if (args.data.url !== undefined) updateData.url = args.data.url
-        if (args.data.enabled !== undefined) updateData.enabled = args.data.enabled
+        if (args.data.enabled !== undefined) updateData.is_active = args.data.enabled
 
         const { data, error } = await supabase
           .from('news_sources')
@@ -1882,7 +1882,7 @@ class SupabaseAdapter {
           id: data.id,
           name: data.name,
           url: data.url,
-          enabled: data.enabled,
+          enabled: data.is_active,
           created_at: new Date(data.created_at),
           updated_at: new Date(data.updated_at)
         }
@@ -1911,7 +1911,7 @@ class SupabaseAdapter {
           id: data.id,
           name: data.name,
           url: data.url,
-          enabled: data.enabled,
+          enabled: data.is_active,
           created_at: new Date(data.created_at),
           updated_at: new Date(data.updated_at)
         }

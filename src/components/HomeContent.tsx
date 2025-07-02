@@ -1,6 +1,6 @@
 "use client"
 
-import { DynamicNavigation } from "@/components/DynamicNavigation"
+import { Navigation } from "@/components/Navigation"
 import { Footer } from "@/components/Footer"
 import { HeroCarousel } from "./home/HeroCarousel"
 import { NewsSection } from "./home/NewsSection"
@@ -11,7 +11,7 @@ export function HomeContent() {
   return (
     <div className="min-h-screen bg-hero-gradient">
       {/* Navigation */}
-      <DynamicNavigation />
+      <Navigation />
 
       {/* 主要内容区域 */}
       <main className="pt-16">
@@ -31,9 +31,6 @@ export function HomeContent() {
         {/* 功能卡片区域 */}
         <FeatureCards />
       </main>
-
-      {/* Footer */}
-      <Footer />
     </div>
   )
 } 

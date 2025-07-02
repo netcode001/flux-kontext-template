@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Script from "next/script"
 import { Button } from "@/components/ui/button"
-import { DynamicNavigation } from "@/components/DynamicNavigation"
+import { Navigation } from "@/components/Navigation"
 import { Footer } from "@/components/Footer"
 import type { HomeDictionary } from "@/lib/i18n/home-config"
 
@@ -13,7 +13,7 @@ export function HomeContentSimple({ dictionary }: HomeContentSimpleProps) {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <DynamicNavigation />
+      <Navigation />
 
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4">
@@ -128,7 +128,7 @@ export function HomeContentSimple({ dictionary }: HomeContentSimpleProps) {
       </section>
 
       {/* Footer */}
-      <Footer />
+    
 
       {/* 推特脚本 - 确保推特内容正常加载 */}
       <Script 

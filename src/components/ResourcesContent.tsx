@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { DynamicNavigation } from "@/components/DynamicNavigation"
+import { Navigation } from "@/components/Navigation"
 import { Footer } from "@/components/Footer"
 import { 
   BookOpen, 
@@ -139,7 +139,7 @@ const featuredResources = [
 export function ResourcesContent() {
   return (
     <div className="min-h-screen bg-background">
-      <DynamicNavigation />
+      <Navigation />
 
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4">

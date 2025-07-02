@@ -271,7 +271,7 @@ export async function grantWelcomeCredits(
 ): Promise<CreditOperationResult> {
   return await grantUserCredits({
     userId,
-    amount: 100,
+    amount: 30,
     type: 'gift',
     description: '新用户注册赠送积分',
     referenceId: 'welcome_bonus',

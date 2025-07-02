@@ -5,7 +5,7 @@ export function OrganizationSchema() {
   const organizationData = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Flux Kontext",
+    "name": "LabubuHub",
     "url": process.env.NEXT_PUBLIC_SITE_URL || "https://fluxkontext.space",
     "logo": {
       "@type": "ImageObject",
@@ -13,7 +13,7 @@ export function OrganizationSchema() {
       "width": 256,
       "height": 256
     },
-    "description": "Professional AI image generation platform powered by Flux Kontext. Create stunning images from text descriptions with advanced AI technology.",
+    "description": "Professional AI image generation platform powered by LabubuHub. Create stunning images from text descriptions with advanced AI technology.",
     "foundingDate": "2024",
     "contactPoint": {
       "@type": "ContactPoint",
@@ -45,9 +45,9 @@ export function WebSiteSchema() {
   const websiteData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Flux Kontext",
+    "name": "LabubuHub",
     "url": process.env.NEXT_PUBLIC_SITE_URL || "https://fluxkontext.space",
-    "description": "Professional AI image generation platform powered by Flux Kontext. Create stunning images from text descriptions with advanced AI technology.",
+    "description": "Professional AI image generation platform powered by LabubuHub. Create stunning images from text descriptions with advanced AI technology.",
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
@@ -58,7 +58,7 @@ export function WebSiteSchema() {
     },
     "publisher": {
       "@type": "Organization",
-      "name": "Flux Kontext"
+      "name": "LabubuHub"
     }
   }
 
@@ -76,8 +76,8 @@ export function SoftwareApplicationSchema() {
   const softwareData = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "Flux Kontext AI Image Generator",
-    "description": "Professional AI image generation platform. Create stunning images from text descriptions with advanced Flux Kontext AI technology.",
+    "name": "LabubuHub AI Image Generator",
+    "description": "Professional AI image generation platform. Create stunning images from text descriptions with advanced LabubuHub AI technology.",
     "url": process.env.NEXT_PUBLIC_SITE_URL || "https://fluxkontext.space",
     "applicationCategory": "ImageEditingApplication",
     "operatingSystem": "Web Browser",
@@ -85,19 +85,19 @@ export function SoftwareApplicationSchema() {
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "USD",
-      "description": "Free AI image generation with Flux Kontext",
+      "description": "Free AI image generation with LabubuHub",
       "availability": "https://schema.org/InStock"
     },
     "creator": {
       "@type": "Organization",
-      "name": "Flux Kontext"
+      "name": "LabubuHub"
     },
     "featureList": [
       "Text to image AI generation",
       "Image editing with AI",
       "Multiple image processing",
       "Professional image output",
-      "Flux Kontext Pro and Max models",
+      "LabubuHub Pro and Max models",
       "AI-powered image creation"
     ],
     "screenshot": `${process.env.NEXT_PUBLIC_SITE_URL || "https://fluxkontext.space"}/screenshot.png`,
@@ -124,11 +124,11 @@ export function ProductSchema() {
   const productData = {
     "@context": "https://schema.org",
     "@type": "Product",
-    "name": "Flux Kontext AI Image Generation Service",
-    "description": "Professional AI image generation service with multiple pricing plans powered by Flux Kontext technology",
+    "name": "LabubuHub AI Image Generation Service",
+    "description": "Professional AI image generation service with multiple pricing plans powered by LabubuHub technology",
     "brand": {
       "@type": "Brand",
-      "name": "Flux Kontext"
+      "name": "LabubuHub"
     },
     "category": "Software",
     "offers": [
@@ -148,7 +148,7 @@ export function ProductSchema() {
         "priceCurrency": "USD",
         "priceValidUntil": "2025-12-31",
         "availability": "https://schema.org/InStock",
-        "description": "Enhanced AI image generation with Flux Kontext Pro"
+        "description": "Enhanced AI image generation with LabubuHub Pro"
       },
       {
         "@type": "Offer",
@@ -157,7 +157,7 @@ export function ProductSchema() {
         "priceCurrency": "USD",
         "priceValidUntil": "2025-12-31",
         "availability": "https://schema.org/InStock",
-        "description": "Premium AI image generation with Flux Kontext Max"
+        "description": "Premium AI image generation with LabubuHub Max"
       },
       {
         "@type": "Offer",
@@ -261,7 +261,7 @@ export function VideoObjectSchema({
     "embedUrl": `${process.env.NEXT_PUBLIC_SITE_URL || "https://fluxkontext.space"}/embed/sample`,
     "publisher": {
       "@type": "Organization",
-      "name": "Flux Kontext",
+      "name": "LabubuHub",
       "logo": {
         "@type": "ImageObject",
         "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://fluxkontext.space"}/logo.png`
@@ -315,10 +315,10 @@ export function StructuredData() {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Flux Kontext",
+    "name": "LabubuHub",
     "url": "https://fluxkontext.space",
     "logo": "https://fluxkontext.space/logo.png",
-    "description": "Professional AI image generation platform powered by Flux Kontext. Create stunning images from text descriptions with advanced AI technology.",
+    "description": "Professional AI image generation platform powered by LabubuHub. Create stunning images from text descriptions with advanced AI technology.",
     "sameAs": [
       "https://twitter.com/fluxkontext",
       "https://github.com/fluxkontext"
@@ -333,7 +333,7 @@ export function StructuredData() {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Flux Kontext",
+    "name": "LabubuHub",
     "url": "https://fluxkontext.space",
     "description": "Professional AI image generation platform",
     "potentialAction": {
@@ -346,14 +346,14 @@ export function StructuredData() {
   const softwareApplicationSchema = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "Flux Kontext AI Image Generator",
+    "name": "LabubuHub AI Image Generator",
     "applicationCategory": "MultimediaApplication",
     "operatingSystem": "Web Browser",
     "description": "AI-powered image generation platform for creating professional images from text descriptions",
     "url": "https://fluxkontext.space",
     "author": {
       "@type": "Organization",
-      "name": "Flux Kontext"
+      "name": "LabubuHub"
     },
     "offers": {
       "@type": "Offer",

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { DynamicNavigation } from "@/components/DynamicNavigation"
+import { Navigation } from "@/components/Navigation"
 import { Footer } from "@/components/Footer"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -27,7 +27,7 @@ const apiEndpoints = [
     name: "Text to Image (Pro)",
     method: "POST",
     endpoint: "/api/v1/flux/text-to-image/pro",
-    description: "Generate high-quality images from text prompts using Flux Pro model",
+    description: "Generate high-quality images from text prompts using LabubuHub Pro model",
     pricing: "$0.05 per request",
     category: "Generation"
   },
@@ -36,7 +36,7 @@ const apiEndpoints = [
     name: "Text to Image (Max)",
     method: "POST", 
     endpoint: "/api/v1/flux/text-to-image/max",
-    description: "Generate ultra-high quality images using Flux Max model",
+    description: "Generate ultra-high quality images using LabubuHub Max model",
     pricing: "$0.08 per request",
     category: "Generation"
   },
@@ -45,7 +45,7 @@ const apiEndpoints = [
     name: "Image Edit (Pro)",
     method: "POST",
     endpoint: "/api/v1/flux/image-edit/pro", 
-    description: "Edit existing images with text instructions using Flux Pro",
+    description: "Edit existing images with text instructions using LabubuHub Pro",
     pricing: "$0.05 per request",
     category: "Editing"
   },
@@ -54,7 +54,7 @@ const apiEndpoints = [
     name: "Image Edit (Max)",
     method: "POST",
     endpoint: "/api/v1/flux/image-edit/max",
-    description: "Edit existing images with highest quality using Flux Max",
+    description: "Edit existing images with highest quality using LabubuHub Max",
     pricing: "$0.08 per request", 
     category: "Editing"
   }
@@ -155,7 +155,7 @@ export function ApiDocumentation() {
 
   return (
     <div className="min-h-screen bg-background">
-      <DynamicNavigation />
+      <Navigation />
       
       {/* Hero Section */}
       <section className="pt-20 pb-12 px-4">
@@ -172,7 +172,7 @@ export function ApiDocumentation() {
               </Badge>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">
-              Flux Kontext Developer API
+              LabubuHub Developer API
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
               Powerful REST API for AI image generation. Easy integration, transparent pricing, and reliable service for professional developers.
@@ -257,7 +257,7 @@ export function ApiDocumentation() {
             <div className="prose prose-gray dark:prose-invert max-w-none">
               <h2 className="text-2xl font-bold mb-4">Getting Started</h2>
               <p className="text-muted-foreground">
-                The Flux Kontext API provides a simple REST interface to our AI image generation models. 
+                The LabubuHub API provides a simple REST interface to our AI image generation models. 
                 Our API offers reliable service with transparent pricing and professional-grade infrastructure.
               </p>
 
@@ -435,11 +435,11 @@ export function ApiDocumentation() {
                   <h4 className="font-medium mb-3 text-blue-900 dark:text-blue-100">Model Pricing</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between text-gray-700 dark:text-gray-300">
-                      <span>Flux Kontext Pro</span>
+                      <span>LabubuHub Pro</span>
                       <span className="font-mono font-medium">$0.05</span>
                     </div>
                     <div className="flex justify-between text-gray-700 dark:text-gray-300">
-                      <span>Flux Kontext Max</span>
+                      <span>LabubuHub Max</span>
                       <span className="font-mono font-medium">$0.08</span>
                     </div>
                   </div>
@@ -476,13 +476,13 @@ export function ApiDocumentation() {
                   </thead>
                   <tbody>
                     <tr className="border-t border-border">
-                      <td className="p-4 font-medium">Flux Kontext Pro</td>
+                      <td className="p-4 font-medium">LabubuHub Pro</td>
                       <td className="p-4 font-mono font-medium text-green-600">$0.05</td>
                       <td className="p-4">High Quality</td>
                       <td className="p-4 text-muted-foreground">General purpose, fast generation</td>
                     </tr>
                     <tr className="border-t border-border">
-                      <td className="p-4 font-medium">Flux Kontext Max</td>
+                      <td className="p-4 font-medium">LabubuHub Max</td>
                       <td className="p-4 font-mono font-medium text-green-600">$0.08</td>
                       <td className="p-4">Ultra High Quality</td>
                       <td className="p-4 text-muted-foreground">Professional, detailed images</td>
@@ -513,7 +513,7 @@ export function ApiDocumentation() {
                 <div>
                   <h4 className="font-medium mb-3">Getting Your API Key</h4>
                   <ol className="space-y-2 text-sm text-muted-foreground">
-                    <li>1. Sign up for a Flux Kontext account</li>
+                    <li>1. Sign up for a LabubuHub account</li>
                     <li>2. Go to your dashboard</li>
                     <li>3. Navigate to API section</li>
                     <li>4. Generate a new API key</li>

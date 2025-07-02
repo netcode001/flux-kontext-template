@@ -69,84 +69,16 @@ export function DynamicNavigation({ fullWidth = false }: DynamicNavigationProps)
     }
   }
 
-  // 🔄 静态菜单作为fallback
+  // 🔄 静态菜单作为fallback，全部英文，风格与主页一致
   const getStaticFallbackMenu = (): DynamicMenuItem[] => [
-    { 
-      id: 'static-home', 
-      key: 'home', 
-      label: common.navigation.home, 
-      href: "/", 
-      emoji: "🏠", 
-      sort_order: 1, 
-      is_dropdown: false 
-    },
-    { 
-      id: 'static-generate', 
-      key: 'generate', 
-      label: common.navigation.generate, 
-      href: "/generate", 
-      emoji: "✨", 
-      sort_order: 2, 
-      is_dropdown: false 
-    },
-    { 
-      id: 'static-labubu-news', 
-      key: 'labubu-news', 
-      label: "Labubu快报", 
-      href: "/labubu-news", 
-      emoji: "📰", 
-      sort_order: 3, 
-      is_dropdown: false 
-    },
-    { 
-      id: 'static-labubu-gallery', 
-      key: 'labubu-gallery', 
-      label: "创意秀场", 
-      href: "/labubu-gallery", 
-      emoji: "🎨", 
-      sort_order: 4, 
-      is_dropdown: false 
-    },
-    { 
-      id: 'static-pricing', 
-      key: 'pricing', 
-      label: common.navigation.pricing, 
-      href: "/pricing", 
-      emoji: "💎", 
-      sort_order: 5, 
-      is_dropdown: false 
-    },
-    { 
-      id: 'static-resources', 
-      key: 'resources', 
-      label: common.navigation.resources,
-      href: "/resources", 
-      emoji: "📚", 
-      sort_order: 6, 
-      is_dropdown: true,
-      children: [
-        { 
-          id: 'static-resources-hub', 
-          key: 'resources-hub', 
-          label: common.navigation.resourcesHub, 
-          href: "/resources", 
-          emoji: "📚", 
-          sort_order: 1, 
-          is_dropdown: false,
-          parent_id: 'static-resources'
-        },
-        { 
-          id: 'static-api-docs', 
-          key: 'api-docs', 
-          label: common.navigation.apiDocs, 
-          href: "/resources/api", 
-          emoji: "📖", 
-          sort_order: 2, 
-          is_dropdown: false,
-          parent_id: 'static-resources'
-        }
-      ]
-    }
+    { id: 'static-home', key: 'home', label: common.navigation.home, href: "/", emoji: "🏠", sort_order: 1, is_dropdown: false },
+    { id: 'static-generate', key: 'generate', label: common.navigation.generate, href: "/generate", emoji: "✨", sort_order: 2, is_dropdown: false },
+    { id: 'static-labubu-news', key: 'labubu-news', label: "News", href: "/labubu-news", emoji: "📰", sort_order: 3, is_dropdown: false },
+    { id: 'static-labubu-gallery', key: 'labubu-gallery', label: "Gallery", href: "/labubu-gallery", emoji: "🎨", sort_order: 4, is_dropdown: false },
+    { id: 'static-wallpapers', key: 'wallpapers', label: "Wallpapers", href: "/wallpapers", emoji: "🖼️", sort_order: 5, is_dropdown: false },
+    { id: 'static-videos', key: 'videos', label: "Videos", href: "/videos", emoji: "🎬", sort_order: 6, is_dropdown: false },
+    // { id: 'static-pricing', key: 'pricing', label: common.navigation.pricing, href: "/pricing", emoji: "💎", sort_order: 7, is_dropdown: false },
+    // { id: 'static-resources', key: 'resources', label: common.navigation.resources, href: "/resources", emoji: "📚", sort_order: 8, is_dropdown: true, children: [...] },
   ]
 
   useEffect(() => {

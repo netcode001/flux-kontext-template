@@ -5,8 +5,7 @@ import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { DynamicNavigation } from "@/components/DynamicNavigation"
-import { Footer } from "@/components/Footer"
+import { Navigation } from "@/components/Navigation"
 import { ProductSchema } from "@/components/StructuredData"
 import { 
   Check, 
@@ -133,7 +132,7 @@ function PricingMainContent() {
 
   return (
     <>
-      <DynamicNavigation />
+      <Navigation />
       
       {/* 添加产品结构化数据 */}
       <ProductSchema />
@@ -373,8 +372,6 @@ function PricingMainContent() {
           </div>
         </div>
       </main>
-
-      <Footer />
 
       {/* Suspense包装的URL参数处理器 */}
       <Suspense fallback={null}>

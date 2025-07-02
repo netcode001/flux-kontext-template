@@ -240,7 +240,7 @@ export function CreditDisplay({
           variant="outline"
           size="sm"
           className="h-6 px-2 text-xs opacity-50 cursor-not-allowed"
-          disabled={true}
+          title="Coming soon"
           onClick={() => {
             window.alert('coming soon')
           }}

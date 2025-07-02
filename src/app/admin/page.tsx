@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { DynamicNavigation } from '@/components/DynamicNavigation'
+import { Navigation } from "@/components/Navigation"
 import { AdminDashboard } from '@/components/admin/AdminDashboard'
 
 export default async function AdminPage() {
@@ -22,7 +22,7 @@ export default async function AdminPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       {/* 统一的导航栏 */}
-      <DynamicNavigation />
+      <Navigation />
       
       {/* 主要内容区域 */}
       <div className="container mx-auto px-4 py-8 pt-24">
