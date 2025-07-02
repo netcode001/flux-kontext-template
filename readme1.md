@@ -1691,3 +1691,14 @@ Can't reach database server at `db.jgiegbhhkfjsqgjdstfe.supabase.co:5432`
 ### 2024-06-09 导航栏菜单 ShowRoom 改为 Gallery
 - 将顶部导航栏的 ShowRoom 菜单项名称改为 Gallery，emoji 保持不变。
 - 影响范围：首页及所有含有主导航的页面。
+
+## 2024-06-09 视频播放量格式国际化优化
+
+- 统一所有视频页面（如主页、视频Tab等）播放量格式为英文单位（M/K），去除中文"万"单位，全部保留一位小数（如2.3M、2.3K）。
+- 涉及文件：
+  - src/components/home/VideoCard.tsx
+  - src/components/videos/VideoTabs.tsx
+- 优化国际化体验，所有用户界面播放量风格一致。
+- 详细中文注释，便于后续维护。
+
+如需切换其他格式或多语言支持，可在formatNumber函数基础上扩展。
