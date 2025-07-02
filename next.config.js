@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // 🌐 Cloudflare Pages 部署配置
+  output: process.env.NODE_ENV === 'production' && process.env.CF_PAGES ? 'export' : undefined,
+  trailingSlash: false,
+  
   // 开发环境跨域配置 - 支持局域网访问
   allowedDevOrigins: [
     'localhost:3000',
@@ -131,6 +135,11 @@ const nextConfig = {
   
   // 压缩配置
   compress: true,
+  
+  // 🔧 Cloudflare Pages 环境变量
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  },
 };
 
 module.exports = nextConfig;
