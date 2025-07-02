@@ -240,7 +240,7 @@ export function WallpaperGalleryContent() {
           <div className="flex-1 flex gap-2">
             <LabubuInput
               variant="search"
-              placeholder="搜索壁纸标题或描述..."
+              placeholder="Search wallpaper title or description..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -305,7 +305,7 @@ export function WallpaperGalleryContent() {
         {selectedTags.length > 0 && (
           <LabubuCard variant="interactive" className="mb-6 p-4">
             <div className="flex flex-wrap gap-2 items-center">
-              <LabubuText variant="small" className="text-soft-600">活跃标签:</LabubuText>
+              <LabubuText variant="small" className="text-soft-600">Active tags:</LabubuText>
               {selectedTags.map(tag => (
                 <LabubuBadge
                   key={tag}
@@ -324,16 +324,16 @@ export function WallpaperGalleryContent() {
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-labubu-600" />
-            <LabubuText className="ml-2 text-soft-600">加载中...</LabubuText>
+            <LabubuText className="ml-2 text-soft-600">Loading...</LabubuText>
           </div>
         ) : wallpapers.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🔍</div>
             <LabubuHeading level={3} className="text-xl font-semibold text-soft-900 mb-2">
-              没有找到壁纸
+              No wallpapers found
             </LabubuHeading>
             <LabubuText className="text-soft-600">
-              尝试调整搜索条件或筛选选项
+              Try adjusting search or filter options
             </LabubuText>
           </div>
         ) : (
@@ -366,10 +366,10 @@ export function WallpaperGalleryContent() {
                   {loadingMore ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      加载中...
+                      Loading...
                     </>
                   ) : (
-                    '加载更多'
+                    'Load more'
                   )}
                 </LabubuButton>
               </div>
