@@ -32,40 +32,136 @@ export class NewsCrawler {
   private sources: NewsSource[] = []
 
   constructor() {
-    this.initializeSources()
+    // 构造函数中不能直接调用异步方法，在实际使用时初始化
+    this.sources = []
   }
 
-  // 🚀 初始化Labubu专门数据源
-  private initializeSources() {
-    this.sources = [
-      // 🎭 玩具和收藏品新闻源 (更有可能包含Labubu内容)
+  // 🚀 确保数据源已初始化
+  private async ensureSourcesInitialized() {
+    if (this.sources.length === 0) {
+      await this.initializeSources()
+    }
+  }
+
+  // 🚀 初始化数据源（从数据库获取，兜底使用默认源）
+  private async initializeSources() {
+    try {
+      // 优先从数据库获取启用的RSS源
+      const supabase = createAdminClient()
+      const { data: dbSources, error } = await supabase
+        .from('news_sources')
+        .select('*')
+        .eq('enabled', true)
+        .order('created_at', { ascending: true })
+
+      if (!error && dbSources && dbSources.length > 0) {
+        // 使用数据库中的源，并自动更新统计
+        this.sources = dbSources.map(source => ({
+          id: this.generateSourceId(source.name),
+          name: source.name,
+          type: 'rss' as const,
+          url: source.url,
+          config: { dbId: source.id }
+        }))
+        console.log(`✅ 从数据库获取到 ${this.sources.length} 个启用的数据源`)
+        
+        // 更新数据库中的源状态
+        await this.updateSourcesInDatabase(this.sources)
+        return
+      }
+    } catch (error) {
+      console.error('🚨 从数据库获取数据源失败:', error)
+    }
+
+    // 兜底：使用默认的RSS源并同步到数据库
+    console.log('⚠️ 使用默认数据源并同步到数据库')
+    const defaultSources = [
       {
         id: 'toy-news',
         name: 'Toy News International',
-        type: 'rss',
+        type: 'rss' as const,
         url: 'https://feeds.feedburner.com/ToyNewsInternational'
       },
       {
         id: 'hypebeast',
         name: 'Hypebeast',
-        type: 'rss',
+        type: 'rss' as const,
         url: 'https://hypebeast.com/feed'
       },
-      // 🛍️ 科技新闻源 (替换失效的时尚源)
       {
         id: 'tech-crunch',
         name: 'TechCrunch',
-        type: 'rss',
+        type: 'rss' as const,
         url: 'https://techcrunch.com/feed/'
       },
-      // 🎪 游戏新闻源 (替换失效的娱乐源)
       {
         id: 'polygon',
         name: 'Polygon Gaming',
-        type: 'rss',
+        type: 'rss' as const,
         url: 'https://www.polygon.com/rss/index.xml'
       }
     ]
+    
+    this.sources = defaultSources
+    await this.syncSourcesToDatabase(defaultSources)
+  }
+
+  // 🔧 生成源ID（从名称）
+  private generateSourceId(name: string): string {
+    return name.toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')
+      .replace(/\s+/g, '-')
+  }
+
+  // 📊 同步默认源到数据库
+  private async syncSourcesToDatabase(sources: NewsSource[]) {
+    try {
+      const supabase = createAdminClient()
+      
+      for (const source of sources) {
+        // 检查是否已存在
+        const { data: existing } = await supabase
+          .from('news_sources')
+          .select('id')
+          .eq('name', source.name)
+          .single()
+
+        if (!existing) {
+          // 创建新源
+          await supabase
+            .from('news_sources')
+            .insert({
+              name: source.name,
+              url: source.url,
+              enabled: true
+            })
+          console.log(`✅ 同步数据源到数据库: ${source.name}`)
+        }
+      }
+    } catch (error) {
+      console.error('🚨 同步数据源失败:', error)
+    }
+  }
+
+  // 📈 更新数据库中的源状态和统计
+  private async updateSourcesInDatabase(sources: NewsSource[]) {
+    try {
+      const supabase = createAdminClient()
+      
+      for (const source of sources) {
+        if (source.config?.dbId) {
+          // 更新最后使用时间等信息
+          await supabase
+            .from('news_sources')
+            .update({
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', source.config.dbId)
+        }
+      }
+    } catch (error) {
+      console.error('🚨 更新数据源状态失败:', error)
+    }
   }
 
   // 🎯 Labubu相关关键词
@@ -464,7 +560,8 @@ export class NewsCrawler {
           content: article.content,
           summary: article.summary,
           author: article.author,
-          source_id: source?.id,
+          source_name: article.sourceId, // 使用source_name而非source_id
+          source_url: article.originalUrl,
           original_url: article.originalUrl,
           published_at: article.publishedAt.toISOString(),
           image_urls: article.imageUrls,
@@ -492,6 +589,9 @@ export class NewsCrawler {
   public async crawlContent(withLogs = false, days = 1): Promise<{ success: boolean; count: number; message: string; logs?: string[] }> {
     const logs: string[] = []
     try {
+      // 确保数据源已初始化
+      await this.ensureSourcesInitialized()
+      
       logs.push('🚀 开始获取热点新闻内容...')
       let totalSaved = 0
       const allArticles: NewsArticle[] = []
@@ -587,21 +687,47 @@ export class NewsCrawler {
 // 🎯 导出爬虫实例
 export const newsCrawler = new NewsCrawler()
 
-// 获取每个数据源的累计抓取成功数量
+// 获取每个数据源的累计抓取成功数量和状态
 export async function getNewsSourceStats() {
   const supabase = createAdminClient()
-  // 查询所有数据源
-  const { data: sources } = await supabase.from('news_sources').select('id, name')
-  if (!sources) return []
-  // 查询所有文章，统计每个source_id出现次数
-  const { data: articles } = await supabase.from('news_articles').select('source_id')
-  const countMap = new Map<string, number>()
-  if (articles) {
-    for (const row of articles) {
-      countMap.set(row.source_id, (countMap.get(row.source_id) || 0) + 1)
+  
+  try {
+    // 查询所有数据源（包括enabled状态）
+    const { data: sources } = await supabase
+      .from('news_sources')
+      .select('id, name, url, enabled, updated_at')
+      .order('created_at', { ascending: true })
+    
+    if (!sources) return []
+    
+    // 查询所有文章，统计每个source_name出现次数（因为实际存储使用source_name）
+    const { data: articles } = await supabase
+      .from('news_articles')
+      .select('source_name')
+    
+    const countMap = new Map<string, number>()
+    if (articles) {
+      for (const row of articles) {
+        if (row.source_name) {
+          countMap.set(row.source_name, (countMap.get(row.source_name) || 0) + 1)
+        }
+      }
     }
+    
+    // 返回带状态的数据源信息
+    return (sources || []).map((s: any) => ({
+      name: s.name,
+      count: countMap.get(s.name) || 0,
+      enabled: s.enabled,
+      url: s.url,
+      lastUsed: s.updated_at,
+      status: s.enabled ? (countMap.get(s.name) > 0 ? 'active' : 'ready') : 'disabled'
+    }))
+    
+  } catch (error) {
+    console.error('🚨 获取数据源统计失败:', error)
+    return []
   }
-  return sources.map((s: any) => ({ name: s.name, count: countMap.get(s.id) || 0 }))
 }
 
 // 🕐 定时任务函数
