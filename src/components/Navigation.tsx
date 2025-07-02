@@ -43,7 +43,7 @@ export function Navigation() {
     },
     { 
       href: "/labubu-gallery", 
-      label: "ShowRoom",
+      label: "Gallery",
       emoji: "🎨"
     },
     { 

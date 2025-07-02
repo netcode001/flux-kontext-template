@@ -1687,3 +1687,7 @@ Can't reach database server at `db.jgiegbhhkfjsqgjdstfe.supabase.co:5432`
 - 保留视频卡片的 tag 不变，按照用户要求不做修改。
 - 代码注释全部保持中文，网页文案全部改为英文。
 - 影响范围：首页所有用户可见的文案，提升国际化体验。
+
+### 2024-06-09 导航栏菜单 ShowRoom 改为 Gallery
+- 将顶部导航栏的 ShowRoom 菜单项名称改为 Gallery，emoji 保持不变。
+- 影响范围：首页及所有含有主导航的页面。
