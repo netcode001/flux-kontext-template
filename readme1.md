@@ -1640,3 +1640,31 @@ Can't reach database server at `db.jgiegbhhkfjsqgjdstfe.supabase.co:5432`
   - "前往生成器" → "Go to Generator"
 - 保持所有变量、逻辑和注释为中文，符合项目国际化和注释规范。
 - 已提交并推送到master分支。
+
+# 首页创意秀场card重构更新记录
+
+## 主要改动内容
+
+1. **图片区域**：每张图片为300x300像素，外包裹独立白色圆角卡片，带阴影，横向排列，单独一行，风格与PostCard一致。
+2. **卡片背景**：整个创意秀场card背景由渐变色改为纯白色，保留圆角、阴影和内边距。
+3. **标题/文案**：在上方，图片区域在下方，视觉分隔明显。
+4. **查看更多按钮**：右上角显示"查看更多"按钮，点击跳转/labubu-gallery，移除右侧箭头。
+5. **样式优化**：整体风格与壁纸区、PostCard区保持一致，提升首页美观度和一致性。
+
+## 涉及文件
+- `src/components/home/GalleryCard.tsx`
+
+## 提交说明
+- 已按项目规范提交至GitHub master分支，提交信息为：
+  > 首页创意秀场card重构：1. 图片区域为300x300白色卡片，横向排列，风格与PostCard一致；2. card整体背景改为白色，圆角阴影；3. 标题文案在上，图片单独一行；4. 右上角为查看更多按钮。
+
+---
+如需进一步调整样式或功能，请在此文档补充说明。
+
+## 2024-06-09 生成页面 Buy Credits 按钮禁用变更
+
+- 全局将所有页面的 Buy Credits 按钮设置为禁用（disabled），不可点击。
+- 具体实现：在 src/components/CreditDisplay.tsx 组件中，直接为按钮添加 disabled 属性和禁用样式（opacity-50 cursor-not-allowed）。
+- 影响范围：所有使用 CreditDisplay 组件的页面（如 /generate 生成页右下角、dashboard 等）Buy Credits 按钮全部变为灰色不可点击。
+- 代码注释全部为中文，网页文案未做更改。
+- 如需恢复为可点击，请移除 disabled 属性和相关样式。

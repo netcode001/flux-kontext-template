@@ -240,7 +240,8 @@ export function CreditDisplay({
           <Button
             variant="outline"
             size="sm"
-            className="h-6 px-2 text-xs"
+            className="h-6 px-2 text-xs opacity-50 cursor-not-allowed"
+            disabled={true}
           >
             <ShoppingCart className="w-3 h-3 mr-1" />
             Buy Credits
