@@ -1262,4 +1262,76 @@ src/components/home/
 - 已提交到master分支，commit message：
   > 重构新闻关键词API为数据库持久化，所有操作通过Prisma操作NewsKeyword表，全部中文注释。
 
---- 
+---
+
+## 🔧 2025-07-01 - 新闻管理数据库连接修复
+
+### 🐛 问题诊断
+发现新闻管理功能无法连接数据库，而YouTube管理功能正常工作：
+
+#### **问题根源**
+- **新闻管理**：使用直接的 `PrismaClient`，尝试连接已失效的数据库地址
+- **YouTube管理**：使用统一的 Supabase 适配器，通过 Supabase API 访问数据库
+- **新闻来源**：使用内存数组而非数据库持久化
+
+#### **错误日志**
+```
+Error [PrismaClientInitializationError]: 
+Can't reach database server at `db.jgiegbhhkfjsqgjdstfe.supabase.co:5432`
+```
+
+### ✅ 解决方案
+
+#### **1. 统一数据库访问方式**
+- 将新闻管理API从 `PrismaClient` 改为统一的 Supabase 适配器
+- 参考YouTube管理的成功模式实现
+
+#### **2. 完善数据库适配器**
+在 `src/lib/database.ts` 中添加：
+- `NewsKeyword` 接口和完整的CRUD实现
+- `NewsSource` 接口和完整的CRUD实现
+- 统一的错误处理和日志记录
+
+#### **3. 权限验证增强**
+- 添加管理员权限验证（参考YouTube管理模式）
+- 统一的会话检查和错误响应格式
+
+#### **4. 数据库表结构**
+创建 `scripts/create-news-tables-only.sql`：
+- `news_keywords` 表：关键词管理
+- `news_sources` 表：新闻来源管理  
+- `news_articles` 表：新闻文章存储（可选）
+- 完整的索引和触发器设置
+
+### 📊 修改的文件
+1. **API路由更新**：
+   - `src/app/api/admin/news-crawler/keywords/route.ts`
+   - `src/app/api/admin/news-crawler/sources/route.ts`
+
+2. **数据库适配器**：
+   - `src/lib/database.ts` - 添加 `newsKeyword` 和 `newsSource` 方法
+
+3. **数据库脚本**：
+   - `scripts/create-news-tables-only.sql` - 新闻表创建脚本
+
+### 🎯 技术改进
+- **统一架构**：所有功能模块现在使用相同的数据库访问模式
+- **权限控制**：所有管理功能都有统一的权限验证
+- **错误处理**：统一的错误处理和响应格式
+- **字段兼容**：支持驼峰和下划线字段名转换
+
+### 📋 验证步骤
+1. 新闻关键词的增删改查功能正常
+2. 新闻来源的管理功能正常  
+3. 统一的权限验证生效
+4. 错误处理和日志记录完善
+
+### 💡 经验总结
+- **数据库连接问题**：不同模块使用不同的数据库连接方式会导致不一致的问题
+- **架构统一重要性**：统一的数据访问层可以避免类似问题
+- **参考成功模式**：复用已验证的成功模式比重新实现更可靠
+- **完整测试必要性**：需要测试所有相关功能的完整性
+
+---
+
+**提交信息**: `🔧 修复新闻管理数据库连接问题 - 统一使用Supabase适配器架构`
