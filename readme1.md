@@ -1,5 +1,32 @@
 # 项目更新日志
 
+## 2025-01-21 - Python爬虫功能清理完成 🗑️
+
+### 🚨 问题定位：Python集成导致构建错误
+- **错误信息**: `Your project's URL and Key are required to create a Supabase client!`
+- **错误位置**: `PythonIntegrationService` 在构建时尝试创建 Supabase 客户端
+- **根本原因**: Python 爬虫功能在静态构建时需要环境变量，但 Cloudflare Pages 构建环境缺少配置
+
+### 🗑️ 清理方案：完全移除 Python 爬虫功能
+由于用户明确表示不需要 Python 新闻爬虫功能，进行了完整清理：
+
+#### 删除的文件
+1. **API 路由**: `src/app/api/admin/python-crawler/route.ts`
+2. **服务类**: `src/lib/services/python-integration.ts`
+3. **脚本文件**: `scripts/python-social-crawler.py`
+
+#### 清理的引用
+1. **爬虫配置**: `src/lib/services/crawler-config.ts` - 移除 `PYTHON: 'python_crawler'`
+2. **管理界面**: `src/components/admin/CrawlerMasterControl.tsx` - 移除 Python 爬虫选项
+3. **安装脚本**: `scripts/setup-crawler-config.js` - 移除 Python 爬虫配置项
+
+### 🚀 清理效果
+- ✅ **构建错误解决**: 移除导致 Supabase 客户端创建错误的代码
+- ✅ **代码简化**: 删除不需要的功能，减少维护复杂度
+- ✅ **功能聚焦**: 专注于核心的 TypeScript/Next.js 爬虫功能
+
+---
+
 ## 2025-01-21 - Cloudflare Pages 部署配置修复完成 🌐
 
 ### 🚨 问题定位：Next.js静态导出配置错误
