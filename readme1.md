@@ -2061,3 +2061,30 @@ duplicate key value violates unique constraint "youtube_videos_video_id_key"
 2. **真正失败**：只有显示具体错误信息时才是真的失败
 3. **检查方法**：可以在视频管理页面查看已导入的视频确认
 4. **获取新视频**：如果需要新内容，可以尝试其他关键词
+```
+
+## 2025-07-03 - Cloudflare Pages 构建体积优化与产物分析报告
+
+### 问题背景
+- Cloudflare Pages 部署报错：单文件超过 25MB（0.pack 体积高达 51MB）。
+- 初步排查发现 public 目录下有大图片 news2.png，已删除。
+- 重新构建后依然报错，怀疑有大依赖或代码分割问题。
+
+### 优化与分析过程
+1. **删除大图片 news2.png**，确认 public 目录无其它大文件。
+2. **集成并运行 @next/bundle-analyzer**，生成产物体积分析报告（client.html）。
+3. **分析 bundle 体积分布**：
+   - 没有超大依赖或静态资源被打包进主 chunk。
+   - 主要体积分布在 react-dom、@supabase、next/dist 等常规依赖。
+   - 业务代码体积健康，无异常大文件。
+4. **确认产物健康**，删除大图片后，前端 bundle 体积已恢复正常。
+
+### 结论与建议
+- 0.pack 超大问题主要由 public 目录下大图片引起，删除后已解决。
+- 产物分析显示无大依赖或大静态资源问题，bundle 分布合理。
+- 后续如遇体积问题，建议继续用 bundle analyzer 检查。
+- 保持大文件不进 public，依赖合理分包，Cloudflare Pages 可顺利部署。
+
+---
+
+</rewritten_file>
