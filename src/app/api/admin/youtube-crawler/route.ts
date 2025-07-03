@@ -46,8 +46,8 @@ export async function GET(request: NextRequest) {
         count: result.count,
         message: result.message,
         quota: {
-          used: result.quota_used,
-          remaining: quotaInfo.estimated_remaining - result.quota_used,
+          used: result.quota_used || 0,
+          remaining: quotaInfo.estimated_remaining - (result.quota_used || 0),
           daily_limit: quotaInfo.daily_limit,
         },
         search_params: {
