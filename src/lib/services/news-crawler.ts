@@ -721,7 +721,7 @@ export async function getNewsSourceStats() {
       enabled: s.is_active,
       url: s.url,
       lastUsed: s.updated_at,
-      status: s.is_active ? (countMap.get(s.name) > 0 ? 'active' : 'ready') : 'disabled'
+      status: s.is_active ? ((countMap.get(s.name) || 0) > 0 ? 'active' : 'ready') : 'disabled'
     }))
     
   } catch (error) {
