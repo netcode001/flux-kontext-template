@@ -229,6 +229,7 @@ export default function YouTubeManagementContent() {
         }))
 
       console.log('🎥 准备导入视频:', videosToImport.length, '个视频')
+      console.log('📊 视频ID列表:', videosToImport.map(v => v.video_id).join(', '))
       console.log('📊 视频数据预览:', videosToImport.slice(0, 2))
 
       const response = await fetch('/api/admin/youtube/import', {
@@ -244,25 +245,34 @@ export default function YouTubeManagementContent() {
 
       const data = await response.json()
 
-      if (data.success) {
-        const message = data.count > 0 
-          ? `✅ 成功导入 ${data.count} 个视频` + (data.skipped > 0 ? `，跳过 ${data.skipped} 个重复视频` : '')
-          : `ℹ️ 所有 ${data.skipped || selectedVideos.size} 个视频都已存在，未新增视频`
+      console.log('📊 导入响应:', data)
+
+      if (response.ok && data.success !== false) {
+        // ✅ 成功响应（包括全部跳过的情况）
+        let message = data.message || `处理完成: 导入 ${data.count || 0} 个，跳过 ${data.skipped || 0} 个`
+        
+        // 添加错误信息（如果有）
+        if (data.errors && data.errors.length > 0) {
+          message += `\n⚠️ ${data.errors.length} 个视频处理失败`
+        }
         
         setSuccess(message)
         setSelectedVideos(new Set())
         setImportDialog({ open: false, count: 0 })
         
-        // 📊 如果所有视频都被跳过，提示用户可能需要重新搜索
-        if (data.count === 0 && data.skipped > 0) {
+        // 📊 如果所有视频都被跳过，提示用户
+        if ((data.count || 0) === 0 && (data.skipped || 0) > 0) {
           setTimeout(() => {
-            setSuccess(prev => prev + ' 💡 提示：所有视频都已存在，您可以搜索新的关键词获取更多视频')
-          }, 1000)
+            setSuccess(prev => prev + '\n💡 提示：视频已存在是正常的，说明之前已成功导入')
+          }, 1500)
         }
         
         await fetchKeywords()
       } else {
-        setError(data.error || '导入视频失败')
+        // ❌ 错误响应
+        const errorMessage = data.error || data.message || '导入视频失败'
+        const errorDetails = data.details ? `\n详细信息: ${data.details}` : ''
+        setError(errorMessage + errorDetails)
       }
     } catch (error) {
       setError('网络错误，请稍后重试')

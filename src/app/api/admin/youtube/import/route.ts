@@ -26,29 +26,40 @@ export async function POST(request: NextRequest) {
 
     let importCount = 0
     let skipCount = 0
-    // 批量插入视频，兼容字段
-    const created = await Promise.all(
-      videos.map(async (video: any) => {
-        // 兼容video_id和videoId
+    const errors: string[] = []
+
+    // 🔧 先批量检查已存在的video_id，避免重复查询
+    const videoIds = videos
+      .map(video => getField(video, 'video_id', 'videoId'))
+      .filter(id => id) // 过滤掉空值
+
+    const existingVideos = await prisma.youtube_videos.findMany({
+      where: { video_id: { in: videoIds } },
+      select: { video_id: true }
+    })
+    const existingVideoIds = new Set(existingVideos.map(v => v.video_id))
+
+    console.log(`📊 批量检查结果: 总数 ${videoIds.length}，已存在 ${existingVideoIds.size}`)
+
+    // 🔄 逐个处理视频，避免并发冲突
+    for (const video of videos) {
+      try {
         const video_id = getField(video, 'video_id', 'videoId')
         if (!video_id) {
           skipCount++
           console.log(`[跳过] 缺少 video_id，原始数据:`, video)
-          return null
+          continue
         }
-        // 检查是否已存在（联合判重 video_id + category_name）
-        const category_name = getField(video, 'category_name', 'categoryName')
-        const existsArr = await prisma.youtube_videos.findMany({
-          where: { video_id, category_name },
-          take: 1
-        })
-        if (existsArr && existsArr.length > 0) {
+
+        // ✅ 检查是否已存在（只检查video_id，匹配数据库约束）
+        if (existingVideoIds.has(video_id)) {
           skipCount++
-          console.log(`[跳过重复] video_id: ${video_id}, category_name: ${category_name}`)
-          return null
+          console.log(`[跳过重复] video_id: ${video_id} 已存在`)
+          continue
         }
-        importCount++
-        return prisma.youtube_videos.create({
+
+        // 💾 尝试插入新视频
+        await prisma.youtube_videos.create({
           data: {
             video_id,
             title: getField(video, 'title', 'title'),
@@ -64,23 +75,55 @@ export async function POST(request: NextRequest) {
             comment_count: getField(video, 'comment_count', 'commentCount'),
             iframe_embed_code: getField(video, 'iframe_embed_code', 'iframeEmbedCode'),
             search_keyword: getField(video, 'search_keyword', 'searchKeyword'),
-            category_name,
+            category_name: getField(video, 'category_name', 'categoryName'),
             is_featured: false,
             is_active: true
           }
         })
-      })
-    )
 
-    console.log(`[导入结果] 成功导入: ${importCount}，跳过: ${skipCount}`)
+        importCount++
+        console.log(`✅ 成功导入: video_id: ${video_id}`)
 
+      } catch (singleError: any) {
+        // 🔍 处理单个视频插入错误
+        const video_id = getField(video, 'video_id', 'videoId')
+        
+        if (singleError?.code === '23505' && singleError?.details?.includes('video_id')) {
+          // 重复键冲突，算作跳过
+          skipCount++
+          console.log(`[跳过重复] video_id: ${video_id} 数据库约束冲突`)
+        } else {
+          // 其他错误
+          const errorMsg = `video_id: ${video_id} - ${singleError?.message || '未知错误'}`
+          errors.push(errorMsg)
+          console.error(`❌ 单个视频插入失败:`, errorMsg)
+        }
+      }
+    }
+
+    console.log(`[导入结果] 成功导入: ${importCount}，跳过: ${skipCount}，错误: ${errors.length}`)
+
+    // 📊 返回详细结果
+    const isSuccess = importCount > 0 || (skipCount > 0 && errors.length === 0)
+    
     return NextResponse.json({
-      success: true,
+      success: isSuccess,
       count: importCount,
-      skipped: skipCount
+      skipped: skipCount,
+      errors: errors.length > 0 ? errors : undefined,
+      message: importCount > 0 
+        ? `成功导入 ${importCount} 个视频` + (skipCount > 0 ? `，跳过 ${skipCount} 个重复视频` : '')
+        : skipCount > 0 
+          ? `所有 ${skipCount} 个视频都已存在，无需重复导入`
+          : '没有有效的视频数据'
     })
+
   } catch (error) {
-    console.error('导入YouTube视频失败:', error)
-    return NextResponse.json({ error: '导入YouTube视频失败' }, { status: 500 })
+    console.error('🚨 YouTube videos create critical error:', error)
+    return NextResponse.json({ 
+      success: false,
+      error: '导入YouTube视频失败',
+      details: error instanceof Error ? error.message : '未知错误'
+    }, { status: 500 })
   }
 } 
