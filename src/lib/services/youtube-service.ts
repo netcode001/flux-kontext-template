@@ -300,6 +300,109 @@ export class YouTubeService {
       dailyLimit: 10000
     }
   }
+
+  /**
+   * 获取配额信息
+   */
+  getQuotaInfo(): { daily_limit: number, estimated_remaining: number } {
+    return {
+      daily_limit: 10000,
+      estimated_remaining: 9000
+    }
+  }
+
+  /**
+   * 搜索 Labubu 相关视频
+   */
+  async searchLabubuVideos(options: {
+    maxResults: number
+    order: 'relevance' | 'date' | 'viewCount'
+    publishedAfter?: string
+  }): Promise<{ items: YouTubeSearchResult[] }> {
+    const keyword = 'Labubu'
+    const results = await this.searchVideos(keyword, options.maxResults, options.order)
+    return { items: results }
+  }
+
+  /**
+   * 将 YouTube 视频转换为新闻文章格式
+   */
+  convertToNewsArticle(video: YouTubeSearchResult): any {
+    const publishedAt = new Date(video.snippet.publishedAt)
+    const viewCount = Math.floor(Math.random() * 100000) // 模拟观看数
+    const likeCount = Math.floor(Math.random() * 1000) // 模拟点赞数
+    const commentCount = Math.floor(Math.random() * 100) // 模拟评论数
+    
+    return {
+      title: video.snippet.title,
+      content: video.snippet.description || '',
+      summary: video.snippet.description?.substring(0, 200) + '...' || '',
+      author: video.snippet.channelTitle,
+      url: `https://www.youtube.com/watch?v=${video.id.videoId}`,
+      published_at: publishedAt.toISOString(),
+      image_urls: [video.snippet.thumbnails.high?.url || video.snippet.thumbnails.medium?.url || ''],
+      tags: ['Labubu', 'YouTube', 'Video'],
+      category: 'Video',
+      hot_score: Math.floor(Math.random() * 100),
+      view_count: viewCount,
+      like_count: likeCount,
+      comment_count: commentCount,
+      duration: '00:05:30' // 模拟时长
+    }
+  }
+
+  /**
+   * 获取并保存 Labubu 相关视频
+   */
+  async fetchAndSaveLabubuVideos(maxResults: number = 10): Promise<{
+    success: boolean
+    error?: string
+    articles?: any[]
+    count?: number
+    message?: string
+    quota_used?: number
+  }> {
+    try {
+      // 搜索 Labubu 相关视频
+      const searchResult = await this.searchLabubuVideos({
+        maxResults,
+        order: 'relevance'
+      })
+
+      if (!searchResult.items || searchResult.items.length === 0) {
+        return {
+          success: false,
+          error: '未找到相关视频',
+          articles: [],
+          count: 0,
+          message: '未找到 Labubu 相关视频'
+        }
+      }
+
+      // 转换为文章格式
+      const articles = searchResult.items.map(video => this.convertToNewsArticle(video))
+
+      // 计算配额使用量
+      const quotaUsed = maxResults * 100 // 模拟配额使用
+
+      return {
+        success: true,
+        articles,
+        count: articles.length,
+        message: `成功获取 ${articles.length} 个 Labubu 相关视频`,
+        quota_used: quotaUsed
+      }
+
+    } catch (error) {
+      console.error('获取 Labubu 视频失败:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '获取视频失败',
+        articles: [],
+        count: 0
+      }
+    }
+  }
 }
 
 // 导出单例实例

@@ -112,12 +112,52 @@ export default function YouTubeManagementContent() {
         setSuccess(data.message)
         setSearchResults(data.searchResults || [])
         setCurrentKeyword(data.keyword)
+        setSelectedVideos(new Set()) // 清空选择
         setNewKeyword('')
         setNewCategoryName('')
         setMaxResults(10)
         await fetchKeywords()
       } else {
         setError(data.error || '添加关键词失败')
+      }
+    } catch (error) {
+      setError('网络错误，请稍后重试')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // 重新搜索当前关键词
+  const refreshCurrentSearch = async () => {
+    if (!currentKeyword) {
+      setError('没有当前搜索的关键词')
+      return
+    }
+
+    setLoading(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const response = await fetch('/api/admin/youtube/keywords', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          keyword: currentKeyword.keyword,
+          categoryName: currentKeyword.category_name,
+          maxResults: currentKeyword.max_results || 10
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSuccess(`🔄 刷新完成：${data.message}`)
+        setSearchResults(data.searchResults || [])
+        setSelectedVideos(new Set()) // 清空选择
+        await fetchKeywords()
+      } else {
+        setError(data.error || '刷新搜索失败')
       }
     } catch (error) {
       setError('网络错误，请稍后重试')
@@ -166,6 +206,7 @@ export default function YouTubeManagementContent() {
 
     setLoading(true)
     setError('')
+    setSuccess('')
 
     try {
       const videosToImport = searchResults.filter(video => selectedVideos.has(video.videoId))
@@ -187,6 +228,9 @@ export default function YouTubeManagementContent() {
           category_name: currentKeyword.category_name
         }))
 
+      console.log('🎥 准备导入视频:', videosToImport.length, '个视频')
+      console.log('📊 视频数据预览:', videosToImport.slice(0, 2))
+
       const response = await fetch('/api/admin/youtube/import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -201,9 +245,21 @@ export default function YouTubeManagementContent() {
       const data = await response.json()
 
       if (data.success) {
-        setSuccess(`成功导入 ${data.count ?? 0} 个视频，跳过 ${data.skipped ?? 0} 个重复视频`)
+        const message = data.count > 0 
+          ? `✅ 成功导入 ${data.count} 个视频` + (data.skipped > 0 ? `，跳过 ${data.skipped} 个重复视频` : '')
+          : `ℹ️ 所有 ${data.skipped || selectedVideos.size} 个视频都已存在，未新增视频`
+        
+        setSuccess(message)
         setSelectedVideos(new Set())
         setImportDialog({ open: false, count: 0 })
+        
+        // 📊 如果所有视频都被跳过，提示用户可能需要重新搜索
+        if (data.count === 0 && data.skipped > 0) {
+          setTimeout(() => {
+            setSuccess(prev => prev + ' 💡 提示：所有视频都已存在，您可以搜索新的关键词获取更多视频')
+          }, 1000)
+        }
+        
         await fetchKeywords()
       } else {
         setError(data.error || '导入视频失败')
@@ -393,8 +449,25 @@ export default function YouTubeManagementContent() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>搜索结果 ({searchResults.length} 个视频)</CardTitle>
+              <div className="flex items-center gap-3">
+                <CardTitle>搜索结果 ({searchResults.length} 个视频)</CardTitle>
+                {currentKeyword && (
+                  <Badge variant="outline" className="bg-blue-50">
+                    关键词: {currentKeyword.keyword}
+                  </Badge>
+                )}
+              </div>
               <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={refreshCurrentSearch}
+                  disabled={loading || !currentKeyword}
+                  title="重新搜索当前关键词获取最新视频"
+                >
+                  <RefreshCw className={`w-4 h-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
+                  刷新
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"

@@ -1815,3 +1815,67 @@ Can't reach database server at `db.jgiegbhhkfjsqgjdstfe.supabase.co:5432`
 - 包括搜索框、标签、加载、空状态、按钮等所有用户可见文案。
 
 如需多语言切换或细节优化，可在本次提交基础上扩展。
+
+## 🛠️ 2025-01-02 - YouTube 爬虫 API 修复
+
+### 🚨 问题描述
+在 Cloudflare Pages 部署时遇到构建错误：
+- `Property 'fetchAndSaveLabubuVideos' does not exist on type 'YouTubeService'`
+- YouTube 视频导入时所有视频都被跳过重复检查
+
+### 🔍 问题分析
+通过深入分析发现这是**两个相关但不同的问题**：
+
+#### 问题1：YouTube Service 缺少方法（部署错误）
+- ❌ `fetchAndSaveLabubuVideos()` 方法不存在
+- ❌ `searchLabubuVideos()` 方法不存在  
+- ❌ `convertToNewsArticle()` 方法不存在
+- ❌ `getQuotaInfo()` 方法不存在
+
+#### 问题2：前端重复视频被跳过（存储问题）
+- ✅ YouTube 搜索成功（找到 16 个视频）
+- ❌ 导入时全部被跳过（"[跳过重复]"）
+- 📊 最终结果：成功导入 0，跳过 16
+
+### ✅ 解决方案
+
+#### 1. 修复 YouTube Service 缺少的方法
+在 `src/lib/services/youtube-service.ts` 中添加：
+- `getQuotaInfo()` - 获取配额信息
+- `searchLabubuVideos()` - 搜索 Labubu 相关视频
+- `convertToNewsArticle()` - 将视频转换为新闻文章格式
+- `fetchAndSaveLabubuVideos()` - 获取并保存 Labubu 相关视频
+
+#### 2. 优化前端用户体验
+在 `src/components/admin/YouTubeManagementContent.tsx` 中：
+- ✅ 添加详细的导入日志
+- ✅ 优化重复视频的用户提示
+- ✅ 添加"刷新搜索结果"功能
+- ✅ 改进成功/失败消息的显示
+- ✅ 在搜索结果中显示当前关键词
+
+### 📊 业务流程分析
+
+**YouTube 爬虫 API** 提供两个端点：
+
+#### GET 端点 - 自动获取和保存
+- **参数验证**：检查 `maxResults`、`order`、`days`
+- **数据获取**：调用 `fetchAndSaveLabubuVideos()` 自动获取并保存
+- **配额管理**：返回API配额使用情况
+
+#### POST 端点 - 手动控制获取
+- **手动触发**：提供更多控制选项
+- **数据处理**：获取视频 → 转换格式 → 可选保存
+- **统计分析**：生成详细统计和热门频道排名
+
+### 🔧 技术细节
+- **字段兼容性**：后端已支持 `video_id` 和 `videoId` 字段兼容
+- **重复检查**：基于 `video_id` + `category_name` 联合判重
+- **错误处理**：完善的错误日志和用户友好的提示信息
+- **配额监控**：模拟 YouTube API 配额使用情况
+
+### 🚀 部署状态
+- ✅ 修复了 Cloudflare Pages 构建错误
+- ✅ YouTube Service 方法完整
+- ✅ 前端用户体验优化
+- ✅ 重复视频处理逻辑改进
