@@ -164,6 +164,5 @@ export const CRAWLER_NAMES = {
   X_API: 'x_api_crawler',
   NEWS: 'news_crawler', 
   ADVANCED_CONTENT: 'advanced_content_crawler',
-  PYTHON: 'python_crawler',
   YOUTUBE: 'youtube_crawler'
 } as const 

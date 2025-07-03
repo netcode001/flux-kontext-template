@@ -31,11 +31,7 @@ async function setupCrawlerConfig() {
         is_enabled: false,
         config: { platforms: ['weibo', 'xiaohongshu'], interval: 120 }
       },
-      {
-        crawler_name: 'python_crawler',
-        is_enabled: false,
-        config: { platforms: ['reddit', 'twitter'], keywords: ['labubu'] }
-      },
+
       {
         crawler_name: 'youtube_crawler',
         is_enabled: false,

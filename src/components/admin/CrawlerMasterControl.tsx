@@ -39,13 +39,7 @@ export function CrawlerMasterControl() {
       description: '抓取微博、小红书等平台内容',
       icon: '🔍'
     },
-    {
-      name: 'python_crawler',
-      displayName: 'Python爬虫',
-      isEnabled: false,
-      description: '使用Python抓取Reddit等平台',
-      icon: '🐍'
-    },
+
     {
       name: 'youtube_crawler',
       displayName: 'YouTube爬虫',
