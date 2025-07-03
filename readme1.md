@@ -2108,3 +2108,11 @@ duplicate key value violates unique constraint "youtube_videos_video_id_key"
 ---
 
 如需进一步自动化检测或平台兼容性建议，请随时补充说明。
+
+## 4. 构建产物大文件明细
+
+- .next/cache/webpack/client-production/0.pack：52MB
+- .next/cache/webpack/client-development-fallback/0.pack.gz：21MB
+- .next/cache/webpack/server-production/index.pack：18MB
+- .next/cache/webpack/server-production/index.pack.old：18MB
+- .next/cache/webpack/server-production/0.pack：120MB
