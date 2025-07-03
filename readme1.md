@@ -2087,4 +2087,24 @@ duplicate key value violates unique constraint "youtube_videos_video_id_key"
 
 ---
 
-</rewritten_file>
+# Cloudflare Pages 构建产物自动化检测与优化记录
+
+## 1. 自动化检测结果
+- `.next/cache/webpack/` 下发现多个大于25MB的缓存文件（如0.pack、index.pack等），这些文件仅为本地/CI构建缓存，不能上传到Cloudflare Pages，否则会导致单文件超限报错。
+- `public/` 目录无大于5MB的静态资源，依赖和import结构健康。
+- `next.config.js` 配置无误，无特殊输出目录或静态资源误配置。
+
+## 2. 优化方案
+- 在 `package.json` 中新增 `postbuild` 脚本：
+  ```json
+  "postbuild": "rm -rf .next/cache"
+  ```
+  每次构建后自动清理 `.next/cache`，防止大文件被上传。
+- 推荐Cloudflare Pages构建输出目录为 `.next`，并确保不包含 `.next/cache`。
+
+## 3. 操作记录
+- 已自动化检测并执行优化，`package.json` 已更新，所有操作已同步记录。
+
+---
+
+如需进一步自动化检测或平台兼容性建议，请随时补充说明。

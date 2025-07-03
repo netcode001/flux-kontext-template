@@ -10,6 +10,7 @@
     "kill:ports": "powershell -Command \"3000..3010 | ForEach-Object { Get-NetTCPConnection -LocalPort $_ -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force } }\"",
     "kill:3000": "powershell -Command \"Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }\"",
     "build": "next build",
+    "postbuild": "rm -rf .next/cache",
     "start": "next start",
     "lint": "next lint && tsc --noEmit",
     "format": "npx @biomejs/biome format --write .",
@@ -72,6 +73,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@eslint/eslintrc": "^3.3.1",
+    "@next/bundle-analyzer": "^15.3.4",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@types/node": "^20.19.1",
     "@types/react": "^18.3.22",
