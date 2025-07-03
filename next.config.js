@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // 🌐 Cloudflare Pages 部署配置
-  output: process.env.NODE_ENV === 'production' && process.env.CF_PAGES ? 'export' : undefined,
+  // 注意：不使用 output: 'export' 因为我们需要支持 API 路由
+  // Cloudflare Pages 原生支持 Next.js 的 API 路由，无需静态导出
   trailingSlash: false,
   
   // 开发环境跨域配置 - 支持局域网访问
