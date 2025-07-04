@@ -34,7 +34,7 @@ export function VideoCard() {
   // 视频数据和标签状态
   const [videos, setVideos] = useState<Video[]>([])
   const [tags, setTags] = useState<string[]>([])
-  const [activeTag, setActiveTag] = useState<string>("全部")
+  const [activeTag, setActiveTag] = useState<string>("")
   const [loading, setLoading] = useState(false)
 
   // 获取视频和标签（一次性加载全部）
@@ -42,11 +42,11 @@ export function VideoCard() {
     setLoading(true)
     try {
       const params = new URLSearchParams()
-      if (tag && tag !== "全部") params.append("category", tag)
+      if (tag) params.append("category", tag)
       const res = await fetch(`/api/youtube/videos?${params}`)
       const data = await res.json()
       setVideos(data.videos || [])
-      setTags(["全部", ...(data.tags || [])])
+      setTags(data.tags || [])
     } catch (e) {
       setVideos([])
       console.error("【前端】拉取视频出错：", e)

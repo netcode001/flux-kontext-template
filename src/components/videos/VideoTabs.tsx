@@ -38,9 +38,9 @@ export function VideoTabs() {
     try {
       const res = await fetch(`/api/youtube/videos?limit=1`)
       const data = await res.json()
-      setTags(['全部', ...(data.tags || [])])
+      setTags(data.tags || [])
     } catch (e) {
-      setTags(['全部'])
+      setTags([])
       console.error('【前端】拉取标签出错：', e)
     }
   }
@@ -50,7 +50,7 @@ export function VideoTabs() {
     setLoading(true)
     try {
       const params = new URLSearchParams()
-      if (tag && tag !== '全部') params.append('category', tag)
+      if (tag) params.append('category', tag)
       const res = await fetch(`/api/youtube/videos?${params}`)
       const data = await res.json()
       setVideosByTag(prev => ({ ...prev, [tag]: data.videos || [] }))
