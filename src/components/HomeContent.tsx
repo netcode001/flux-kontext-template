@@ -22,14 +22,14 @@ export function HomeContent() {
           </div>
         </section> */}
 
-        {/* 新闻区域 */}
-        <NewsSection />
-
         {/* 视频区 */}
         <VideoCard />
 
         {/* 功能卡片区域 */}
         <FeatureCards />
+
+        {/* 新闻区域 */}
+        <NewsSection />
       </main>
     </div>
   )
