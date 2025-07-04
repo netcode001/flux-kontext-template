@@ -50,6 +50,7 @@ export function VideoTabs() {
     setLoading(true)
     try {
       const params = new URLSearchParams()
+      params.append('limit', '20')
       if (tag) params.append('category', tag)
       const res = await fetch(`/api/youtube/videos?${params}`)
       const data = await res.json()
