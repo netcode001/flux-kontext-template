@@ -2116,3 +2116,31 @@ duplicate key value violates unique constraint "youtube_videos_video_id_key"
 - .next/cache/webpack/server-production/index.pack：18MB
 - .next/cache/webpack/server-production/index.pack.old：18MB
 - .next/cache/webpack/server-production/0.pack：120MB
+
+## 2025-07-04 - 集成 Cloudflare Workers 部署配置 🚀
+
+### ✨ 主要改动
+1. **依赖新增**
+   - 生产依赖：`@opennextjs/cloudflare`
+   - 开发依赖：`wrangler`
+2. **脚本新增**
+   - `cf:build` / `cf:preview` / `cf:deploy` / `cf:typegen`
+3. **配置文件**
+   - `wrangler.toml`：Workers 主配置
+   - `open-next.config.ts`：OpenNext Cloudflare 适配
+   - `public/_headers`：静态资源缓存策略
+4. **其他优化**
+   - `.gitignore` 忽略 `.open-next`
+   - `next.config.js` dev 模式注入 `initOpenNextCloudflareForDev()`
+
+### 🛠️ 使用方式
+```bash
+npm install            # 安装新依赖
+npm run cf:preview     # 本地以 Workers Runtime 预览
+npm run cf:deploy      # 构建并部署到 Cloudflare Workers
+```
+
+### 📈 预期收益
+- **平台迁移**：摆脱 Pages 对 Edge Runtime 的限制，支持完整 Node.js API
+- **性能优势**：Workers 全球 300+ 节点 + Node 兼容特性
+- **未来扩展**：可接入 R2 增量缓存、D1/KV 等
