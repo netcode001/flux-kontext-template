@@ -50,6 +50,9 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
   // 获取当前语言
   const currentLocale = getLocaleFromPathname(pathname)
   
+  // 仅在菜单中展示英文
+  const MENU_LOCALES = SUPPORTED_LOCALES.filter((l) => l !== 'zh')
+  
   // 客户端挂载后设置mounted状态，避免服务端渲染不一致
   useEffect(() => {
     setMounted(true)
@@ -91,7 +94,7 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
         {/* 下拉菜单 */}
         {isOpen && (
           <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-purple-100 rounded-xl  py-2 z-[9999] max-h-60 overflow-y-auto">
-            {SUPPORTED_LOCALES.map((locale) => (
+            {MENU_LOCALES.map((locale) => (
               <button
                 key={locale}
                 onClick={() => switchLanguage(locale)}
@@ -124,7 +127,7 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
         {/* 移动端下拉菜单 */}
         {isOpen && (
           <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-purple-100 rounded-xl  py-2 z-[9999] max-h-60 overflow-y-auto">
-            {SUPPORTED_LOCALES.map((locale) => (
+            {MENU_LOCALES.map((locale) => (
               <button
                 key={locale}
                 onClick={() => switchLanguage(locale)}
@@ -146,7 +149,7 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
     // 网格布局 - 适用于页脚（已移除，保留兼容性）
     return (
       <div className={`grid grid-cols-2 gap-1 ${className}`}>
-        {SUPPORTED_LOCALES.map((locale) => (
+        {MENU_LOCALES.map((locale) => (
           <button
             key={locale}
             onClick={() => switchLanguage(locale)}
@@ -182,7 +185,7 @@ export function LanguageSwitcher({ variant = "dropdown", className = "" }: Langu
       {/* 下拉菜单 */}
       {isOpen && (
         <div className="absolute top-full right-0 mt-2 w-48 bg-background border border-border rounded-lg  py-2 z-[9999] max-h-60 overflow-y-auto">
-          {SUPPORTED_LOCALES.map((locale) => (
+          {MENU_LOCALES.map((locale) => (
             <button
               key={locale}
               onClick={() => switchLanguage(locale)}
