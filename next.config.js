@@ -151,12 +151,12 @@ module.exports = withBundleAnalyzer(nextConfig);
 
 // 本地开发时初始化 OpenNext Cloudflare 适配 (生产环境不执行)
 if (process.env.NODE_ENV !== 'production') {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { initOpenNextCloudflareForDev } = require('@opennextjs/cloudflare');
-    initOpenNextCloudflareForDev();
-  } catch (err) {
-    // ⚠️ 本地缺少依赖时忽略，避免阻塞开发
-    console.warn('OpenNext Cloudflare dev 初始化失败：', err?.message);
-  }
+  (async () => {
+    try {
+      const { initOpenNextCloudflareForDev } = await import('@opennextjs/cloudflare');
+      initOpenNextCloudflareForDev();
+    } catch (err) {
+      console.warn('OpenNext Cloudflare dev 初始化失败：', err?.message);
+    }
+  })();
 }

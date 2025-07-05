@@ -1,4 +1,4 @@
-name = "flux-kontext-worker"
+name = "labubuhub"
 main = ".open-next/worker.js"
 compatibility_date = "2024-12-30"
 compatibility_flags = [
@@ -10,5 +10,7 @@ compatibility_flags = [
 directory = ".open-next/assets"
 binding = "ASSETS" 
 
+[vars]
 NEXTAUTH_URL = "https://labubu.hot"
-NEXTAUTH_SECRET ="${NEXTAUTH_SECRET}"
+# NEXTAUTH_SECRET 从 Dashboard 注入，留占位
+NEXTAUTH_SECRET = "${NEXTAUTH_SECRET}"
