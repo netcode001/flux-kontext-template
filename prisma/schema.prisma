@@ -12,7 +12,7 @@ model users {
   email                      String                @unique @db.VarChar
   name                       String?               @db.VarChar
   image                      String?               @db.VarChar
-  credits                    Int?                  @default(100)
+  credits                    Int?                  @default(30)
   location                   String?               @db.VarChar
   last_signin_at             DateTime?             @db.Timestamptz
   signin_count               Int?                  @default(0)

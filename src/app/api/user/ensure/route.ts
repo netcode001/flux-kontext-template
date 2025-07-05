@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
         email: session.user.email,
         name: session.user.name || null,
         image: session.user.image || null,
-        credits: 100, // 默认积分
+        credits: 30, // 默认积分，注册赠送30积分
         signin_provider: 'nextauth',
         signin_type: 'oauth',
         signin_count: 1,

@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS public.users (
   email VARCHAR UNIQUE NOT NULL,
   name VARCHAR,
   image VARCHAR,
-  credits INTEGER DEFAULT 100,
+  credits INTEGER DEFAULT 30,
   location VARCHAR,
   last_signin_at TIMESTAMP WITH TIME ZONE,
   signin_count INTEGER DEFAULT 0,
