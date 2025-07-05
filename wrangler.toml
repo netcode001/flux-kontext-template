@@ -9,3 +9,6 @@ compatibility_flags = [
 [assets]
 directory = ".open-next/assets"
 binding = "ASSETS" 
+
+NEXTAUTH_URL = "https://labubu.hot"
+NEXTAUTH_SECRET ="${NEXTAUTH_SECRET}"
