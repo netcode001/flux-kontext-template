@@ -11,26 +11,17 @@ directory = ".open-next/assets"
 binding = "ASSETS" 
 
 [vars]
-# 🌐 基础配置
+# 🌐 基础配置（非敏感信息）
 NEXTAUTH_URL = "https://labubu.hot"
 NODE_ENV = "production"
-
-# 🔐 NextAuth配置
-# 注意：敏感密钥通过 wrangler secret 命令单独设置
-NEXTAUTH_SECRET = "${NEXTAUTH_SECRET}"
-
-# 🔑 Google OAuth配置
-# 注意：敏感密钥通过 wrangler secret 命令单独设置
-GOOGLE_CLIENT_ID = "${GOOGLE_CLIENT_ID}"
-GOOGLE_CLIENT_SECRET = "${GOOGLE_CLIENT_SECRET}"
 NEXT_PUBLIC_AUTH_GOOGLE_ENABLED = "true"
-
-# 🗄️ Supabase数据库配置
 NEXT_PUBLIC_SUPABASE_URL = "https://jgiegbhhkfjsqgjdstfe.supabase.co"
-# 注意：敏感密钥通过 wrangler secret 命令单独设置
-NEXT_PUBLIC_SUPABASE_ANON_KEY = "${NEXT_PUBLIC_SUPABASE_ANON_KEY}"
-SUPABASE_SERVICE_ROLE_KEY = "${SUPABASE_SERVICE_ROLE_KEY}"
 
-# 🎨 FAL AI API配置
-# 注意：敏感密钥通过 wrangler secret 命令单独设置
-FAL_KEY = "${FAL_KEY}"
+# 📝 注意：敏感密钥已通过 Cloudflare Workers Dashboard 配置
+# 已配置的环境变量：
+# - NEXTAUTH_SECRET (NextAuth会话密钥)
+# - GOOGLE_CLIENT_ID (Google OAuth客户端ID)
+# - GOOGLE_CLIENT_SECRET (Google OAuth客户端密钥)
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY (Supabase匿名访问密钥)
+# - SUPABASE_SERVICE_ROLE_KEY (Supabase服务角色密钥)
+# - FAL_KEY (FAL AI API密钥)
