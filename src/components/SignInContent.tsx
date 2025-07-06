@@ -147,9 +147,9 @@ export function SignInContent() {
             <div className="space-y-3">
               {/* Google 登录 - 只有在启用时才显示 */}
               {providers.google && process.env.NEXT_PUBLIC_AUTH_GOOGLE_ENABLED === "true" && (
-                <button
-                  onClick={() => handleOAuthSignIn("google")}
-                  disabled={isLoading}
+                <Link
+                  href={`/api/auth/signin/google?callbackUrl=${encodeURIComponent('/')}`}
+                  prefetch={false}
                   className="group relative w-full flex justify-center py-3 px-4 border border-border text-sm font-medium rounded-md text-foreground bg-card hover:bg-card/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
@@ -171,7 +171,7 @@ export function SignInContent() {
                     />
                   </svg>
                   {isLoading ? common.buttons.signingIn : common.buttons.continueWithGoogle}
-                </button>
+                </Link>
               )}
             </div>
           )}
