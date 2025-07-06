@@ -2144,3 +2144,118 @@ npm run cf:deploy      # 构建并部署到 Cloudflare Workers
 - **平台迁移**：摆脱 Pages 对 Edge Runtime 的限制，支持完整 Node.js API
 - **性能优势**：Workers 全球 300+ 节点 + Node 兼容特性
 - **未来扩展**：可接入 R2 增量缓存、D1/KV 等
+
+# Flux Kontext Template 项目更新日志
+
+## 项目概述
+基于 Next.js 15 + TypeScript 的 AI 图像生成平台，集成 Labubu 主题内容、壁纸分享、新闻聚合等功能。
+
+## 最新更新记录
+
+### 2025-07-06 🔧 Cloudflare Workers环境变量配置修复
+
+#### 🔍 问题诊断
+**主要问题：**
+1. **主页没有数据** - 壁纸、新闻等内容无法加载
+2. **Google登录不成功** - 点击登录按钮无反应
+
+**根本原因：**
+- Cloudflare Workers部署环境缺少关键环境变量
+- 数据库连接失败：`SUPABASE_SERVICE_ROLE_KEY` 未配置
+- Google OAuth失败：`GOOGLE_CLIENT_ID` 和 `GOOGLE_CLIENT_SECRET` 未配置
+
+#### ✅ 修复方案
+**1. 环境变量配置修复**
+- 更新 `wrangler.toml` 配置文件，添加所有必需的环境变量引用
+- 使用 `${VARIABLE_NAME}` 格式引用环境变量，避免硬编码敏感信息
+- 创建 `cloudflare-env-setup.md` 详细配置指南
+
+**2. 安全措施实施**
+- 使用 `wrangler secret` 命令管理敏感密钥
+- 从代码仓库中移除所有敏感信息
+- 实现密钥与代码分离的安全架构
+
+**3. 配置的环境变量清单**
+```bash
+# 认证相关
+NEXTAUTH_SECRET - NextAuth会话密钥
+GOOGLE_CLIENT_ID - Google OAuth客户端ID  
+GOOGLE_CLIENT_SECRET - Google OAuth客户端密钥
+
+# 数据库相关
+SUPABASE_SERVICE_ROLE_KEY - Supabase服务角色密钥
+NEXT_PUBLIC_SUPABASE_ANON_KEY - Supabase匿名访问密钥
+
+# AI服务相关
+FAL_KEY - FAL AI图像生成API密钥
+```
+
+#### 🎯 修复结果验证
+**API测试结果：**
+- ✅ `/api/debug/env` - 环境变量配置正确
+- ✅ `/api/debug/database-connection` - 数据库连接正常
+- ✅ `/api/wallpapers?limit=4` - 壁纸数据加载正常（返回4条记录）
+- ✅ `/api/labubu/news?limit=6` - 新闻API正常响应
+
+**功能验证：**
+- ✅ 主页数据正常显示 - 壁纸、新闻内容可以正常加载
+- ✅ 数据库连接正常 - 用户数据查询成功（3个用户记录）
+- ✅ Google OAuth配置完整 - 登录功能准备就绪
+- ✅ 部署流程正常 - Cloudflare Workers部署成功
+
+#### 📋 技术要点
+**Cloudflare Workers环境变量管理：**
+- 使用 `wrangler.toml` 的 `[vars]` 部分配置非敏感变量
+- 使用 `wrangler secret put` 命令配置敏感密钥
+- 环境变量通过 `${VARIABLE_NAME}` 语法引用
+
+**安全最佳实践：**
+- 密钥与代码分离存储
+- 使用环境变量引用避免硬编码
+- Git仓库中不包含任何敏感信息
+- 提供完整的配置文档和验证步骤
+
+#### 🔄 部署流程
+1. **配置环境变量** - 使用 `wrangler secret` 命令设置所有密钥
+2. **重新部署** - 运行 `npm run cf:deploy` 部署到生产环境
+3. **验证功能** - 测试API接口和页面功能
+4. **Git提交** - 安全地提交配置文件到代码仓库
+
+#### 📚 相关文档
+- `cloudflare-env-setup.md` - 详细的环境变量配置指南
+- `wrangler.toml` - Cloudflare Workers配置文件
+- 历史对话记录 - 完整的问题诊断和修复过程
+
+---
+
+## 历史更新记录
+
+### 2025-07-02 🔧 Google OAuth登录修复
+- 修复Google登录按钮点击无反应问题
+- 改为直接链接跳转：`/api/auth/signin/google`
+- 避免POST请求在Edge Runtime中的兼容性问题
+
+### 2025-06-30 💰 注册积分调整
+- 新用户注册赠送积分从100调整为30
+- 更新相关显示文案和默认值
+- 优化用户激励机制
+
+### 2025-06-28 📊 Google Analytics集成
+- 更新Google Analytics ID为：`G-CDFP2QCPB7`
+- 完善网站访问统计功能
+
+## 技术栈信息
+- **前端框架**: Next.js 15 + TypeScript
+- **部署平台**: Cloudflare Workers (使用OpenNext适配器)
+- **数据库**: Supabase PostgreSQL
+- **认证系统**: NextAuth.js + Google OAuth
+- **AI服务**: FAL AI (图像生成)
+- **UI组件**: Shadcn UI + Tailwind CSS
+- **自定义域名**: https://labubu.hot
+
+## 项目状态
+- ✅ **生产环境正常** - https://labubu.hot
+- ✅ **数据库连接正常** - Supabase集成完成
+- ✅ **Google登录功能** - OAuth配置完成
+- ✅ **AI图像生成** - FAL AI集成正常
+- ✅ **内容管理** - 壁纸、新闻、视频功能完整
