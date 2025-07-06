@@ -134,7 +134,7 @@ export const authOptions: NextAuthOptions = {
         sameSite: 'lax',        // 🔧 设置为lax而非strict，支持第三方登录
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production' ? 'fluxkontext.space' : undefined, // 🌐 明确指定域名
+        domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined, // 🌐 明确指定域名
       },
     },
     callbackUrl: {
@@ -143,7 +143,7 @@ export const authOptions: NextAuthOptions = {
         sameSite: 'lax',        // 🔧 支持跨站点回调
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production' ? 'fluxkontext.space' : undefined,
+        domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
       },
     },
     csrfToken: {
@@ -153,7 +153,7 @@ export const authOptions: NextAuthOptions = {
         sameSite: 'lax',        // 🔧 支持CSRF保护但允许第三方登录
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production' ? 'fluxkontext.space' : undefined,
+        domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
       },
     },
     // 🔧 添加状态Cookie配置以支持Google One Tap
@@ -165,7 +165,7 @@ export const authOptions: NextAuthOptions = {
         path: '/',
         secure: process.env.NODE_ENV === 'production',
         maxAge: 900, // 15分钟
-        domain: process.env.NODE_ENV === 'production' ? 'fluxkontext.space' : undefined,
+        domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
       },
     },
     pkceCodeVerifier: {
@@ -176,7 +176,7 @@ export const authOptions: NextAuthOptions = {
         path: '/',
         secure: process.env.NODE_ENV === 'production',
         maxAge: 900, // 15分钟
-        domain: process.env.NODE_ENV === 'production' ? 'fluxkontext.space' : undefined,
+        domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
       },
     },
   },

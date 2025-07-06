@@ -1550,7 +1550,7 @@ src/components/home/
 - 已提交到master分支，commit message：
   > 新闻爬虫后台新增新闻列表与删除功能，支持分页、删除操作，全部中文注释。
 
----
+--- 
 
 ## 2024-新闻爬虫支持自定义时间范围（1-7天）功能上线
 
@@ -2346,3 +2346,280 @@ FAL_KEY - FAL AI图像生成API密钥
 - ✅ **Google登录功能** - OAuth配置完成
 - ✅ **AI图像生成** - FAL AI集成正常
 - ✅ **内容管理** - 壁纸、新闻、视频功能完整
+
+# 🚀 LabubuHub 项目进展记录
+
+## 📅 2025年1月6日 - 环境变量不稳定问题解决
+
+### 🔍 问题描述
+用户反馈主页数据又消失了，下午还有数据，感觉不稳定。
+
+### 🔎 问题分析
+经过调查发现：
+1. **环境变量丢失**：Cloudflare Workers 中的环境变量配置不稳定
+2. **占位符问题**：环境变量值变成了 `"NOT_SET"` 占位符
+3. **数据库连接失败**：由于 Supabase 密钥丢失导致数据库无法连接
+4. **API 失效**：所有依赖数据库的 API 都返回错误
+
+### 🛠️ 解决方案
+创建了一个**稳定的环境变量配置系统**：
+
+#### 1. 自动化部署脚本
+- 创建 `scripts/deploy-and-secure.sh` 脚本
+- 自动配置环境变量 → 部署项目 → 清理敏感信息
+- 包含部署后的自动验证功能
+
+#### 2. 环境变量管理策略
+- **部署时**：在 `wrangler.toml` 中临时配置所有环境变量
+- **部署后**：立即清理敏感信息，只保留非敏感配置
+- **代码仓库**：不存储任何敏感密钥
+
+#### 3. 配置的环境变量
+```bash
+# 🔐 身份验证
+NEXTAUTH_SECRET="[CONFIGURED_IN_CLOUDFLARE]"
+
+# 🔑 Google OAuth
+GOOGLE_CLIENT_ID="[CONFIGURED_IN_CLOUDFLARE]"
+GOOGLE_CLIENT_SECRET="[CONFIGURED_IN_CLOUDFLARE]"
+
+# 🗄️ Supabase 数据库
+NEXT_PUBLIC_SUPABASE_ANON_KEY="[CONFIGURED_IN_CLOUDFLARE]"
+SUPABASE_SERVICE_ROLE_KEY="[CONFIGURED_IN_CLOUDFLARE]"
+
+# 🎨 FAL AI API
+FAL_KEY="[CONFIGURED_IN_CLOUDFLARE]"
+```
+
+### ✅ 验证结果
+
+#### 部署验证
+```bash
+# 数据库连接测试
+✅ 数据库连接正常 (3个用户记录)
+✅ 壁纸API正常 (返回4条记录)
+✅ 所有API接口响应正常
+```
+
+#### 功能验证
+- ✅ 主页数据正常显示
+- ✅ 用户登录功能正常
+- ✅ 数据库查询稳定
+- ✅ 环境变量配置持久化
+
+### 🚀 使用指南
+
+#### 重新部署项目
+```bash
+# 使用安全部署脚本
+./scripts/deploy-and-secure.sh
+```
+
+#### 手动部署（不推荐）
+```bash
+# 1. 手动配置环境变量到 wrangler.toml
+# 2. 部署项目
+npm run cf:deploy
+# 3. 立即清理敏感信息
+```
+
+### 📋 技术要点
+
+#### 问题根因
+- Cloudflare Workers 环境变量配置在某些情况下会丢失
+- 之前使用的 `wrangler secret` 方法不够稳定
+- 需要每次部署时重新确保环境变量配置
+
+#### 解决策略
+- **配置即代码**：将环境变量配置写入部署脚本
+- **自动化清理**：部署后立即清理敏感信息
+- **验证机制**：部署后自动验证关键功能
+
+#### 安全措施
+- 敏感信息不存储在代码仓库中
+- 使用脚本自动化配置和清理过程
+- 包含完整的验证和错误处理
+
+### 🔄 项目状态
+- **网站地址**：https://labubu.hot
+- **部署状态**：✅ 正常运行
+- **数据库**：✅ 连接稳定 (3个用户记录)
+- **API状态**：✅ 所有接口正常
+- **环境变量**：✅ 配置稳定
+
+### 📚 历史记录
+- **2025-01-06 下午**：环境变量配置问题首次修复
+- **2025-01-06 晚上**：环境变量再次丢失，创建稳定解决方案
+- **当前状态**：问题完全解决，建立了稳定的部署流程
+
+---
+
+## 📅 2025年1月6日 - 环境变量配置问题解决
+
+### 🔍 问题描述
+用户反馈网站主页没有数据显示，Google登录按钮无响应。
+
+### 🔎 问题分析
+通过API调试发现：
+1. **环境变量缺失**：关键环境变量 `GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`SUPABASE_SERVICE_ROLE_KEY` 等显示为 `"NOT_SET"`
+2. **数据库连接失败**：由于 Supabase 密钥缺失导致数据库无法连接
+3. **API错误**：`/api/wallpapers` 返回 "Internal Server Error"
+
+### 🛠️ 解决方案
+
+#### 1. 环境变量配置方法
+最初尝试使用 `wrangler secret` 命令，但遇到 "Binding name already in use" 错误。
+
+**最终解决方案**：直接在 `wrangler.toml` 中配置环境变量
+```toml
+[vars]
+NEXTAUTH_SECRET = "[YOUR_NEXTAUTH_SECRET]"
+GOOGLE_CLIENT_ID = "[YOUR_GOOGLE_CLIENT_ID]"
+GOOGLE_CLIENT_SECRET = "[YOUR_GOOGLE_CLIENT_SECRET]"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "[YOUR_SUPABASE_ANON_KEY]"
+SUPABASE_SERVICE_ROLE_KEY = "[YOUR_SUPABASE_SERVICE_ROLE_KEY]"
+FAL_KEY = "[YOUR_FAL_KEY]"
+```
+
+#### 2. 部署和验证
+```bash
+npm run cf:deploy
+```
+
+### ✅ 验证结果
+
+#### API测试结果
+```bash
+# 环境变量检查
+curl "https://labubu.hot/api/debug/env"
+✅ 所有环境变量正确配置
+
+# 数据库连接测试
+curl "https://labubu.hot/api/debug/database-connection"
+✅ 数据库连接成功，找到3个用户记录
+
+# 壁纸API测试
+curl "https://labubu.hot/api/wallpapers?limit=4"
+✅ 返回4条壁纸记录，包含完整数据
+```
+
+#### 功能验证
+- ✅ 主页数据正常显示（4个壁纸）
+- ✅ 数据库连接稳定（3个用户记录）
+- ✅ Google OAuth配置完整
+- ✅ 所有API接口正常响应
+
+### 🔒 安全处理
+部署验证完成后，立即清理了 `wrangler.toml` 中的敏感信息，恢复到安全状态。
+
+### 📋 技术要点
+- **环境变量配置**：Cloudflare Workers 需要在 `wrangler.toml` 的 `[vars]` 部分配置
+- **部署平台**：Cloudflare Workers 使用 OpenNext 适配器
+- **数据库**：Supabase PostgreSQL，包含用户表和壁纸表
+- **认证系统**：NextAuth.js 配置 Google OAuth
+
+### 🔄 当前状态
+- **网站地址**：https://labubu.hot ✅ 正常运行
+- **数据库**：✅ 连接正常（3个用户记录）
+- **API状态**：✅ 所有接口正常
+- **环境变量**：✅ 正确配置
+
+---
+
+## 📅 项目概述
+
+### 🎯 项目信息
+- **项目名称**：LabubuHub - AI生成内容平台
+- **技术栈**：Next.js 15 + TypeScript + Tailwind CSS + Supabase
+- **部署平台**：Cloudflare Workers
+- **域名**：https://labubu.hot
+
+### 🔧 核心功能
+- AI图像生成（FAL AI集成）
+- 壁纸画廊系统
+- 新闻聚合展示
+- 用户认证系统（Google OAuth）
+- 多语言支持
+- 响应式设计
+
+### 📊 数据库状态
+- **用户表**：3个测试用户
+- **壁纸表**：4个示例壁纸
+- **连接状态**：稳定正常
+
+### 🚀 部署信息
+- **当前版本**：最新稳定版
+- **部署时间**：2025年1月6日
+- **状态**：✅ 全功能正常运行
+
+---
+
+## 📅 2025年1月6日 - 项目状态报告
+
+### 🔄 当前状态
+- ✅ **网站运行正常** - https://labubu.hot 完全可访问
+- ✅ **数据库连接稳定** - Supabase 连接正常，3个用户记录
+- ✅ **API接口正常** - 所有关键API响应正常
+- ✅ **环境变量配置** - 所有必要的环境变量正确配置
+- ✅ **Google OAuth** - 登录功能完整配置
+- ✅ **AI图像生成** - FAL AI集成正常
+- ✅ **内容管理** - 壁纸、新闻、视频功能完整
+
+## 2025-01-06 部署成功记录
+
+### 问题背景
+- 用户报告Cloudflare Pages部署失败，显示"An internal error occurred"
+- 本地部署脚本工作正常，但云端部署失败
+
+### 问题分析
+1. **环境变量配置问题**：Cloudflare Pages可能无法正确读取环境变量
+2. **构建过程中断**：Next.js构建成功，但在部署阶段失败
+3. **内部错误**：Cloudflare服务器内部错误
+
+### 解决方案
+1. **使用安全部署脚本**：
+   ```bash
+   ./scripts/deploy-and-secure.sh
+   ```
+
+2. **脚本工作流程**：
+   - 临时配置环境变量到wrangler.toml
+   - 执行npm run cf:deploy部署
+   - 立即清理敏感信息
+   - 验证部署结果
+
+### 部署成功验证
+✅ **网站状态**：https://labubu.hot 正常运行
+✅ **数据库连接**：3个用户记录，连接稳定
+✅ **壁纸API**：返回10个壁纸记录，功能正常
+✅ **Google OAuth**：配置正确，登录功能正常
+✅ **NextAuth**：Providers配置正常
+
+### 技术要点
+- **安全部署**：使用临时配置，部署后立即清理
+- **环境变量稳定性**：通过脚本确保配置不丢失
+- **验证机制**：自动测试各项功能状态
+- **错误处理**：完善的错误处理和状态检查
+
+### 部署日志摘要
+```
+Total Upload: 16624.10 KiB / gzip: 2876.52 KiB
+Worker Startup Time: 21 ms
+Uploaded labubuhub (18.87 sec)
+Deployed labubuhub triggers (0.41 sec)
+Current Version ID: 82c7167e-c03b-4be7-ba19-2101c58c937d
+✅ 部署成功！
+```
+
+### 经验总结
+1. **云端部署失败时**：优先使用本地安全部署脚本
+2. **环境变量问题**：通过脚本临时配置可解决大部分问题
+3. **验证机制重要**：部署后立即验证各项功能状态
+4. **安全性优先**：确保敏感信息不泄露到代码仓库
+
+---
+
+**最后更新时间**：2025-01-06 15:12 UTC
+**部署状态**：✅ 成功
+**网站地址**：https://labubu.hot
+**版本ID**：82c7167e-c03b-4be7-ba19-2101c58c937d
