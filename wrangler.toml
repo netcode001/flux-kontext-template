@@ -17,7 +17,9 @@ NODE_ENV = "production"
 NEXT_PUBLIC_AUTH_GOOGLE_ENABLED = "true"
 NEXT_PUBLIC_SUPABASE_URL = "https://jgiegbhhkfjsqgjdstfe.supabase.co"
 
-# 📝 注意：敏感密钥已通过 Cloudflare Workers Dashboard 配置
+# 📝 注意：敏感密钥已在Cloudflare Workers中配置
+# 环境变量在部署时自动注入，代码仓库中不存储敏感信息
+# 
 # 已配置的环境变量：
 # - NEXTAUTH_SECRET (NextAuth会话密钥)
 # - GOOGLE_CLIENT_ID (Google OAuth客户端ID)
@@ -25,3 +27,6 @@ NEXT_PUBLIC_SUPABASE_URL = "https://jgiegbhhkfjsqgjdstfe.supabase.co"
 # - NEXT_PUBLIC_SUPABASE_ANON_KEY (Supabase匿名访问密钥)
 # - SUPABASE_SERVICE_ROLE_KEY (Supabase服务角色密钥)
 # - FAL_KEY (FAL AI API密钥)
+#
+# 🚀 如需重新部署，请运行: ./scripts/deploy-and-secure.sh
+# 该脚本会自动配置环境变量、部署项目并清理敏感信息
