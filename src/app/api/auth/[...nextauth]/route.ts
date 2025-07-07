@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
-import { authOptions } from "@/lib/auth"
+// 🚨 临时使用简化配置测试 Google OAuth
+import { authOptionsSimple } from "@/lib/auth-simple"
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptionsSimple)
 
 export { handler as GET, handler as POST } 

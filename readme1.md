@@ -1,5 +1,59 @@
 # 项目更新日志
 
+## 🔥 2025-01-21 - Google OAuth 登录深度诊断报告
+
+### 问题现象
+- 点击 "Continue with Google" 按钮无法跳转到 Google 登录页面
+- NextAuth 重定向到 `/auth/signin?error=google` 而不是 `accounts.google.com`
+- 浏览器 Console 显示 JavaScript 错误：`Lockdown failed: TypeError`
+
+### 🎯 深度诊断结果
+
+#### 1️⃣ 已排除的问题（确认正常）
+- ✅ **NextAuth 环境变量配置** - `GOOGLE_CLIENT_ID` 和 `GOOGLE_CLIENT_SECRET` 正确
+- ✅ **Cloudflare Workers Secrets** - 所有9个环境变量已正确配置
+- ✅ **Google One Tap 冲突** - 已禁用，问题依然存在
+- ✅ **复杂数据库操作** - 已简化为最小配置，问题依然存在
+- ✅ **Cookie 域名配置** - 已移除复杂配置，使用默认设置
+
+#### 2️⃣ 核心发现：NextAuth Provider 配置问题
+**关键测试结果**:
+```
+NextAuth 端点测试: /api/auth/signin/google
+状态: 302 重定向到 /auth/signin?error=google
+结果: ❌ 重定向到错误页面，而非 accounts.google.com
+```
+
+**手动 Google OAuth URL 测试**:
+```
+https://accounts.google.com/o/oauth2/v2/auth?client_id=4449767768-4kfj8uq3vngvdtj6hgcn90o1vng0r9s2.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flabubu.hot%2Fapi%2Fauth%2Fcallback%2Fgoogle&response_type=code&scope=openid%20email%20profile&state=test-state-123
+```
+
+**🧪 关键测试步骤**:
+1. 复制上面的 URL 在浏览器中测试
+2. 如果显示 Google 登录页面 = Google Console 配置正确
+3. 如果显示错误 = Google Console 配置问题
+
+### 🔧 已尝试的修复方案
+1. **简化 NextAuth 配置** - 移除复杂回调逻辑
+2. **优化 Google Provider 参数** - 添加明确的授权参数
+3. **移除 Cookie 域名配置** - 使用 NextAuth 默认设置
+4. **禁用冲突组件** - 移除 Google One Tap
+
+### 🎯 当前状态
+- **网站正常运行**: https://labubu.hot 所有功能正常
+- **环境变量完整**: Cloudflare Workers 9个密钥已配置
+- **NextAuth 配置**: 使用简化版本 `auth-simple.ts`
+- **等待测试**: 需要手动测试上述 Google OAuth URL
+
+### 📋 下一步行动
+1. **手动测试 Google OAuth URL** - 验证 Google Console 配置
+2. **如果 URL 测试成功** - 问题在 NextAuth 配置
+3. **如果 URL 测试失败** - 需要重新配置 Google Cloud Console
+4. **恢复完整配置** - 测试通过后恢复原始 NextAuth 配置
+
+---
+
 ## 2025-01-21 - Python爬虫功能清理完成 🗑️
 
 ### 🚨 问题定位：Python集成导致构建错误

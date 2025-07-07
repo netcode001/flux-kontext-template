@@ -125,6 +125,19 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/signin",
   },
+  // 🔧 添加调试模式以诊断 OAuth 错误
+  debug: process.env.NODE_ENV === 'development',
+  logger: {
+    error(code, metadata) {
+      console.error('NextAuth Error:', code, metadata)
+    },
+    warn(code) {
+      console.warn('NextAuth Warning:', code)
+    },
+    debug(code, metadata) {
+      console.log('NextAuth Debug:', code, metadata)
+    }
+  },
   // 🍪 Cookie安全配置 - 优化以支持Google One Tap
   cookies: {
     sessionToken: {
