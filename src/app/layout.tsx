@@ -4,9 +4,9 @@ import "./globals.css";
 import ClientBody from "./ClientBody";
 import { Analytics } from "@/components/Analytics";
 import SessionProvider from "@/components/providers/SessionProvider";
-// 🚨 临时禁用 Google One Tap - 修复 OAuth 冲突
-// import { GoogleOneTap } from "@/components/GoogleOneTap";
-// import { GoogleOneTapTrigger } from "@/components/GoogleOneTapTrigger";
+// ✅ 恢复 Google One Tap - OAuth 凭据已更新
+import { GoogleOneTap } from "@/components/GoogleOneTap";
+import { GoogleOneTapTrigger } from "@/components/GoogleOneTapTrigger";
 import { StructuredData } from "@/components/StructuredData";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -85,9 +85,9 @@ export default function RootLayout({
           </ClientBody>
           {/* 全局页脚 */}
           <Footer />
-          {/* 🚨 临时禁用 Google One Tap - 修复 OAuth 冲突 */}
-          {/* <GoogleOneTap /> */}
-          {/* <GoogleOneTapTrigger /> */}
+          {/* ✅ 恢复 Google One Tap - OAuth 凭据已更新 */}
+          <GoogleOneTap />
+          <GoogleOneTapTrigger />
           <Analytics />
         </SessionProvider>
       </body>

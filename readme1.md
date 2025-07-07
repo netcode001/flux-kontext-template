@@ -2592,6 +2592,104 @@ curl "https://labubu.hot/api/wallpapers?limit=4"
 
 ---
 
+## 📅 2025年1月6日 - Google OAuth 深度诊断和解决方案
+
+### 🚨 问题现象
+用户反馈：更新了Google OAuth凭据后，登录按钮仍然无法正常工作，点击后显示"Signing In..."但最终跳转到错误页面。
+
+### 🔍 深度诊断过程
+
+#### 1. 环境变量验证
+```bash
+# 检查Cloudflare Workers环境变量
+✅ GOOGLE_CLIENT_ID: 4449767768-4kfj8uq3vngvdtj6hgcn90o1vng0r9s2.apps.googleusercontent.com
+✅ GOOGLE_CLIENT_SECRET: 已正确配置
+✅ NEXTAUTH_URL: https://labubu.hot
+```
+
+#### 2. NextAuth配置优化
+- **恢复完整配置**：从简化测试版本恢复到完整的NextAuth配置
+- **Google One Tap重新启用**：恢复Google One Tap登录组件
+- **Provider配置验证**：确认Google Provider配置正确
+
+#### 3. 端点测试结果
+```bash
+# OAuth登录端点测试
+curl -I "https://labubu.hot/api/auth/signin/google"
+❌ 302 重定向到: /auth/signin?error=google
+❌ 不是预期的 accounts.google.com 重定向
+
+# 调试端点测试
+curl "https://labubu.hot/api/debug/oauth"
+✅ 200 所有配置正确显示
+```
+
+#### 4. 手动OAuth URL测试
+```bash
+# 生成的Google OAuth URL
+https://accounts.google.com/o/oauth2/v2/auth?client_id=4449767768...&redirect_uri=https%3A%2F%2Flabubu.hot%2Fapi%2Fauth%2Fcallback%2Fgoogle&response_type=code&scope=openid%20email%20profile&state=test
+
+# 测试结果
+❌ Error 401: invalid_client
+❌ The OAuth client was not found
+```
+
+### 🎯 根本原因确认
+通过深度测试确认：**Google Cloud Console中的OAuth客户端ID不存在或配置错误**
+
+**当前客户端ID** `4449767768-4kfj8uq3vngvdtj6hgcn90o1vng0r9s2.apps.googleusercontent.com` 在Google的OAuth系统中返回"client not found"错误。
+
+### 🛠️ 最终解决方案
+
+#### 必须在Google Cloud Console中创建新的OAuth 2.0客户端ID
+
+1. **访问Google Cloud Console**
+   ```
+   https://console.cloud.google.com/apis/credentials
+   ```
+
+2. **创建新的OAuth 2.0客户端ID**
+   - 应用类型：Web应用
+   - 名称：LabubuHub Production
+   - 授权重定向URI：`https://labubu.hot/api/auth/callback/google`
+   - 授权域：`labubu.hot`
+
+3. **更新Cloudflare Workers环境变量**
+   ```bash
+   npx wrangler secret put GOOGLE_CLIENT_ID
+   npx wrangler secret put GOOGLE_CLIENT_SECRET
+   ```
+
+4. **重新部署应用**
+   ```bash
+   npm run cf:deploy
+   ```
+
+5. **验证配置**
+   ```bash
+   node scripts/test-new-google-oauth.js
+   ```
+
+### 📋 技术工具创建
+为了诊断和解决这个问题，创建了多个技术工具：
+- `test-new-google-oauth.js` - 新OAuth配置测试工具
+- `debug-google-signin.js` - Google登录调试工具
+- `create-new-google-oauth.js` - OAuth重新配置指南
+
+### 🔄 当前状态
+- **网站功能**：✅ 除Google登录外全部正常
+- **环境变量**：✅ 已正确配置
+- **NextAuth配置**：✅ 已恢复完整版本
+- **Google OAuth**：❌ 需要用户在Google Cloud Console中创建新的客户端ID
+
+### 📚 重要经验
+1. **环境变量配置正确不等于OAuth配置正确**
+2. **Google Cloud Console中的客户端ID可能被删除或禁用**
+3. **需要定期验证第三方服务的凭据有效性**
+4. **深度测试比表面测试更能发现根本问题**
+
+---
+
 ## 📅 项目概述
 
 ### 🎯 项目信息
