@@ -1,5 +1,84 @@
 # 项目更新日志
 
+## 🔧 2025-01-21 - Cloudflare Pages构建错误修复完成 ✅
+
+### 🚨 部署构建失败问题解决
+
+#### 🎯 问题表现
+Cloudflare Pages部署时出现构建错误：
+```
+Error: Your project's URL and Key are required to create a Supabase client!
+```
+
+#### 🔍 根本原因分析
+在Next.js构建过程中，多个服务类在模块级别直接创建Supabase客户端，但构建时环境变量未设置，导致连接失败。
+
+#### 💡 涉及的问题文件
+1. **advanced-content-engine.ts** - 高级内容引擎服务
+2. **workflow-automation.ts** - 工作流自动化服务
+3. **content-scheduler.ts** - 内容调度器服务
+4. **crawler-config.ts** - 爬虫配置服务
+
+#### 🛠️ 修复方案
+
+**1. 懒加载Supabase客户端**
+```typescript
+// ❌ 原始写法 - 类级别直接创建
+export class SomeService {
+  private supabase = createAdminClient() // 构建时立即执行
+}
+
+// ✅ 修复后 - 懒加载机制
+export class SomeService {
+  private _supabase: any = null
+  
+  private get supabase() {
+    if (!this._supabase) {
+      // 构建时跳过创建
+      if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        console.log('⚠️ 构建时跳过Supabase客户端创建')
+        return null
+      }
+      this._supabase = createAdminClient()
+    }
+    return this._supabase
+  }
+}
+```
+
+**2. 运行时环境检查**
+```typescript
+// 所有数据库操作前检查客户端可用性
+if (!this.supabase) {
+  console.log('⚠️ Supabase客户端不可用，跳过数据库操作')
+  return
+}
+```
+
+**3. 实例创建懒加载**
+```typescript
+// ❌ 原始写法 - 模块级别立即创建
+export const serviceInstance = new SomeService()
+
+// ✅ 修复后 - 懒加载实例
+let serviceInstance: SomeService | null = null
+
+function getService(): SomeService {
+  if (!serviceInstance) {
+    serviceInstance = new SomeService()
+  }
+  return serviceInstance
+}
+```
+
+#### 🎉 修复效果
+- ✅ 构建时跳过数据库连接，避免环境变量缺失错误
+- ✅ 运行时正常创建Supabase客户端，功能不受影响
+- ✅ 服务类保持原有功能，向后兼容
+- ✅ 增加了更好的错误处理和日志记录
+
+---
+
 ## 🔧 2025-01-21 - 生产环境OAuth登录问题最终修复完成 ✅
 
 ### 问题根源确认
