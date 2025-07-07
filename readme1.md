@@ -2680,7 +2680,16 @@ https://accounts.google.com/o/oauth2/v2/auth?client_id=4449767768...&redirect_ur
 - **网站功能**：✅ 除Google登录外全部正常
 - **环境变量**：✅ 已正确配置
 - **NextAuth配置**：✅ 已恢复完整版本
-- **Google OAuth**：❌ 需要用户在Google Cloud Console中创建新的客户端ID
+- **Google OAuth**：✅ 本地开发环境配置成功，待部署生产环境
+
+### 🎉 OAuth配置成功解决（2025年1月6日）
+- **本地开发环境**：✅ 配置完成，测试正常
+- **新的客户端ID**：`444976776839-8cmjcm1fdmh7ca67r50jrhpc3d5n8oct.apps.googleusercontent.com`
+- **重定向URI配置**：
+  - ✅ `http://localhost:3000/api/auth/callback/google` (本地开发)
+  - ✅ `https://labubu.hot/api/auth/callback/google` (生产环境)
+- **测试结果**：Google登录页面正常显示，账户选择功能正常
+- **待完成**：更新生产环境的OAuth配置
 
 ### 📚 重要经验
 1. **环境变量配置正确不等于OAuth配置正确**
