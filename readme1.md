@@ -46,11 +46,23 @@ https://accounts.google.com/o/oauth2/v2/auth?client_id=4449767768-4kfj8uq3vngvdt
 - **NextAuth 配置**: 使用简化版本 `auth-simple.ts`
 - **等待测试**: 需要手动测试上述 Google OAuth URL
 
-### 📋 下一步行动
-1. **手动测试 Google OAuth URL** - 验证 Google Console 配置
-2. **如果 URL 测试成功** - 问题在 NextAuth 配置
-3. **如果 URL 测试失败** - 需要重新配置 Google Cloud Console
-4. **恢复完整配置** - 测试通过后恢复原始 NextAuth 配置
+### 🎯 **关键测试结果确认**
+
+✅ **Google OAuth URL 测试完成**:
+- **能够访问**: `accounts.google.com` 正常显示
+- **错误确认**: "The OAuth client was not found"
+- **错误代码**: Error 401: invalid_client
+- **根本原因**: Google Cloud Console 中的 OAuth 客户端配置问题
+
+### 📋 **立即修复行动**
+**问题100%确认在 Google Cloud Console，而非 NextAuth 配置！**
+
+1. **访问 Google Cloud Console**: https://console.cloud.google.com/apis/credentials
+2. **检查现有 OAuth 客户端**: 查找 `4449767768-4kfj8uq3vngvdtj6hgcn90o1vng0r9s2`
+3. **创建新的 OAuth 2.0 客户端 ID** (推荐)
+4. **配置正确的重定向 URI**: `https://labubu.hot/api/auth/callback/google`
+5. **更新 Cloudflare Workers 环境变量**: 新的 client_id 和 client_secret
+6. **重新部署**: `npm run cf:deploy`
 
 ---
 
