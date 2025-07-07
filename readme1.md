@@ -2659,6 +2659,48 @@ export YOUTUBE_API_KEY="your_youtube_api_key"
 3. 运行部署脚本验证配置
 4. 测试YouTube爬虫功能
 
+## 🔐 Google OAuth 登录问题修复 (最新发现 2025-01-07)
+
+### 📍 问题描述
+- **现象**: 点击 "Continue with Google" 按钮无法跳转到 Google 登录页面
+- **错误**: OAuth 登录端点返回 HTTP 400 错误
+- **根本原因**: Google Cloud Console 中的 OAuth 应用配置问题
+
+### 🔍 诊断结果
+- ✅ NextAuth providers 配置正确
+- ✅ 环境变量 `GOOGLE_CLIENT_ID` 和 `GOOGLE_CLIENT_SECRET` 配置正确  
+- ✅ CSRF token 生成正常
+- ❌ Google OAuth 重定向配置有问题
+
+### 🛠️ 修复方案
+运行自动修复指南：
+```bash
+node scripts/fix-google-oauth.js
+```
+
+### 📋 关键配置检查项
+1. **授权重定向 URI**: 必须包含 `https://labubu.hot/api/auth/callback/google`
+2. **授权域**: 添加 `labubu.hot` 到已获授权的网域
+3. **OAuth 同意屏幕**: 确保应用状态为 "已发布" 或添加测试用户
+4. **API 启用**: 启用 Google+ API 和 People API
+
+### 🚨 临时解决方案
+如需快速修复，建议在 Google Cloud Console 中创建新的 OAuth 2.0 客户端 ID：
+- 应用类型: Web 应用
+- JavaScript 来源: `https://labubu.hot`  
+- 重定向 URI: `https://labubu.hot/api/auth/callback/google`
+
+### 🧪 验证命令
+```bash
+# 测试OAuth端点
+curl -I "https://labubu.hot/api/auth/signin/google"
+# 期待结果: HTTP 302 重定向到 accounts.google.com
+```
+
+### 🛠️ 新增工具
+- **scripts/fix-google-oauth.js**: Google OAuth 修复指南
+- **scripts/debug-google-signin.js**: Google 登录问题调试工具
+
 ---
 
 ## 📅 2025年1月6日 - 项目状态报告
