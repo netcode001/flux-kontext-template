@@ -2623,6 +2623,34 @@ export YOUTUBE_API_KEY="your_youtube_api_key"
 - **scripts/create-env-template.js**: 生成完整的环境变量配置模板
 - **scripts/check-youtube-api.js**: YouTube API诊断工具
 
+### 🎯 Google Analytics 配置修复 (最新)
+- **问题**: Google Analytics 显示 "No data received from your website yet"
+- **原因**: 环境变量中使用占位符 `G-XXXXXXXXXX` 而非实际 ID
+- **解决**: 创建专门的修复脚本和配置正确的 Analytics ID
+
+#### 🔧 修复步骤
+1. **手动更新环境变量**: 
+   - 打开 `.env.local` 文件
+   - 将 `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID="G-XXXXXXXXXX"`
+   - 改为 `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID="G-CDFP2QCPB7"`
+   - 保存文件
+
+2. **运行修复脚本**:
+   ```bash
+   node scripts/fix-google-analytics.js
+   ```
+
+3. **验证结果**:
+   - 脚本会自动清理缓存、重新构建、部署
+   - 验证网站是否正确加载 Google Analytics ID
+   - 确认 Google Analytics 控制台开始收集数据
+
+#### 📊 配置详情
+- **Analytics ID**: G-CDFP2QCPB7
+- **网站地址**: https://labubu.hot
+- **配置文件**: wrangler.toml (已更新)
+- **环境变量**: NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
+
 ### 📋 后续步骤 (可选)
 1. 获取有效的YouTube Data API v3密钥
 2. 在Cloudflare Workers中配置`YOUTUBE_API_KEY`环境变量
