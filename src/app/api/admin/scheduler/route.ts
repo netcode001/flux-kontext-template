@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { 
-  contentScheduler, 
   startContentScheduler, 
   stopContentScheduler, 
   getSchedulerStats 
@@ -35,13 +34,13 @@ export async function POST(request: NextRequest) {
 
     // 🚀 启动调度器
     startContentScheduler()
-    const status = contentScheduler.getStatus()
+    const stats = await getSchedulerStats()
 
     return NextResponse.json({
       success: true,
       data: {
         message: '内容调度器启动成功',
-        status,
+        stats,
         timestamp: new Date().toISOString()
       }
     })
@@ -84,13 +83,13 @@ export async function DELETE(request: NextRequest) {
 
     // 🛑 停止调度器
     stopContentScheduler()
-    const status = contentScheduler.getStatus()
+    const stats = await getSchedulerStats()
 
     return NextResponse.json({
       success: true,
       data: {
         message: '内容调度器已停止',
-        status,
+        stats,
         timestamp: new Date().toISOString()
       }
     })
@@ -132,13 +131,11 @@ export async function GET(request: NextRequest) {
     }
 
     // 📊 获取状态和统计
-    const status = contentScheduler.getStatus()
     const stats = await getSchedulerStats()
 
     return NextResponse.json({
       success: true,
       data: {
-        status,
         stats,
         timestamp: new Date().toISOString()
       }
