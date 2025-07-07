@@ -17,9 +17,22 @@ interface TaskStats {
 
 // ⏰ 内容调度器类
 export class ContentScheduler {
-  private supabase = createAdminClient()
+  private _supabase: any = null
   private isRunning = false
   private intervals: NodeJS.Timeout[] = []
+
+  // 🔧 懒加载Supabase客户端，避免构建时错误
+  private get supabase() {
+    if (!this._supabase) {
+      // 在构建时跳过Supabase客户端创建
+      if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        console.log('⚠️ 构建时跳过Supabase客户端创建')
+        return null
+      }
+      this._supabase = createAdminClient()
+    }
+    return this._supabase
+  }
 
   // 🚀 启动调度器
   public start() {
@@ -130,6 +143,12 @@ export class ContentScheduler {
   // 🧹 执行清理任务
   private async performCleanupTasks() {
     try {
+      // 🔧 检查Supabase客户端是否可用
+      if (!this.supabase) {
+        console.log('⚠️ Supabase客户端不可用，跳过清理任务')
+        return
+      }
+
       // 清理30天前的旧文章
       const thirtyDaysAgo = new Date()
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
@@ -194,7 +213,7 @@ export class ContentScheduler {
   }
 
   // 📝 记录任务执行日志
-  private async logTaskExecution(taskName: string, success: boolean, result: any) {
+  private async logTaskExecution(taskName: string, success: boolean, result: any): Promise<void> {
     try {
       const { error } = await this.supabase
         .from('task_logs')
@@ -230,7 +249,7 @@ export class ContentScheduler {
       // 按任务名称分组统计
       const statsMap = new Map<string, TaskStats>()
 
-      logs?.forEach(log => {
+      logs?.forEach((log: any) => {
         const taskName = log.task_name
         if (!statsMap.has(taskName)) {
           statsMap.set(taskName, {
@@ -293,20 +312,30 @@ export class ContentScheduler {
   }
 }
 
-// 🚀 导出调度器实例
-export const contentScheduler = new ContentScheduler()
+// 🚀 懒加载调度器实例
+let contentSchedulerInstance: ContentScheduler | null = null
+
+function getContentScheduler(): ContentScheduler {
+  if (!contentSchedulerInstance) {
+    contentSchedulerInstance = new ContentScheduler()
+  }
+  return contentSchedulerInstance
+}
 
 // 🎯 便捷函数：启动内容调度器
 export function startContentScheduler() {
-  return contentScheduler.start()
+  const scheduler = getContentScheduler()
+  return scheduler.start()
 }
 
 // 🛑 便捷函数：停止内容调度器
 export function stopContentScheduler() {
-  return contentScheduler.stop()
+  const scheduler = getContentScheduler()
+  return scheduler.stop()
 }
 
 // 📊 便捷函数：获取任务统计
 export function getSchedulerStats() {
-  return contentScheduler.getTaskStats()
+  const scheduler = getContentScheduler()
+  return scheduler.getTaskStats()
 } 

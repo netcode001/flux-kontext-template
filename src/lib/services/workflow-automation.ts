@@ -37,11 +37,24 @@ interface WorkflowTrigger {
 
 // 🎯 工作流自动化类
 export class WorkflowAutomation {
-  private supabase = createAdminClient()
+  private _supabase: any = null
   private platforms: WorkflowPlatform[] = []
 
   constructor() {
     this.initializePlatforms()
+  }
+
+  // 🔧 懒加载Supabase客户端，避免构建时错误
+  private get supabase() {
+    if (!this._supabase) {
+      // 在构建时跳过Supabase客户端创建
+      if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        console.log('⚠️ 构建时跳过Supabase客户端创建')
+        return null
+      }
+      this._supabase = createAdminClient()
+    }
+    return this._supabase
   }
 
   // 🚀 初始化工作流平台

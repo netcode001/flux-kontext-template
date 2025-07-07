@@ -18,11 +18,30 @@ export interface CrawlerConfigUpdate {
 }
 
 export class CrawlerConfigService {
-  private supabase = createAdminClient()
+  private _supabase: any = null
+
+  // 🔧 懒加载Supabase客户端，避免构建时错误
+  private get supabase() {
+    if (!this._supabase) {
+      // 在构建时跳过Supabase客户端创建
+      if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        console.log('⚠️ 构建时跳过Supabase客户端创建')
+        return null
+      }
+      this._supabase = createAdminClient()
+    }
+    return this._supabase
+  }
 
   // 🔍 获取所有爬虫配置
   async getAllConfigs(): Promise<CrawlerConfig[]> {
     try {
+      // 🔧 检查Supabase客户端是否可用
+      if (!this.supabase) {
+        console.log('⚠️ Supabase客户端不可用，返回空配置')
+        return []
+      }
+
       const { data, error } = await this.supabase
         .from('crawler_config')
         .select('*')
