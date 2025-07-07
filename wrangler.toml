@@ -27,6 +27,7 @@ NEXT_PUBLIC_SUPABASE_URL = "https://jgiegbhhkfjsqgjdstfe.supabase.co"
 # - NEXT_PUBLIC_SUPABASE_ANON_KEY (Supabase匿名访问密钥)
 # - SUPABASE_SERVICE_ROLE_KEY (Supabase服务角色密钥)
 # - FAL_KEY (FAL AI API密钥)
+# - YOUTUBE_API_KEY (YouTube Data API v3密钥)
 #
 # 🚀 如需重新部署，请运行: ./scripts/deploy-and-secure.sh
 # 该脚本会自动配置环境变量、部署项目并清理敏感信息

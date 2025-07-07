@@ -2554,6 +2554,45 @@ curl "https://labubu.hot/api/wallpapers?limit=4"
 
 ---
 
+## 📅 2025年1月6日 - YouTube API 配置修复
+
+### 🔍 问题分析
+- **YouTube API配置问题**：硬编码的API密钥可能过期或无效
+- **环境变量缺失**：`YOUTUBE_API_KEY`未在Cloudflare Workers中配置
+- **部署不稳定**：Workers上的YouTube爬虫功能多次失败
+
+### 🛠️ 解决方案
+1. **移除硬编码密钥**：将`media-api-config.ts`中的硬编码API密钥改为环境变量
+2. **完善环境变量配置**：在`wrangler.toml`中添加`YOUTUBE_API_KEY`配置说明
+3. **增强部署脚本**：添加YouTube API连接状态检查
+4. **创建诊断工具**：新增`check-youtube-api.js`脚本用于API配置检查
+
+### 🔧 修复内容
+- ✅ **API密钥安全化**：移除硬编码密钥，改为环境变量获取
+- ✅ **错误处理优化**：在YouTube服务构造函数中添加密钥检查
+- ✅ **部署验证增强**：部署脚本增加YouTube API连接测试
+- ✅ **诊断工具**：创建专门的YouTube API配置检查脚本
+
+### 🚀 使用指南
+```bash
+# 检查YouTube API配置
+node scripts/check-youtube-api.js
+
+# 设置环境变量
+export YOUTUBE_API_KEY="your_youtube_api_key"
+
+# 重新部署
+./scripts/deploy-and-secure.sh
+```
+
+### 📋 后续步骤
+1. 获取有效的YouTube Data API v3密钥
+2. 在Cloudflare Workers中配置`YOUTUBE_API_KEY`环境变量
+3. 运行部署脚本验证配置
+4. 测试YouTube爬虫功能
+
+---
+
 ## 📅 2025年1月6日 - 项目状态报告
 
 ### 🔄 当前状态
@@ -2564,6 +2603,7 @@ curl "https://labubu.hot/api/wallpapers?limit=4"
 - ✅ **Google OAuth** - 登录功能完整配置
 - ✅ **AI图像生成** - FAL AI集成正常
 - ✅ **内容管理** - 壁纸、新闻、视频功能完整
+- ⚠️ **YouTube API** - 需要配置有效的API密钥
 
 ## 2025-01-06 部署成功记录
 

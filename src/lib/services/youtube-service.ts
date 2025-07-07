@@ -72,6 +72,11 @@ export class YouTubeService {
   constructor() {
     const config = MediaAPIConfigManager.getInstance()
     this.apiKey = config.getYouTubeConfig().apiKey
+    
+    // 检查API密钥是否配置
+    if (!this.apiKey) {
+      console.error('❌ YouTube API 密钥未配置。请设置 YOUTUBE_API_KEY 环境变量。')
+    }
   }
 
   /**
