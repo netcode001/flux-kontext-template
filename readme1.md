@@ -2585,23 +2585,43 @@ export YOUTUBE_API_KEY="your_youtube_api_key"
 ./scripts/deploy-and-secure.sh
 ```
 
-### ✅ 部署成功验证
-- **部署时间**: 2025年1月7日
-- **版本ID**: 859cd3bb-ad96-4d83-a46d-a5c532230b5a
-- **Worker启动时间**: 22ms
-- **上传文件**: 152个文件 (16.6MB)
+### ✅ 环境变量配置完成和部署成功验证
 
-### 🌐 域名状态
+#### 🔐 Secrets配置结果
+- **成功配置**: 9个secret环境变量
+  - NEXTAUTH_SECRET ✅
+  - GOOGLE_CLIENT_ID ✅
+  - GOOGLE_CLIENT_SECRET ✅
+  - NEXT_PUBLIC_SUPABASE_ANON_KEY ✅
+  - SUPABASE_SERVICE_ROLE_KEY ✅
+  - FAL_KEY ✅
+  - YOUTUBE_API_KEY ✅
+  - TWITTER_BEARER_TOKEN ✅
+  - STRIPE_WEBHOOK_SECRET ✅
+
+#### 📊 最新部署状态
+- **部署时间**: 2025年1月7日
+- **版本ID**: a7b986a0-2a02-46df-a5f9-c29a32deefa8
+- **Worker启动时间**: 26ms
+- **上传文件**: 275个静态资源 + Worker代码
+
+#### 🌐 域名状态
 - **主域名**: https://labubu.hot ✅ 正常运行
 - **Workers域名**: https://labubuhub.lylh0319-139.workers.dev ✅ 正常运行
 - **DNS解析**: 正常
 - **HTTPS证书**: 有效
 
-### 🔍 功能验证
+#### 🔍 功能验证
 - **数据库连接**: ✅ 正常 (3个用户记录)
 - **主页加载**: ✅ 完整HTML渲染
 - **API响应**: ✅ 所有端点正常
-- **环境变量**: ✅ 配置正确
+- **壁纸API**: ✅ 正常返回数据
+- **环境变量**: ✅ 所有secrets配置正确
+
+#### 🛠️ 新增工具
+- **scripts/setup-cloudflare-secrets.js**: 自动配置所有Cloudflare Workers的secret环境变量
+- **scripts/create-env-template.js**: 生成完整的环境变量配置模板
+- **scripts/check-youtube-api.js**: YouTube API诊断工具
 
 ### 📋 后续步骤 (可选)
 1. 获取有效的YouTube Data API v3密钥
