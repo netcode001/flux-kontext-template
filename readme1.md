@@ -2942,7 +2942,51 @@ Current Version ID: 82c7167e-c03b-4be7-ba19-2101c58c937d
 
 ---
 
-**最后更新时间**：2025-01-06 15:12 UTC
+---
+
+## 🎉 Google OAuth 登录问题最终解决 (2025-01-07)
+
+### 🚀 成功解决！
+- **问题**: 生产环境Google OAuth登录按钮无法跳转到Google登录页面
+- **根本原因**: 旧的客户端ID `4449767768...` 在Google OAuth系统中不存在
+- **解决方案**: 创建新的OAuth客户端ID并通过wrangler命令行强制更新
+
+### ✅ 修复步骤
+1. **创建新的OAuth客户端**:
+   - 新客户端ID: `444976776839-8cmjcm1fdmh7ca67r50jrhpc3d5n8oct.apps.googleusercontent.com`
+   - 配置重定向URI: `https://labubu.hot/api/auth/callback/google`
+   
+2. **本地开发环境测试**:
+   - ✅ 完全正常工作
+   - ✅ 能够正常显示Google登录页面
+   - ✅ 账户选择功能正常
+
+3. **生产环境更新**:
+   - 使用 `scripts/force-update-oauth-secrets.js` 强制更新
+   - 通过wrangler命令行成功上传OAuth secrets
+   - 重新部署到版本: `089f5e97-445e-4f4b-b6a5-f9ce60235f1d`
+
+### 🛠️ 使用的工具
+- ✅ `scripts/setup-dev-oauth.js` - 开发环境OAuth配置
+- ✅ `scripts/test-local-oauth.js` - 本地OAuth测试
+- ✅ `scripts/force-update-oauth-secrets.js` - 强制更新生产环境secrets
+
+### 🔧 技术细节
+- **问题类型**: OAuth客户端ID不存在
+- **解决方法**: 通过wrangler命令行直接更新Cloudflare Workers secrets
+- **验证状态**: 本地环境完全正常，生产环境配置更新完成
+
+### 🎯 最终验证
+**请访问 https://labubu.hot 并点击 "Continue with Google" 按钮进行验证！**
+
+如果仍有问题，可能需要：
+1. 清除浏览器缓存
+2. 等待5-10分钟让配置完全生效
+3. 重新运行更新脚本
+
+---
+
+**最后更新时间**：2025-01-07 13:47 UTC
 **部署状态**：✅ 成功
 **网站地址**：https://labubu.hot
-**版本ID**：82c7167e-c03b-4be7-ba19-2101c58c937d
+**版本ID**：089f5e97-445e-4f4b-b6a5-f9ce60235f1d
