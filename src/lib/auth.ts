@@ -244,8 +244,16 @@ export const authOptions: NextAuthOptions = {
             })
 
             if (!ensureUserResponse.ok) {
-              const errorBody = await ensureUserResponse.text()
-              console.error('❌ [signIn] 调用内部ensure-user API失败:', errorBody)
+              let errorBody = '调用ensure-user API返回了非200状态码'
+              try {
+                // 尝试解析JSON格式的错误信息
+                const jsonError = await ensureUserResponse.json()
+                errorBody = JSON.stringify(jsonError)
+              } catch {
+                // 如果不是JSON，则获取文本内容
+                errorBody = await ensureUserResponse.text()
+              }
+              console.error('❌ [signIn] 调用内部ensure-user API失败，详情:', errorBody)
               return false // 调用失败，终止登录
             }
             

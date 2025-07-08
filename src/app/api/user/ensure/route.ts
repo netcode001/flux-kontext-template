@@ -1,22 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createAdminClient } from '@/lib/supabase/server'
+import { getUuid } from '@/lib/utils/hash'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { createAdminClient } from '@/lib/supabase/server'
 
-// 🔧 确保用户存在API - 如果用户不存在则自动创建
+
+// 终极修复：改造ensure-user API的安全机制
+// 移除 getServerSession 检查，改用内部密钥验证
 export async function POST(request: NextRequest) {
   try {
-    // 🔐 验证用户身份
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.email) {
-      console.log('❌ 用户未登录')
+    // 🔐 验证内部API密钥
+    const internalSecret = request.headers.get('X-Internal-Secret')
+    if (process.env.INTERNAL_API_SECRET && internalSecret !== process.env.INTERNAL_API_SECRET) {
+      console.log('❌ [ensure-user] 无效的内部API密钥')
       return NextResponse.json(
-        { error: '用户未登录' },
-        { status: 401 }
+        { error: '无权访问' },
+        { status: 403 }
       )
     }
 
-    console.log('🔍 确保用户存在:', session.user.email)
+    // 从请求体中获取用户信息，因为不再有session
+    const body = await request.json()
+    const { email, name, image, provider } = body
+
+    if (!email) {
+      return NextResponse.json({ error: '邮箱不能为空' }, { status: 400 })
+    }
+
+    console.log('🔍 [ensure-user] 收到请求:', email)
 
     const supabase = createAdminClient()
     
@@ -25,45 +36,32 @@ export async function POST(request: NextRequest) {
       const { data: existingUser, error: findError } = await supabase
         .from('users')
         .select('*')
-        .eq('email', session.user.email)
+        .eq('email', email)
         .limit(1)
         .single()
 
       if (!findError && existingUser) {
-        console.log('✅ 用户已存在:', existingUser.email)
+        console.log('✅ [ensure-user] 用户已存在:', existingUser.email)
         return NextResponse.json({
           success: true,
           message: '用户已存在',
           user: {
             id: existingUser.id,
             email: existingUser.email,
-            name: existingUser.name,
-            credits: existingUser.credits || 0
           },
           action: 'found'
         })
       }
-
-      // 如果用户不存在，尝试创建
-      if (findError?.message?.includes('does not exist')) {
-        console.log('❌ 用户表不存在，无法创建用户')
-        return NextResponse.json({
-          success: false,
-          error: '数据库表不存在',
-          message: '请先执行数据库初始化脚本',
-          recommendation: '在Supabase SQL编辑器中执行 scripts/setup-database.sql'
-        }, { status: 500 })
-      }
-
-      // 用户不存在，创建新用户
-      console.log('🔧 创建新用户:', session.user.email)
+      
+      // 用户不存在 (PGRST116)，创建新用户
+      console.log('🔧 [ensure-user] 创建新用户:', email)
       
       const newUserData = {
-        email: session.user.email,
-        name: session.user.name || null,
-        image: session.user.image || null,
-        credits: 30, // 默认积分，注册赠送30积分
-        signin_provider: 'nextauth',
+        email: email,
+        name: name || null,
+        image: image || null,
+        credits: 30, // 默认积分
+        signin_provider: provider || 'unknown',
         signin_type: 'oauth',
         signin_count: 1,
         last_signin_at: new Date().toISOString()
@@ -72,11 +70,11 @@ export async function POST(request: NextRequest) {
       const { data: newUser, error: createError } = await supabase
         .from('users')
         .insert(newUserData)
-        .select()
+        .select('id, email')
         .single()
 
       if (createError) {
-        console.error('🚨 创建用户失败:', createError)
+        console.error('🚨 [ensure-user] 创建用户失败:', createError)
         return NextResponse.json({
           success: false,
           error: '创建用户失败',
@@ -84,37 +82,17 @@ export async function POST(request: NextRequest) {
         }, { status: 500 })
       }
 
-      console.log('✅ 用户创建成功:', newUser.email)
+      console.log('✅ [ensure-user] 用户创建成功:', newUser.email)
       
       return NextResponse.json({
         success: true,
         message: '用户创建成功',
-        user: {
-          id: newUser.id,
-          email: newUser.email,
-          name: newUser.name,
-          credits: newUser.credits || 0
-        },
+        user: newUser,
         action: 'created'
       })
 
     } catch (error) {
-      console.error('🚨 数据库操作失败:', error)
-      
-      // 如果是表不存在的错误，提供明确的指导
-      if (error instanceof Error && error.message.includes('does not exist')) {
-        return NextResponse.json({
-          success: false,
-          error: '数据库表不存在',
-          message: '数据库尚未初始化',
-          recommendation: '请在Supabase SQL编辑器中执行 scripts/setup-database.sql',
-          debugInfo: {
-            error: error.message,
-            userEmail: session.user.email
-          }
-        }, { status: 500 })
-      }
-
+      console.error('🚨 [ensure-user] 数据库操作失败:', error)
       return NextResponse.json({
         success: false,
         error: '数据库操作失败',
@@ -123,7 +101,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('❌ 确保用户存在失败:', error)
+    console.error('❌ [ensure-user] API 发生未知错误:', error)
     return NextResponse.json(
       { 
         success: false,
@@ -135,7 +113,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// 🔍 检查用户状态
+// 🔍 GET - 检查用户状态 (恢复被误删的GET方法)
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
@@ -157,20 +135,19 @@ export async function GET(request: NextRequest) {
         .single()
 
       if (error) {
-        if (error.message.includes('does not exist')) {
+        if (error.code === 'PGRST116') {
           return NextResponse.json({
             success: false,
             exists: false,
-            error: '数据库表不存在',
-            recommendation: '请执行数据库初始化'
+            error: '用户不存在'
           })
         }
         
         return NextResponse.json({
           success: false,
           exists: false,
-          error: '用户不存在',
-          canCreate: true
+          error: '数据库查询错误',
+          details: error
         })
       }
 
