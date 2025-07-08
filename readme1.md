@@ -5178,3 +5178,119 @@ Current Version ID: 82c7167e-c03b-4be7-ba19-2101c58c937d
 **部署状态**：✅ 成功
 **网站地址**：https://labubu.hot
 **版本ID**：089f5e97-445e-4f4b-b6a5-f9ce60235f1d
+
+---
+
+## 🎯 **Google OAuth 配置更新 - 第二阶段** (2025-07-08)
+
+### 📋 **用户提供的新凭据**
+- **Client ID**: `444976776839-8cmjcm1fdmh7ca67r50jrhpc3d5n******.apps.googleusercontent.com`
+- **Client Secret**: `GOCSPX-rPH6mqAbIZBM9sqxm2euZnzl****`
+
+### ✅ **已完成的配置更新**
+
+#### 1. 本地环境变量更新
+- ✅ 用户已在 `.env.local` 中更新新的 Google OAuth 凭据
+
+#### 2. Cloudflare Workers 环境变量更新
+```bash
+# 成功上传新的 Google OAuth 凭据
+echo "444976776839-8cmjcm1fdmh7ca67r50jrhpc3d5n******.apps.googleusercontent.com" | npx wrangler secret put GOOGLE_CLIENT_ID
+echo "GOCSPX-rPH6mqAbIZBM9sqxm2euZnzl****" | npx wrangler secret put GOOGLE_CLIENT_SECRET
+```
+
+#### 3. 应用重新部署
+- ✅ 成功重新部署 (版本: `b55209e7-d463-46f4-aac2-cff2d9a2b668`)
+- ✅ 构建成功，无错误
+- ✅ 网站正常运行
+
+### 🔍 **详细诊断结果**
+
+#### 环境变量验证
+- ✅ **NEXTAUTH_URL**: `https://labubu.hot`
+- ✅ **NEXTAUTH_SECRET**: 已设置
+- ✅ **GOOGLE_CLIENT_ID**: 已设置
+- ✅ **GOOGLE_CLIENT_SECRET**: 已设置
+
+#### Google 提供商配置
+- ✅ **Google 提供商**: 已正确配置
+- ✅ **回调 URL**: `https://labubu.hot/api/auth/callback/google`
+- ✅ **登录 URL**: `https://labubu.hot/api/auth/signin/google`
+
+#### Google Cloud Console 配置验证
+从用户截图确认：
+- ✅ **授权重定向 URI**: 
+  - `https://labubu.hot/api/auth/callback/google` ✅
+  - `http://localhost:3000/api/auth/callback/google` ✅
+- ✅ **客户端密钥**: 2个密钥已启用
+- ✅ **客户端状态**: 正常运行
+
+### ⚠️ **当前问题状态**
+
+#### 症状
+- 登录端点仍重定向到错误页面：`/auth/signin?error=google`
+- 未能成功重定向到 Google OAuth 授权页面
+
+#### 可能原因
+1. **配置传播延迟**: Cloudflare Workers 环境变量需要 5-15 分钟传播到全球边缘节点
+2. **OAuth 同意屏幕配置**: 可能需要检查 Google Cloud Console 中的 OAuth 同意屏幕设置
+3. **域名验证**: 可能需要在 Google Cloud Console 中验证域名 `labubu.hot`
+
+#### 诊断工具
+已创建以下诊断工具：
+- `scripts/test-google-oauth-detailed.js`: 详细的 OAuth 配置诊断
+- `scripts/wait-and-test-oauth.js`: 循环测试等待配置生效
+
+### 🛠️ **解决方案建议**
+
+#### 立即行动
+1. **手动浏览器测试**:
+   - 访问 https://labubu.hot/auth/signin
+   - 点击 Google 登录按钮
+   - 观察是否跳转到 Google 授权页面
+
+2. **Google Cloud Console 检查**:
+   - 确认 OAuth 客户端状态为 "Enabled"
+   - 检查 OAuth 同意屏幕配置
+   - 确认授权域名包含 `labubu.hot`
+
+3. **等待配置传播**:
+   - 运行 `node scripts/wait-and-test-oauth.js` 进行循环测试
+   - 配置可能需要 5-15 分钟才能完全生效
+
+#### 备用方案
+如果问题持续存在：
+1. 在 Google Cloud Console 中创建全新的 OAuth 客户端
+2. 确保从零开始正确配置所有设置
+3. 使用新的客户端 ID 和密钥重新部署
+
+### 📊 **进度总结**
+
+#### 已解决 ✅
+- Cloudflare Workers 构建错误
+- 环境变量配置
+- 应用部署和运行
+- OAuth 提供商配置
+
+#### 待解决 ⏳
+- Google OAuth 认证流程
+- 可能的配置传播延迟
+- OAuth 同意屏幕最终配置
+
+#### 技术现状
+- **网站状态**: 完全正常运行
+- **构建状态**: 成功
+- **环境变量**: 完全配置
+- **Google OAuth**: 配置已更新，等待生效
+
+### 🎯 **下一步行动**
+1. 等待 10-15 分钟让配置传播
+2. 运行循环测试工具
+3. 手动测试 Google 登录流程
+4. 如需要，检查 Google Cloud Console 高级设置
+
+---
+
+*更新时间: 2025-07-08*
+*更新人员: AI 助手*
+*版本: Google OAuth 配置更新第二阶段*
