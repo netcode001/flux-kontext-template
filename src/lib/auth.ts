@@ -215,7 +215,7 @@ export const authOptions: NextAuthOptions = {
           const supabase = createAdminClient()
           
           // 检查用户是否已存在
-          console.log('🔍 查询现有用户...')
+          console.log('🔍 [signIn] 查询现有用户...')
           const { data: existingUser, error: findError } = await supabase
             .from('users')
             .select('*')
@@ -223,70 +223,37 @@ export const authOptions: NextAuthOptions = {
             .limit(1)
             .single()
           
-          console.log('🔍 查询结果:', existingUser ? '用户已存在' : '用户不存在')
+          console.log('🔍 [signIn] 查询结果:', existingUser ? '用户已存在' : '用户不存在')
 
           if (findError && findError.code === 'PGRST116') {
-            // 用户不存在，创建新用户
-            console.log('🎁 开始创建新用户...')
-            
-            // 🔧 修复：永远使用生成的UUID，不使用OAuth提供商的ID
-            const newUserId = getUuid()
-            
-            const newUserData = {
-              id: newUserId, // 🎯 强制使用生成的UUID
-              email: user.email,
-              name: user.name || user.email,
-              image: user.image || '',
-              credits: 100, // 🎁 新用户赠送100积分
-              signin_type: account?.type || 'oauth',
-              signin_provider: account?.provider || 'google',
-              signin_openid: account?.providerAccountId || '', // OAuth ID单独存储
-              signin_ip: 'unknown',
-              last_signin_at: new Date().toISOString(),
-              signin_count: 1,
-              location: 'US',
-              preferred_currency: 'USD',
-              preferred_payment_provider: 'creem'
-            }
-
-            console.log('🔍 准备插入用户数据:', { 
-              id: newUserData.id, 
-              email: newUserData.email,
-              signin_provider: newUserData.signin_provider,
-              signin_openid: newUserData.signin_openid
+            // 🚀 终极修复：不再直接创建用户，而是调用我们已验证可行的内部API来绕过环境问题
+            console.log('🚀 [signIn] 用户不存在，调用内部API创建用户...')
+            const ensureUserResponse = await fetch(`${process.env.NEXTAUTH_URL}/api/user/ensure`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                // 内部调用，可以添加一个密钥来增加安全性
+                'X-Internal-Secret': process.env.INTERNAL_API_SECRET || ''
+              },
+              body: JSON.stringify({
+                email: user.email,
+                name: user.name,
+                image: user.image,
+                provider: account?.provider || 'google'
+              })
             })
 
-            const { data: newUser, error: createError } = await supabase
-              .from('users')
-              .insert(newUserData)
-              .select()
-              .single()
-
-            if (createError) {
-              console.error('🚨 [signIn] 新用户创建失败，登录终止:', createError)
-              // 修复：创建用户失败，必须终止登录，否则JWT会出错
-              return false
-            } else {
-              console.log('🎉 新用户创建成功:', newUser.id)
-
-              // 🎁 创建积分赠送记录
-              try {
-                await supabase
-                  .from('credit_transactions')
-                  .insert({
-                    id: getUuid(),
-                    user_id: newUser.id,
-                    amount: 100,
-                    type: 'gift',
-                    description: '新用户注册赠送积分',
-                    reference_id: 'welcome_bonus'
-                  })
-                
-                console.log(`🎁 新用户注册成功，赠送100积分: ${user.email}`)
-              } catch (creditError) {
-                console.error('⚠️ 积分记录创建失败:', creditError)
-              }
+            if (!ensureUserResponse.ok) {
+              const errorBody = await ensureUserResponse.text()
+              console.error('❌ [signIn] 调用内部ensure-user API失败:', errorBody)
+              return false // 调用失败，终止登录
             }
+            
+            console.log('✅ [signIn] 内部API调用成功，用户已创建或确认存在')
+
+          } else if (findError) {
+            console.error('🚨 [signIn] 数据库查询用户失败，登录终止:', findError)
+            return false // 修复：数据库查询异常，终止
           } else if (!findError && existingUser) {
             console.log('🔄 更新现有用户登录信息...')
             
