@@ -5041,35 +5041,34 @@ curl -I "https://labubu.hot/api/auth/signin/google"
 3. **重新部署成功**：版本 `074ba485-b188-4ffc-aad1-338ab3d92e15`
 4. **验证结果**：构建不再出现"supabaseUrl is required"错误
 
-#### 🔄 待完成：Google OAuth客户端配置
-1. 访问 https://console.cloud.google.com/apis/credentials
-2. 选择项目（如果没有项目，请先创建）
-3. 点击 "创建凭据" → "OAuth 2.0 客户端ID"
-4. 选择应用类型: "Web应用"
-5. 名称: "LabubuHub Production"
-6. 授权重定向URI: `https://labubu.hot/api/auth/callback/google`
-7. 点击 "创建"
-8. 复制生成的客户端ID和客户端密钥
+#### 🔄 剩余问题：Google OAuth 客户端无效
 
-#### 步骤2：更新Google OAuth环境变量
-```bash
-npx wrangler secret put GOOGLE_CLIENT_ID
-# 输入新的Google客户端ID
+**当前状态**：
+- ✅ 网站正常运行：https://labubu.hot (200状态码)
+- ✅ 所有环境变量已配置完成
+- ❌ Google OAuth 客户端 ID 无效：`4449767768...`
 
-npx wrangler secret put GOOGLE_CLIENT_SECRET
-# 输入新的Google客户端密钥
-```
+**解决方案**：
 
-#### 步骤3：重新部署应用
-```bash
-npm run cf:deploy
-```
+1. **在 Google Cloud Console 创建新的 OAuth 客户端**：
+   - 访问：https://console.cloud.google.com/apis/credentials
+   - 创建新的 OAuth 2.0 客户端 ID
+   - 重定向 URI：`https://labubu.hot/api/auth/callback/google`
 
-#### 步骤4：验证修复结果
-```bash
-# 等待5-10分钟后运行验证
-node scripts/verify-oauth-fix.js
-```
+2. **运行更新脚本**：
+   ```bash
+   ./scripts/update-google-oauth.sh
+   ```
+
+3. **验证修复结果**：
+   ```bash
+   node scripts/verify-oauth-fix.js
+   ```
+
+**重要提醒**：
+- 截图中显示的"Your last build failed"是历史记录
+- 当前构建已成功，网站运行正常
+- 只需要创建有效的 Google OAuth 客户端即可完成修复
 
 ### 📋 技术工具创建
 为了诊断和解决这个问题，创建了以下工具：
