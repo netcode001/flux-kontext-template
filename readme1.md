@@ -5028,7 +5028,20 @@ curl -I "https://labubu.hot/api/auth/signin/google"
 
 ### 🛠️ 完整修复方案
 
-#### 步骤1：在Google Cloud Console创建新的OAuth客户端
+#### ✅ 已完成：Cloudflare Workers环境变量修复
+1. **诊断问题**：确认缺少关键环境变量导致构建失败
+2. **配置环境变量**：
+   ```bash
+   # 已成功配置以下环境变量
+   npx wrangler secret put NEXTAUTH_SECRET
+   npx wrangler secret put NEXT_PUBLIC_SUPABASE_ANON_KEY
+   npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+   npx wrangler secret put FAL_KEY
+   ```
+3. **重新部署成功**：版本 `074ba485-b188-4ffc-aad1-338ab3d92e15`
+4. **验证结果**：构建不再出现"supabaseUrl is required"错误
+
+#### 🔄 待完成：Google OAuth客户端配置
 1. 访问 https://console.cloud.google.com/apis/credentials
 2. 选择项目（如果没有项目，请先创建）
 3. 点击 "创建凭据" → "OAuth 2.0 客户端ID"
@@ -5038,7 +5051,7 @@ curl -I "https://labubu.hot/api/auth/signin/google"
 7. 点击 "创建"
 8. 复制生成的客户端ID和客户端密钥
 
-#### 步骤2：更新Cloudflare Workers环境变量
+#### 步骤2：更新Google OAuth环境变量
 ```bash
 npx wrangler secret put GOOGLE_CLIENT_ID
 # 输入新的Google客户端ID
