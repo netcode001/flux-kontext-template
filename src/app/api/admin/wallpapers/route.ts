@@ -6,11 +6,17 @@ import { z } from 'zod'
 import type { Wallpaper, WallpaperUploadData } from '@/types/wallpaper'
 import { r2Storage } from '@/lib/services/r2-storage'
 
-// 🔐 初始化Supabase客户端
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// 🔐 修复：将Supabase客户端的初始化延迟到函数调用时
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase URL 或 Service Role Key 未配置')
+  }
+
+  return createClient(supabaseUrl, supabaseKey)
+}
 
 // 🛡️ 管理员权限检查
 async function checkAdminPermission(session: any): Promise<boolean> {
@@ -112,6 +118,8 @@ export async function GET(request: NextRequest) {
         { status: 403 }
       )
     }
+    
+    const supabase = getSupabaseClient() // ✨ 使用函数获取客户端
 
     // 📊 解析查询参数
     const { searchParams } = new URL(request.url)
@@ -252,9 +260,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 📝 解析请求体
-    const body = await request.json()
-    const validatedData = wallpaperCreateSchema.parse(body)
+    const supabase = getSupabaseClient() // ✨ 使用函数获取客户端
+    const wallpaperData: WallpaperUploadData = await request.json()
+
+    // 🛡️ 验证输入数据
+    const validatedData = wallpaperCreateSchema.parse(wallpaperData)
 
     console.log('📝 创建壁纸:', validatedData)
 
@@ -321,10 +331,11 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // 📝 解析请求体
-    const body = await request.json()
-    const { id, ...updateData } = body
-    
+    const supabase = getSupabaseClient() // ✨ 使用函数获取客户端
+
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
     if (!id) {
       return NextResponse.json(
         { success: false, error: '缺少壁纸ID' },
@@ -332,6 +343,9 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    const body = await request.json()
+    const { id: _, ...updateData } = body
+    
     const validatedData = wallpaperUpdateSchema.parse(updateData)
 
     console.log('✏️ 更新壁纸:', { id, ...validatedData })
@@ -397,22 +411,25 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const { ids } = await request.json()
+    const supabase = getSupabaseClient() // ✨ 使用函数获取客户端
+    
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
 
-    if (!Array.isArray(ids) || ids.length === 0) {
+    if (!id || typeof id !== 'string') {
       return NextResponse.json(
         { success: false, error: '请提供要删除的壁纸ID' },
         { status: 400 }
       )
     }
     
-    console.log(`🗑️ 管理员请求删除壁纸:`, ids);
+    console.log(`��️ 管理员请求删除壁纸:`, id);
 
     // 1. 从数据库中查询要删除的壁纸，获取文件URL
     const { data: wallpapersToDelete, error: fetchError } = await supabase
       .from('wallpapers')
       .select('image_url, video_url')
-      .in('id', ids)
+      .eq('id', id)
 
     if (fetchError) {
       console.error('❌ 查询待删除壁纸失败:', fetchError)
@@ -446,7 +463,7 @@ export async function DELETE(request: NextRequest) {
     const { error: deleteError } = await supabase
       .from('wallpapers')
       .delete()
-      .in('id', ids)
+      .eq('id', id)
 
     if (deleteError) {
       console.error('❌ 删除数据库记录失败:', deleteError)
@@ -456,11 +473,11 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    console.log(`✅ 成功删除 ${ids.length} 个壁纸`);
+    console.log(`✅ 成功删除 ${id} 个壁纸`);
 
     return NextResponse.json({
       success: true,
-      message: `成功删除了 ${ids.length} 个壁纸`
+      message: `成功删除了 ${id} 个壁纸`
     })
 
   } catch (error) {
