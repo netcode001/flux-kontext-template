@@ -147,7 +147,7 @@ export const authOptions: NextAuthOptions = {
         sameSite: 'lax',        // 🔧 设置为lax而非strict，支持第三方登录
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined, // 🌐 明确指定域名
+        // domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined, // 🌐 明确指定域名
       },
     },
     callbackUrl: {
@@ -156,7 +156,7 @@ export const authOptions: NextAuthOptions = {
         sameSite: 'lax',        // 🔧 支持跨站点回调
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
+        // domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
       },
     },
     csrfToken: {
@@ -166,7 +166,7 @@ export const authOptions: NextAuthOptions = {
         sameSite: 'lax',        // 🔧 支持CSRF保护但允许第三方登录
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
+        // domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
       },
     },
     // 🔧 添加状态Cookie配置以支持Google One Tap
@@ -178,7 +178,7 @@ export const authOptions: NextAuthOptions = {
         path: '/',
         secure: process.env.NODE_ENV === 'production',
         maxAge: 900, // 15分钟
-        domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
+        // domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
       },
     },
     pkceCodeVerifier: {
@@ -189,7 +189,7 @@ export const authOptions: NextAuthOptions = {
         path: '/',
         secure: process.env.NODE_ENV === 'production',
         maxAge: 900, // 15分钟
-        domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
+        // domain: process.env.NODE_ENV === 'production' ? 'labubu.hot' : undefined,
       },
     },
   },
@@ -263,8 +263,9 @@ export const authOptions: NextAuthOptions = {
               .single()
 
             if (createError) {
-              console.error('🚨 新用户创建失败:', createError)
-              // 即使创建失败，也允许用户登录，后续通过API自动创建
+              console.error('🚨 [signIn] 新用户创建失败，登录终止:', createError)
+              // 修复：创建用户失败，必须终止登录，否则JWT会出错
+              return false
             } else {
               console.log('🎉 新用户创建成功:', newUser.id)
 
@@ -305,17 +306,19 @@ export const authOptions: NextAuthOptions = {
             
             console.log('✅ 现有用户登录信息更新完成')
           } else {
-            console.error('🚨 数据库查询异常:', findError)
+            console.error('🚨 [signIn] 数据库查询用户失败，登录终止:', findError)
+            return false // 修复：数据库查询异常，终止
           }
         } else {
           console.log('⚠️ 用户邮箱为空，跳过数据库操作')
         }
       } catch (error) {
-        console.error('❌ 用户登录处理失败:', error)
-        // 即使数据库操作失败，也允许用户登录
+        console.error('❌ [signIn] 回调发生未知异常，登录终止:', error)
+        // 修复：任何未知异常都应终止登录
+        return false
       }
 
-      console.log('✅ signIn回调完成，返回true')
+      console.log('✅ [signIn] 回调成功完成，允许登录')
       return true
     },
     async redirect({ url, baseUrl }) {
