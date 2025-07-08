@@ -107,8 +107,8 @@ export function OpenPanelAnalytics() {
 export function Analytics() {
   return (
     <>
-      {/* 自定义分析服务 - 支持 click.pageview.click 等第三方服务 */}
-      <CustomAnalytics />
+      {/* 自定义分析服务 - 支持 click.pageview.click 等第三方服务 (已禁用) */}
+      {/* <CustomAnalytics /> */}
       
       {/* Plausible Analytics - 隐私友好的付费服务 */}
       <PlausibleAnalytics />

@@ -19,87 +19,52 @@ export function SignInContent() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
+    let isMounted = true;
+    const maxRetries = 2;
+    let attempt = 0;
+
     const fetchProviders = async () => {
+      if (!isMounted) return;
+
       try {
-        console.log('🔍 开始获取认证提供商...')
-        setProvidersLoading(true)
-        setProvidersError("")
+        console.log(`🔍 [尝试 ${attempt + 1}/${maxRetries}] 开始获取认证提供商...`);
+        setProvidersLoading(true);
+        setProvidersError("");
         
-        const res = await getProviders()
-        console.log('✅ 获取到的提供商:', res)
+        const res = await getProviders();
+        
+        if (!isMounted) return;
+
+        console.log('✅ 获取到的提供商:', res);
         
         if (res && Object.keys(res).length > 0) {
-          setProviders(res)
-          console.log('✅ 提供商设置成功:', Object.keys(res))
+          setProviders(res);
+          console.log('✅ 提供商设置成功:', Object.keys(res));
+          setProvidersLoading(false);
         } else {
-          console.log('⚠️ 提供商为空，尝试直接API调用...')
-          try {
-            const response = await fetch('/api/auth/providers')
-            if (response.ok) {
-              const apiProviders = await response.json()
-              console.log('✅ API直接调用结果:', apiProviders)
-              if (apiProviders && Object.keys(apiProviders).length > 0) {
-                setProviders(apiProviders)
-              } else {
-                throw new Error('Empty providers from API')
-              }
-            } else {
-              throw new Error(`API responded with ${response.status}`)
-            }
-          } catch (apiError) {
-            console.error('❌ API调用也失败:', apiError)
-            // 强制使用降级方案
-            console.log('🔧 强制使用降级方案：直接启用Google登录')
-            setProviders({ 
-              google: { 
-                id: 'google', 
-                name: 'Google',
-                type: 'oauth',
-                signinUrl: '/api/auth/signin/google',
-                callbackUrl: '/api/auth/callback/google'
-              } 
-            })
-          }
+          throw new Error('getProviders() 返回了空对象');
         }
       } catch (error) {
-        console.error('❌ 获取提供商失败:', error)
-        // 无论如何都提供Google登录选项
-        console.log('🔧 异常情况使用降级方案：直接启用Google登录')
-        setProviders({ 
-          google: { 
-            id: 'google', 
-            name: 'Google',
-            type: 'oauth',
-            signinUrl: '/api/auth/signin/google',
-            callbackUrl: '/api/auth/callback/google'
-          } 
-        })
-      } finally {
-        setProvidersLoading(false)
+        console.error(`❌ [尝试 ${attempt + 1}/${maxRetries}] 获取提供商失败:`, error);
+        
+        if (isMounted && attempt < maxRetries - 1) {
+          attempt++;
+          // 指数退避重试
+          setTimeout(fetchProviders, 1000 * Math.pow(2, attempt)); 
+        } else if (isMounted) {
+          setProvidersError(auth.errors.unknown);
+          setProvidersLoading(false);
+          console.log('❌ 所有重试均失败，显示错误信息。');
+        }
       }
-    }
+    };
     
-    // 添加超时机制，确保加载状态不会无限持续
-    const timeout = setTimeout(() => {
-      if (providersLoading) {
-        console.log('⏰ 提供商加载超时，使用降级方案')
-        setProviders({ 
-          google: { 
-            id: 'google', 
-            name: 'Google',
-            type: 'oauth',
-            signinUrl: '/api/auth/signin/google',
-            callbackUrl: '/api/auth/callback/google'
-          } 
-        })
-        setProvidersLoading(false)
-      }
-    }, 5000) // 5秒超时
+    fetchProviders();
     
-    fetchProviders()
-    
-    return () => clearTimeout(timeout)
-  }, [])
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const error = searchParams.get('error')
