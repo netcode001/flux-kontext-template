@@ -5,11 +5,17 @@ import { createClient } from '@supabase/supabase-js'
 import { z } from 'zod'
 import { headers } from 'next/headers'
 
-// 🔐 初始化Supabase客户端
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// 🔐 修复：延迟Supabase客户端初始化
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase URL 或 Service Role Key 未配置')
+  }
+
+  return createClient(supabaseUrl, supabaseKey)
+}
 
 // 📝 路径参数验证Schema
 const downloadParamsSchema = z.object({
@@ -36,6 +42,8 @@ async function checkUserRateLimit(userId: string, ipAddress: string): Promise<{
     const now = new Date()
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+    
+    const supabase = getSupabaseClient() // ✨ 使用函数获取客户端
 
     // 🔍 检查用户小时限制
     const { count: userHourlyCount, error: userHourlyError } = await supabase
@@ -154,6 +162,8 @@ export async function POST(
 ) {
   const params = await context.params
   try {
+    const supabase = getSupabaseClient() // ✨ 使用函数获取客户端
+    
     // 🛡️ 验证路径参数
     const validatedParams = downloadParamsSchema.parse(params)
     const { id: wallpaperId } = validatedParams

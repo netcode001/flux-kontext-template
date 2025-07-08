@@ -6,11 +6,17 @@ import { z } from 'zod'
 import { UserType, getUserLimits } from '@/lib/user-tiers'
 import type { WallpaperListParams, WallpaperListResponse } from '@/types/wallpaper'
 
-// 🔐 初始化Supabase客户端
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// 🔐 修复：延迟Supabase客户端初始化
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase URL 或 Service Role Key 未配置')
+  }
+
+  return createClient(supabaseUrl, supabaseKey)
+}
 
 // 📝 请求参数验证Schema
 const wallpaperParamsSchema = z.object({
@@ -27,6 +33,8 @@ const wallpaperParamsSchema = z.object({
 // 🔍 GET /api/wallpapers - 获取壁纸列表
 export async function GET(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient() // ✨ 使用函数获取客户端
+    
     // 📊 解析查询参数
     const { searchParams } = new URL(request.url)
     const params = Object.fromEntries(searchParams.entries())

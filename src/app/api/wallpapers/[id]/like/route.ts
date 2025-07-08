@@ -4,11 +4,17 @@ import { authOptions } from '@/lib/auth'
 import { createClient } from '@supabase/supabase-js'
 import { z } from 'zod'
 
-// 🔐 初始化Supabase客户端
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// 🔐 修复：延迟Supabase客户端初始化
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase URL 或 Service Role Key 未配置')
+  }
+
+  return createClient(supabaseUrl, supabaseKey)
+}
 
 // 📝 路径参数验证Schema
 const likeParamsSchema = z.object({
@@ -22,6 +28,8 @@ export async function POST(
 ) {
   const params = await context.params
   try {
+    const supabase = getSupabaseClient() // ✨ 使用函数获取客户端
+    
     // 🛡️ 验证路径参数
     const validatedParams = likeParamsSchema.parse(params)
     const { id: wallpaperId } = validatedParams
@@ -169,6 +177,8 @@ export async function DELETE(
 ) {
   const params = await context.params
   try {
+    const supabase = getSupabaseClient() // ✨ 使用函数获取客户端
+    
     // 🛡️ 验证路径参数
     const validatedParams = likeParamsSchema.parse(params)
     const { id: wallpaperId } = validatedParams
