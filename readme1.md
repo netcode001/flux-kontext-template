@@ -4997,6 +4997,100 @@ curl -I "https://labubu.hot/api/auth/signin/google"
 ✅ **网站状态**：https://labubu.hot 正常运行
 ✅ **数据库连接**：3个用户记录，连接稳定
 ✅ **壁纸API**：返回10个壁纸记录，功能正常
+
+---
+
+## 📅 2025年1月8日 - Google OAuth 问题精确诊断和修复方案
+
+### 🚨 问题现象
+用户反馈：网站无法使用Google登录，点击登录按钮后显示"OAuth login error, please try again"。
+
+### 🔍 技术诊断结果
+
+#### 1. 环境变量状态检查
+```bash
+curl "https://labubu.hot/api/debug/oauth"
+✅ OAuth配置正确
+   Google Client ID: 4449767768...
+   NextAuth URL: https://labubu.hot
+   NextAuth Secret: 已设置
+```
+
+#### 2. 登录端点问题确认
+```bash
+curl -I "https://labubu.hot/api/auth/signin/google"
+❌ HTTP/2 302 重定向到: /auth/signin?error=google
+❌ 不是预期的 accounts.google.com 重定向
+```
+
+#### 3. 根本原因确认
+**Google OAuth客户端ID无效** - 当前客户端ID `4449767768-4kfj8uq3vngvdtj6hgcn90o1vng0r9s2.apps.googleusercontent.com` 在Google Cloud Console中不存在或配置错误。
+
+### 🛠️ 完整修复方案
+
+#### 步骤1：在Google Cloud Console创建新的OAuth客户端
+1. 访问 https://console.cloud.google.com/apis/credentials
+2. 选择项目（如果没有项目，请先创建）
+3. 点击 "创建凭据" → "OAuth 2.0 客户端ID"
+4. 选择应用类型: "Web应用"
+5. 名称: "LabubuHub Production"
+6. 授权重定向URI: `https://labubu.hot/api/auth/callback/google`
+7. 点击 "创建"
+8. 复制生成的客户端ID和客户端密钥
+
+#### 步骤2：更新Cloudflare Workers环境变量
+```bash
+npx wrangler secret put GOOGLE_CLIENT_ID
+# 输入新的Google客户端ID
+
+npx wrangler secret put GOOGLE_CLIENT_SECRET
+# 输入新的Google客户端密钥
+```
+
+#### 步骤3：重新部署应用
+```bash
+npm run cf:deploy
+```
+
+#### 步骤4：验证修复结果
+```bash
+# 等待5-10分钟后运行验证
+node scripts/verify-oauth-fix.js
+```
+
+### 📋 技术工具创建
+为了诊断和解决这个问题，创建了以下工具：
+- ✅ `scripts/fix-google-oauth-production.js` - 完整的诊断和修复指导工具
+- ✅ `scripts/verify-oauth-fix.js` - 修复结果验证工具
+
+### ⚠️ 重要注意事项
+1. **确保在Google Cloud Console中**：
+   - 启用了Google+ API 或 Google People API
+   - OAuth同意屏幕配置完整
+   - 授权重定向URI完全匹配
+
+2. **等待时间**：
+   - Cloudflare Workers环境变量更新需要5-10分钟
+   - 部署后需要等待全球CDN缓存更新
+
+3. **如果仍然失败**：
+   - 检查浏览器开发者工具的网络请求
+   - 清除浏览器缓存和Cookie
+   - 尝试使用无痕模式测试
+
+### 🎯 预期结果
+修复完成后，用户应该能够：
+- ✅ 正常访问 `https://labubu.hot/auth/signin`
+- ✅ 点击"Continue with Google"按钮
+- ✅ 跳转到Google OAuth授权页面
+- ✅ 完成授权后成功登录网站
+
+### 🔄 当前状态
+- **网站地址**：https://labubu.hot ✅ 正常运行
+- **数据库**：✅ 连接正常（3个用户记录）
+- **API状态**：✅ 所有接口正常
+- **环境变量**：✅ 正确配置
+- **Google OAuth**：❌ 需要重新配置（客户端ID无效）
 ✅ **Google OAuth**：配置正确，登录功能正常
 ✅ **NextAuth**：Providers配置正常
 
