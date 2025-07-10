@@ -1,3 +1,20 @@
+// ================= Clerk 官方中间件集成 =================
+// 只保留 Clerk 官方推荐的中间件实现，原有自定义逻辑已注释保留
+import { clerkMiddleware } from "@clerk/nextjs/server";
+
+export default clerkMiddleware();
+
+export const config = {
+  matcher: [
+    // 跳过 Next.js 内部和所有静态文件，除非在 search params 里
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // API 路由始终执行
+    "/(api|trpc)(.*)",
+  ],
+};
+
+// ================= 以下为原有自定义逻辑，已注释保留 =================
+/*
 import { NextRequest, NextResponse } from 'next/server'
 
 // 简单的内存速率限制器 (生产环境建议使用Redis)
@@ -146,4 +163,5 @@ export const config = {
     // 暂时禁用middleware，只匹配API路由进行测试
     '/api/(.*)',
   ],
-} 
+}
+*/ 

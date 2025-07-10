@@ -33,7 +33,9 @@
     "@ai-sdk/anthropic": "^0.0.56",
     "@aws-sdk/client-s3": "^3.817.0",
     "@aws-sdk/lib-storage": "^3.817.0",
+    "@clerk/nextjs": "^6.24.0",
     "@fal-ai/client": "^1.5.0",
+    "@opennextjs/cloudflare": "^1.0.0-beta",
     "@prisma/client": "^6.10.1",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -72,8 +74,7 @@
     "use-debounce": "^10.0.5",
     "uuid": "^11.0.4",
     "zod": "^3.25.67",
-    "zustand": "^5.0.5",
-    "@opennextjs/cloudflare": "^1.0.0-beta"
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
