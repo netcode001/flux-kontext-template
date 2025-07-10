@@ -37,7 +37,6 @@ export function WallpaperCard() {
   const [wallpapers, setWallpapers] = useState<WallpaperData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showLoginDialog, setShowLoginDialog] = useState(false)
   const [downloadingId, setDownloadingId] = useState<string | null>(null)
 
   // 获取壁纸数据
@@ -124,7 +123,7 @@ export function WallpaperCard() {
   // 处理点赞
   const handleLike = async (wallpaper: WallpaperData) => {
     if (!session) {
-      setShowLoginDialog(true)
+      alert('请先登录才能点赞')
       return
     }
 
@@ -159,10 +158,7 @@ export function WallpaperCard() {
 
   // 处理下载
   const handleDownload = async (wallpaper: WallpaperData) => {
-    if (!session) {
-      setShowLoginDialog(true)
-      return
-    }
+    // 移除登录验证，允许所有用户下载
     setDownloadingId(wallpaper.id)
     try {
       const response = await fetch(`/api/wallpapers/${wallpaper.id}/download`, {
@@ -265,11 +261,7 @@ export function WallpaperCard() {
                   className="w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-full text-base"
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (session) {
-                      handleDownload(wallpaper);
-                    } else {
-                      setShowLoginDialog(true);
-                    }
+                    handleDownload(wallpaper);
                   }}
                   title="Download"
                   disabled={downloadingId === wallpaper.id}
@@ -301,22 +293,6 @@ export function WallpaperCard() {
           </p>
         </div>
       )}
-
-      {/* 未登录下载弹窗 */}
-      <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Please login to download HD wallpapers</DialogTitle>
-            <DialogDescription>Login to download HD wallpapers and enjoy more features</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowLoginDialog(false)}>OK</Button>
-            <Link href="/auth/signin">
-              <Button variant="default">Login</Button>
-            </Link>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 } 

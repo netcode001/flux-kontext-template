@@ -168,18 +168,9 @@ export async function POST(
     const validatedParams = downloadParamsSchema.parse(params)
     const { id: wallpaperId } = validatedParams
 
-    // 🔐 检查用户认证
+    // 🔐 检查用户认证（可选，不再强制要求）
     const session = await getServerSession(authOptions)
-    if (!session?.user) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: '请先登录才能下载壁纸',
-          code: 'AUTHENTICATION_REQUIRED'
-        },
-        { status: 401 }
-      )
-    }
+    const isAuthenticated = !!session?.user
 
     // 🌐 获取请求信息
     const headersList = await headers()
@@ -190,9 +181,10 @@ export async function POST(
 
     console.log('📥 壁纸下载请求:', {
       wallpaperId,
-      userId: session.user.id,
+      userId: session?.user?.id || 'anonymous',
       userAgent,
-      ipAddress
+      ipAddress,
+      isAuthenticated
     })
 
     // 🤖 检测爬虫
@@ -209,18 +201,50 @@ export async function POST(
       )
     }
 
-    // 🛡️ 检查速率限制
-    const rateLimitCheck = await checkUserRateLimit(session.user.id, ipAddress)
-    if (!rateLimitCheck.allowed) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: rateLimitCheck.reason,
-          code: 'RATE_LIMIT_EXCEEDED',
-          remaining: rateLimitCheck.remaining || 0
-        },
-        { status: 429 }
-      )
+    // 🛡️ 检查速率限制（对登录用户和匿名用户分别处理）
+    if (isAuthenticated) {
+      const rateLimitCheck = await checkUserRateLimit(session.user.id, ipAddress)
+      if (!rateLimitCheck.allowed) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: rateLimitCheck.reason,
+            code: 'RATE_LIMIT_EXCEEDED',
+            remaining: rateLimitCheck.remaining || 0
+          },
+          { status: 429 }
+        )
+      }
+    } else {
+      // 🔍 对匿名用户的IP限制检查
+      const now = new Date()
+      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
+      
+      const { count: ipHourlyCount, error: ipHourlyError } = await supabase
+        .from('wallpaper_downloads')
+        .select('*', { count: 'exact', head: true })
+        .eq('ip_address', ipAddress)
+        .is('user_id', null) // 只检查匿名用户
+        .gte('download_at', oneHourAgo.toISOString())
+
+      if (ipHourlyError) {
+        console.error('❌ 检查匿名用户IP限制失败:', ipHourlyError)
+        return NextResponse.json(
+          { success: false, error: '系统错误' },
+          { status: 500 }
+        )
+      }
+
+      if ((ipHourlyCount || 0) >= RATE_LIMITS.PER_IP_HOURLY) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: `IP地址下载频率过高，请稍后再试`,
+            code: 'RATE_LIMIT_EXCEEDED'
+          },
+          { status: 429 }
+        )
+      }
     }
 
     // 🖼️ 获取壁纸信息
@@ -243,22 +267,24 @@ export async function POST(
       )
     }
 
-    // 🎯 检查Premium权限
+    // 🎯 检查Premium权限（暂时允许所有用户下载）
     if (wallpaper.is_premium) {
       // TODO: 这里需要检查用户是否为Premium用户
-      // 暂时允许所有登录用户下载
+      // 暂时允许所有用户下载
     }
 
-    // 📊 记录下载
+    // 📊 记录下载（支持匿名用户）
+    const downloadRecord = {
+      wallpaper_id: wallpaperId,
+      user_id: session?.user?.id || null, // 匿名用户为null
+      user_email: session?.user?.email || null, // 匿名用户为null
+      ip_address: ipAddress,
+      user_agent: userAgent
+    }
+
     const { error: downloadError } = await supabase
       .from('wallpaper_downloads')
-      .insert({
-        wallpaper_id: wallpaperId,
-        user_id: session.user.id,
-        user_email: session.user.email,
-        ip_address: ipAddress,
-        user_agent: userAgent
-      })
+      .insert(downloadRecord)
 
     if (downloadError) {
       console.error('❌ 记录下载失败:', downloadError)
@@ -280,7 +306,7 @@ export async function POST(
 
     console.log('✅ 壁纸下载成功:', {
       wallpaperId,
-      userId: session.user.id,
+      userId: session?.user?.id || 'anonymous',
       title: wallpaper.title,
       download_count: wallpaper.download_count + 1
     })
@@ -343,23 +369,10 @@ export async function POST(
 
   } catch (error) {
     console.error('❌ 壁纸下载API错误:', error)
-    
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: '请求参数无效', 
-          details: error.errors,
-          code: 'INVALID_PARAMS'
-        },
-        { status: 400 }
-      )
-    }
-
     return NextResponse.json(
       { 
         success: false, 
-        error: '服务器内部错误',
+        error: '系统错误，请稍后重试',
         code: 'INTERNAL_ERROR'
       },
       { status: 500 }

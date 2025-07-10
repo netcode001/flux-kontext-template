@@ -28,7 +28,6 @@ export function WallpaperCard({
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
   const [showVideoPlayer, setShowVideoPlayer] = useState(false)
-  const [showLoginDialog, setShowLoginDialog] = useState(false)
   const [downloading, setDownloading] = useState(false)
 
   const handleVideoPlay = () => {
@@ -46,10 +45,7 @@ export function WallpaperCard({
 
   const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!wallpaper.can_download) {
-      setShowLoginDialog(true)
-      return
-    }
+    // 移除登录验证，允许所有用户下载
     setDownloading(true)
     fetch(`/api/wallpapers/${wallpaper.id}/download`, { method: 'POST' })
       .then(async response => {
@@ -172,21 +168,7 @@ export function WallpaperCard({
           )}
         </div>
 
-        {/* 未登录下载弹窗 */}
-        <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>请登录后下载高清壁纸</DialogTitle>
-              <DialogDescription>登录后可下载高清壁纸和享受更多功能</DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowLoginDialog(false)}>确定</Button>
-              <Link href="/auth/signin">
-                <Button variant="default">去登录</Button>
-              </Link>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+
       </div>
     </Card>
   )

@@ -177,11 +177,7 @@ export function WallpaperGalleryContent() {
 
   // 📥 下载处理
   const handleDownload = async (wallpaper: Wallpaper) => {
-    if (!session) {
-      alert('请先登录才能下载壁纸')
-      return
-    }
-
+    // 移除登录验证，允许所有用户下载
     try {
       const response = await fetch(`/api/wallpapers/${wallpaper.id}/download`, {
         method: 'POST'
