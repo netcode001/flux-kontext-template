@@ -5294,3 +5294,8 @@ echo "GOCSPX-rPH6mqAbIZBM9sqxm2euZnzl****" | npx wrangler secret put GOOGLE_CLIE
 *更新时间: 2025-07-08*
 *更新人员: AI 助手*
 *版本: Google OAuth 配置更新第二阶段*
+
+
+
+2025.7.10 
+ 在 vercel 里面测试部署
