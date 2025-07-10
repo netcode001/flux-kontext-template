@@ -140,7 +140,8 @@ export function Navigation() {
           ) : (
             // 未登录状态 - 语言选择器已在上方显示，这里只显示登录/注册按钮
             <>
-              <Link href="/auth/signin">
+              {/* 登录按钮跳转到 Clerk 新登录页 /sign-in */}
+              <Link href="/sign-in">
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -149,7 +150,8 @@ export function Navigation() {
                   {common.navigation.login}
                 </Button>
               </Link>
-              <Link href="/auth/signup">
+              {/* 注册按钮跳转到 Clerk 新注册页 /sign-up（如需自定义注册页可后续补充）*/}
+              <Link href="/sign-up">
                 <Button 
                   size="sm" 
                   className="bg-gradient-to-r from-labubu-500 to-labubu-600 text-white hover:from-labubu-600 hover:to-labubu-700 hover:scale-105 active:scale-95 transition-all duration-300  hover: rounded-2xl px-6"
